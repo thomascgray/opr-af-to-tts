@@ -67,9 +67,36 @@ const cleanFirstLineOfUnitProfile = (val: string) => {
 };
 
 const cleanSecondLineOfUnitProfile = (val: string) => {
-  // val = val.replace(/\[\d\]/g, "|");
   return val;
 };
+
+// this just gets all the keywords out of a some crazy nested bracket string. see tests
+export const getAllIndividualSpecialRulesFromString = (line: string) => {
+  const individualSpecialRules = line
+    .split(/[\(\),]/gm)
+    .filter((x) => x !== "")
+    .map((x) => x.trim())
+    .filter((x) => Number.isNaN(+x))
+    .map((x) => removeQuantityStringFromStartOfString(x))
+    // .map((x) => x.replaceAll(/\(\)/gm, "a"))
+    .map((x) => x.trim());
+  return individualSpecialRules;
+};
+
+// this gets the top level special rules, like "Ambush" or "Flying" or "Tough(3)"
+// it wont go a bracket level deeper, so given "A(B,C(D)), E", it will return "A(B,C(D))" and "E"
+export const getTopLevelSpecialRulesFromString = (line: string) => {
+  return splitNoParen(line)
+    .map((x) => x.trim())
+    .map((x) => removeQuantityStringFromStartOfString(x))
+    .map((x) => x.trim())
+    .map((x) => x.replace(/\(\)/gm, ""));
+};
+
+interface iSpecialRule {
+  name: string;
+  value?: number;
+}
 
 interface iUnitProfile {
   id: string;
@@ -83,6 +110,7 @@ interface iUnitProfile {
     definition: string;
     quantity: number;
   }[];
+  individualSpecialRules: string[];
   specialRules: {
     id: string;
     name: string;
@@ -94,22 +122,79 @@ interface iUnitProfile {
 interface iAppState {
   armyListRawText: string;
   armySpecialRulesRawText: string;
+  armySpecialRulesDict: {
+    name: string;
+    definition: string;
+  }[];
+  armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
 }
 
 const state = proxy<iAppState>({
-  armyListRawText: "",
-  armySpecialRulesRawText: "",
+  armyListRawText: `++ DAO Union [GF 935pts] ++
+
+Battle Suit Elite [1] Q3+ D3+ | 245pts | Ambush, Flying, Hero, Tough(6), 1x Spotter Drone(Spotting Laser)
+Bash (A4, AP(1)), 3x Suit-Ion (18", A1, Blast(3), AP(1)), Plasma Sword (A4, AP(1), Rending)
+
+Battle Suit Elite [1] Q3+ D3+ | 300pts | Ambush, Flying, Hero, Tough(6), 1x Spotter Drone(Spotting Laser)
+Bash (A4, AP(1)), Suit-Missiles (30", A2, AP(2), Lock-On), Suit-Plasma (24", A2, AP(4)), Suit-Frag (24", A1, Blast(3), Indirect), Plasma Sword (A4, AP(1), Rending)
+
+Battle Suits [3] Q4+ D3+ | 390pts | Ambush, Flying, Tough(3), Shield Drone, 1x Energy Shield(Shield Wall), 1x Gun Drone(), 1x Spotter Drone(Spotting Laser)
+3x Bashes (A2), Suit-Burst (18", A2, Rending), Suit-Flamer (12", A3), Suit-Fuse (12", A1, AP(4), Deadly(3)), Suit-Ion (18", A1, Blast(3), AP(1)), Suit-Frag (24", A1, Blast(3), Indirect), 3x Plasma Sword (A2, AP(1), Rending), Pulse-Guns (18", A1, Rending)`,
+  armySpecialRulesRawText: `AP: Targets get -X to Defense rolls when blocking hits.
+
+Ambush: This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere, over 9” away from enemy units. If both player have Ambush, they roll-off to see who deploys first, and then alternate in placing them.
+
+Blast: Ignores cover and multiplies hits by X, but can’t deal more than one hit per model in the target unit.
+
+Deadly: Assign each wound to one model, and multiply it by X. Note that these wounds don't carry over to other models if the target is killed.
+
+Defense: Gets +X to Defense rolls.
+
+Flying: May move through all obstacles, and may ignore terrain effects.
+
+Hero: May be deployed as part of one friendly unit, which may use its Quality value for morale tests. When taking hits, you must use the unit’s Defense value, until all non-hero models are killed.
+
+Indirect: May target enemies that are not in line of sight, and ignores cover from sight obstructions, but gets -1 to hit rolls when shooting after moving.
+
+Lock-On: Ignores all negative modifiers to hit rolls and range.
+
+Rending: Unmodified results of 6 to hit count as having AP(4), and ignore the regeneration rule.
+
+Shield Drone: This model and its unit count as having the Stealth special rule.
+
+Shield Wall: Attacks targeting units where all models have this rule count as having AP(-1), to a min. of AP(0).
+
+Spotting Laser: Once per activation, before attacking, this model may pick one enemy unit within 30” in line of sight and roll one die, on a 4+ place a marker on it. Friendly units may remove markers from their target to get +X to hit rolls when shooting, where X is the number of removed markers.
+
+Stealth: Enemies get -1 to hit rolls when shooting at this unit.
+
+Tough: This model must take X wounds before being killed. If a model with tough joins a unit without it, then it is removed last when the unit takes wounds. Note that you must continue to put wounds on the tough model with most wounds in the unit until it is killed, before starting to put them on the next tough model (heroes must be assigned wounds last).`,
+  armySpecialRulesDict: [],
+  armySpecialRulesDictNames: [],
   unitProfiles: [],
 });
 
 const updateWeaponQuantity = (upId: string, wpId: string, quantity: number) => {
   const unitProfile = state.unitProfiles.find((up) => up.id === upId);
-  console.log("unitProfile", JSON.stringify(unitProfile, null, 2));
   if (unitProfile) {
     const weapon = unitProfile.weapons.find((wp) => wp.id === wpId);
     if (weapon) {
       weapon.quantity = quantity;
+    }
+  }
+};
+
+const updateSpecialRuleQuantity = (
+  upId: string,
+  srId: string,
+  quantity: number
+) => {
+  const unitProfile = state.unitProfiles.find((up) => up.id === upId);
+  if (unitProfile) {
+    const specialRule = unitProfile.specialRules.find((wp) => wp.id === srId);
+    if (specialRule) {
+      specialRule.quantity = quantity;
     }
   }
 };
@@ -145,10 +230,26 @@ function App() {
 
       <button
         onClick={() => {
+          // the army list
           const armyList = formatRawTextIntoLines(stateView.armyListRawText);
-
           armyList.shift();
           const rawUnitProfiles = _.chunk(armyList, 2);
+
+          // the special rules
+          const armySpecialRules = formatRawTextIntoLines(
+            stateView.armySpecialRulesRawText
+          ).map((line) => {
+            const i = line.indexOf(":");
+            const name = line.substring(0, i).trim();
+            const definition = line.substring(i + 1).trim();
+            return {
+              name,
+              definition,
+            };
+          });
+
+          state.armySpecialRulesDict = armySpecialRules;
+          state.armySpecialRulesDictNames = armySpecialRules.map((x) => x.name);
 
           const unitProfiles = rawUnitProfiles.map(
             (rawUnitProfile): iUnitProfile => {
@@ -158,17 +259,9 @@ function App() {
               const [unitName, unitQuaDef, unitPoints, unitSpecialsRaw] =
                 firstLineParsed.split("|");
 
-              // some of these special rules are actually a word, then in brackets the special rules
-              // that come with that word e.g "Jetpacks(Ambush, Flying)"
-              // in that case, we should just use the special rules in the brackets
-              // UNLESS that special Rule is "Tough" - then we need to keep "Tough"
-
-              // special rules are crazy!
-              // they can be
-              // - a single word
-              // - a single word followed by a number in brackets
-              // - a single word followed by multiple
-              const unitSpecials = unitSpecialsRaw.split(/[\(\),,]+/); // split on commas and either bracket character
+              //  work out all the specials from the the first row after the points
+              const unitSpecials =
+                getTopLevelSpecialRulesFromString(unitSpecialsRaw);
 
               const [unitQua, unitDef] = extractQuaDef(unitQuaDef);
 
@@ -181,6 +274,9 @@ function App() {
                 .map((x) => removeQuantityStringFromStartOfString(x))
                 .map((x) => x.trim());
 
+              // we also need to get all the specials out of the weapons
+
+              // return the final profile
               return {
                 id: nanoid(),
                 isGenerated: true,
@@ -200,10 +296,12 @@ function App() {
                     quantity: 1,
                   };
                 }),
+                individualSpecialRules:
+                  getAllIndividualSpecialRulesFromString(unitSpecialsRaw),
                 specialRules: unitSpecials.map((specialRule) => {
                   return {
                     id: nanoid(),
-                    name: removeQuantityStringFromStartOfString(specialRule),
+                    name: specialRule,
                     definition: "",
                     quantity: 1,
                   };
@@ -221,7 +319,7 @@ function App() {
 
       <hr className="my-5" />
 
-      <div className="flex flex-row">
+      <div className="flex flex-row space-x-2">
         <div className="space-y-3 w-1/3">
           {stateView.unitProfiles.map((unitProfile) => {
             return (
@@ -302,13 +400,13 @@ function App() {
                           <span className="font-bold">{specialRule.name}</span>
                           <span className="">{specialRule.definition}</span>
                         </span>
-                        {/* 
+
                         <input
                           className="w-10"
                           min={0}
                           onChange={(e) => {
                             const value = parseInt(e.currentTarget.value);
-                            updateWeaponQuantity(
+                            updateSpecialRuleQuantity(
                               unitProfile.id,
                               specialRule.id,
                               value
@@ -316,7 +414,7 @@ function App() {
                           }}
                           value={specialRule.quantity}
                           type="number"
-                        /> */}
+                        />
                       </div>
                     );
                   })}
@@ -342,7 +440,46 @@ function App() {
           })}
         </div>
 
-        <div className="space-y-3 w-1/3"></div>
+        <div className="space-y-3 w-2/3">
+          {stateView.unitProfiles.map((unit) => {
+            const activeWeapons = unit.weapons.filter((w) => w.quantity > 0);
+            const activeSpecialRules = unit.specialRules.filter(
+              (s) => s.quantity > 0
+            );
+            return (
+              <div key={unit.id + "tts"} className="bg-slate-300 p-4">
+                <span
+                  contentEditable={true}
+                  className="block whitespace-pre text-xs"
+                >
+                  {unit.name} [sub]w/{" "}
+                  {activeWeapons.map((x) => x.name).join(", ")}[/sub]
+                </span>
+                <span className="block whitespace-pre text-xs">
+                  [sub]w/ {activeSpecialRules.map((x) => x.name).join(", ")}
+                  [/sub]
+                </span>
+
+                {unit.individualSpecialRules
+                  .filter((isp) =>
+                    stateView.armySpecialRulesDictNames.includes(isp)
+                  )
+                  .map((isp) => {
+                    return (
+                      <span key={isp} className="block text-xs">
+                        {isp}:{" "}
+                        {
+                          stateView.armySpecialRulesDict.find(
+                            (x) => x.name === isp
+                          )?.definition
+                        }
+                      </span>
+                    );
+                  })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
