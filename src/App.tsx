@@ -180,11 +180,19 @@ const duplicateModel = (upId: string, mId: string) => {
     const model = unit.models.find((m) => m.id === mId);
     if (model) {
       unit.models.push({
-        ...model,
+        ..._.cloneDeep(model),
         isGenerated: false,
         id: nanoid(),
       });
     }
+  }
+};
+
+const deleteModel = (upId: string, mId: string) => {
+  const unit = state.unitProfiles.find((up) => up.id === upId);
+  if (unit) {
+    const modelIndex = unit.models.findIndex((m) => m.id === mId);
+    unit.models.splice(modelIndex, 1);
   }
 };
 
@@ -193,9 +201,7 @@ function App() {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-xl font-bold">
-        Grimdark Future <small className="font-normal">Army Forge to TTS</small>
-      </h1>
+      <h1 className="text-xl font-bold">Grimdark Future Army Forge to TTS</h1>
       <div className="inputs flex flex-row space-x-5">
         <div className="w-1/2">
           <label className="block h-20">
@@ -245,10 +251,7 @@ function App() {
       </div>
 
       <button
-        disabled={
-          stateView.armyListRawText === "" ||
-          stateView.armySpecialRulesRawText === ""
-        }
+        disabled={stateView.armyListRawText === ""}
         onClick={() => {
           // the army list
           const armyList = formatRawTextIntoLines(
@@ -347,13 +350,13 @@ function App() {
         Generate
       </button>
 
-      <hr className="my-5" />
-
-      <details className="text-sm">
+      <details className="text-sm mt-4">
         <summary className="cursor-pointer">Tutorial</summary>
         <p>
-          OPR Army Forge does not know which models have which Weapons and
-          Special Rules attached.
+          Army list definitions keep track of the whole "pool" of Weapons and
+          Special Rules associated with an entire unit - <em>not</em> which
+          Weapons and Special Rules are associated with individual, distinct
+          models.
         </p>
         <p>
           Therefore, we need to define which distinct models have which Weapons
@@ -362,11 +365,18 @@ function App() {
         </p>
         <p>
           The left column lets you change quantities of items and create
-          duplicates of the base "distinct model". This way, you can create a
-          duplicate, and then make sure each model has the right Weapons and
-          Special Rules.
+          duplicates of the base "distinct model", allowing you to create a
+          single entry for each <em>distinct</em> model in your army.
+        </p>
+        <p>
+          The right column then prints out 2 paragraphs of text for each
+          distinct model - these go in the TTS objects "Name" and "Description"
+          field, respectively.
         </p>
       </details>
+
+      <hr className="my-5" />
+
       <div className="flex flex-col space-y-2">
         {stateView.unitProfiles.map((unit) => {
           return (
@@ -379,211 +389,218 @@ function App() {
                 {unit.models[0].def}+
               </legend>
 
-              {unit.models.map((model) => {
-                const activeWeapons = model.weapons.filter(
-                  (w) => w.quantity > 0
-                );
-                const activeSpecialRules = model.specialRules.filter(
-                  (s) => s.quantity > 0
-                );
+              <div className="flex flex-col space-y-2">
+                {unit.models.map((model) => {
+                  const activeWeapons = model.weapons.filter(
+                    (w) => w.quantity > 0
+                  );
+                  const activeSpecialRules = model.specialRules.filter(
+                    (s) => s.quantity > 0
+                  );
 
-                const activeWeaponNamesCommaSeparated = activeWeapons
-                  .map((x) => {
-                    if (x.quantity > 1) {
-                      return `${x.quantity}x ${x.name}`;
-                    }
-                    return `${x.name}`;
-                  })
-                  .join(", ");
+                  const activeWeaponNamesCommaSeparated = activeWeapons
+                    .map((x) => {
+                      if (x.quantity > 1) {
+                        return `${x.quantity}x ${x.name}`;
+                      }
+                      return `${x.name}`;
+                    })
+                    .join(", ");
 
-                const activeSpecialRulesNamesCommaSeparated = activeSpecialRules
-                  .map((x) => {
-                    if (x.quantity > 1) {
-                      return `${x.quantity}x ${x.name}`;
-                    }
-                    return `${x.name}`;
-                  })
-                  .join(", ");
+                  const activeSpecialRulesNamesCommaSeparated =
+                    activeSpecialRules
+                      .map((x) => {
+                        if (x.quantity > 1) {
+                          return `${x.quantity}x ${x.name}`;
+                        }
+                        return `${x.name}`;
+                      })
+                      .join(", ");
 
-                const activeSpecialRulesList = activeSpecialRules
-                  .map((sr) => {
-                    const definition = stateView.armySpecialRulesDict.find(
-                      (x) => x.name === sr.name
-                    )?.definition;
-                    return `${sr.name}: ${definition}`;
-                  })
-                  .join(", ");
+                  const activeSpecialRulesList = activeSpecialRules
+                    .map((sr) => {
+                      const definition = stateView.armySpecialRulesDict.find(
+                        (x) => x.name === sr.name
+                      )?.definition;
+                      return `${sr.name}: ${definition}`;
+                    })
+                    .join(", ");
 
-                const fullSpecialRulesForThisUnit = model.individualSpecialRules
-                  .filter((isp) =>
-                    activeSpecialRules.find((sr) => sr.name.includes(isp))
-                  )
-                  .filter((isp) =>
-                    stateView.armySpecialRulesDictNames.includes(isp)
-                  )
-                  .map((isp) => {
-                    return `[f0932b]${isp}[-]
+                  const fullSpecialRulesForThisUnit =
+                    model.individualSpecialRules
+                      .filter((isp) =>
+                        activeSpecialRules.find((sr) => sr.name.includes(isp))
+                      )
+                      .filter((isp) =>
+                        stateView.armySpecialRulesDictNames.includes(isp)
+                      )
+                      .map((isp) => {
+                        return `[f0932b]${isp}[-]
 [sup]${
-                      stateView.armySpecialRulesDict.find((x) => x.name === isp)
-                        ?.definition
-                    }[/sup]`;
-                  })
-                  .join("\r\n");
+                          stateView.armySpecialRulesDict.find(
+                            (x) => x.name === isp
+                          )?.definition
+                        }[/sup]`;
+                      })
+                      .join("\r\n");
 
-                const activeWeaponsList = activeWeapons
-                  .map((w) => {
-                    return `[eb4d4b]${w.name}[-]
+                  const activeWeaponsList = activeWeapons
+                    .map((w) => {
+                      return `[eb4d4b]${w.name}[-]
 [sup]${w.definition}[/sup]`;
-                  })
-                  .join("\r\n");
+                    })
+                    .join("\r\n");
 
-                return (
-                  <div key={unit.id} className="flex flex-row space-x-2">
-                    <div className="editor-panel space-y-3 w-1/3">
-                      <div className="flex flex-row justify-between">
-                        <h3 className="text-base">
-                          {model.name}
-                          <br />
-                          <small className="text-[#eb4d4b] font-bold">
-                            {activeWeaponNamesCommaSeparated}
-                          </small>
-                          <br />
-                          <small className="text-[#f0932b] font-bold">
-                            {activeSpecialRulesNamesCommaSeparated}
-                          </small>
-                        </h3>
-                        {!model.isGenerated && (
-                          <button
-                            onClick={() => {
-                              const i = state.unitProfiles.findIndex(
-                                (x) => x.id === unit.id
-                              );
-                              state.unitProfiles.splice(i, 1);
-                            }}
-                            className=" text-white rounded-full hover:scale-105  active:scale-95"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-6 h-6"
+                  return (
+                    <div key={unit.id} className="flex flex-row space-x-2">
+                      <div className="editor-panel space-y-3 w-1/3">
+                        <div className="flex flex-row justify-between relative">
+                          <h3 className="text-base">
+                            {model.name}
+                            <br />
+                            <small className="text-[#eb4d4b] font-bold">
+                              {activeWeaponNamesCommaSeparated}
+                            </small>
+                            <br />
+                            <small className="text-[#f0932b] font-bold">
+                              {activeSpecialRulesNamesCommaSeparated}
+                            </small>
+                          </h3>
+                          {!model.isGenerated && (
+                            <button
+                              onClick={() => {
+                                deleteModel(unit.id, model.id);
+                              }}
+                              title="Delete this distinct model definition"
+                              className="bg-stone-500 absolute top-0 right-0 text-white rounded-full hover:scale-105  active:scale-95"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
 
-                      {/* weapons */}
+                        {/* weapons */}
 
-                      <div className="space-y-1 ">
-                        {model.weapons.map((weapon) => {
-                          return (
-                            <div
-                              key={weapon.id}
-                              className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
-                            >
-                              <span className="flex flex-row items-center space-x-1 ">
-                                <span className="font-bold">{weapon.name}</span>
-                                <span className="">{weapon.definition}</span>
-                              </span>
-
-                              <input
-                                className="w-10 p-1"
-                                min={0}
-                                onChange={(e) => {
-                                  const value = parseInt(e.currentTarget.value);
-                                  updateWeaponQuantity(
-                                    unit.id,
-                                    model.id,
-                                    weapon.id,
-                                    value
-                                  );
-                                }}
-                                value={weapon.quantity}
-                                type="number"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* special abilities */}
-
-                      <div className="space-y-1">
-                        {model.specialRules.map((specialRule) => {
-                          return (
-                            <div
-                              key={specialRule.id}
-                              className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
-                            >
-                              <span className="flex flex-row items-center space-x-1">
-                                <span className="font-bold">
-                                  {specialRule.name}
+                        <div className="space-y-1 ">
+                          {model.weapons.map((weapon) => {
+                            return (
+                              <div
+                                key={weapon.id}
+                                className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
+                              >
+                                <span className="flex flex-row items-center space-x-1 ">
+                                  <span className="font-bold">
+                                    {weapon.name}
+                                  </span>
+                                  <span className="">{weapon.definition}</span>
                                 </span>
-                                <span>{specialRule.definition}</span>
-                              </span>
 
-                              <input
-                                className="w-10 p-1"
-                                min={0}
-                                onChange={(e) => {
-                                  const value = parseInt(e.currentTarget.value);
-                                  updateSpecialRuleQuantity(
-                                    unit.id,
-                                    model.id,
-                                    specialRule.id,
-                                    value
-                                  );
-                                }}
-                                value={specialRule.quantity}
-                                type="number"
-                              />
-                            </div>
-                          );
-                        })}
+                                <input
+                                  className="w-10 p-1"
+                                  min={0}
+                                  onChange={(e) => {
+                                    const value = parseInt(
+                                      e.currentTarget.value
+                                    );
+                                    updateWeaponQuantity(
+                                      unit.id,
+                                      model.id,
+                                      weapon.id,
+                                      value
+                                    );
+                                  }}
+                                  value={weapon.quantity}
+                                  type="number"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* special abilities */}
+
+                        <div className="space-y-1">
+                          {model.specialRules.map((specialRule) => {
+                            return (
+                              <div
+                                key={specialRule.id}
+                                className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
+                              >
+                                <span className="flex flex-row items-center space-x-1">
+                                  <span className="font-bold">
+                                    {specialRule.name}
+                                  </span>
+                                  <span>{specialRule.definition}</span>
+                                </span>
+
+                                <input
+                                  className="w-10 p-1"
+                                  min={0}
+                                  onChange={(e) => {
+                                    const value = parseInt(
+                                      e.currentTarget.value
+                                    );
+                                    updateSpecialRuleQuantity(
+                                      unit.id,
+                                      model.id,
+                                      specialRule.id,
+                                      value
+                                    );
+                                  }}
+                                  value={specialRule.quantity}
+                                  type="number"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <button
+                          onClick={() => duplicateModel(unit.id, model.id)}
+                          className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                        >
+                          Duplicate "Distinct Model" Definition
+                        </button>
                       </div>
 
-                      <button
-                        onClick={() => duplicateModel(unit.id, model.id)}
-                        className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
-                      >
-                        Duplicate "Distinct Model" Definition
-                      </button>
-                    </div>
-
-                    <div className="output-panel space-y-3 w-2/3">
-                      <div
-                        key={model.id + "tts"}
-                        className="bg-stone-300 p-4 space-y-1"
-                      >
-                        <textarea
-                          onFocus={(e) => e.target.select()}
-                          rows={1}
-                          value={`[b]${model.name}[/b]
+                      <div className="output-panel space-y-3 w-2/3">
+                        <div
+                          key={model.id + "tts"}
+                          className="bg-stone-300 p-4 space-y-1"
+                        >
+                          <textarea
+                            onFocus={(e) => e.target.select()}
+                            value={`[b]${model.name}[/b]
 [sup][eb4d4b]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][f0932b]${activeSpecialRulesNamesCommaSeparated}[-][/sup]
 [2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
-                          className="block whitespace-pre text-xs w-full h-10"
-                        />
-                        <textarea
-                          rows={1}
-                          onFocus={(e) => e.target.select()}
-                          value={`${activeWeaponsList}
+                            className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                          />
+                          <textarea
+                            onFocus={(e) => e.target.select()}
+                            value={`${activeWeaponsList}
 ${fullSpecialRulesForThisUnit}`}
-                          className="block whitespace-pre text-xs w-full h-10"
-                        />
+                            className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </fieldset>
           );
         })}
