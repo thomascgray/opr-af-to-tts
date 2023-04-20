@@ -1,0 +1,15 @@
+[00ff16]1/1[-] Beast Snagga Boy
+
+[56f442]M   WS  BS   S   T   W   A  Ld  Sv   [-]
+5"   3+   5+   5   5   1   2   6   6+   [-][-]
+
+[e85545]Weapons[-]
+[c6c930]Slugga[-]
+12" Pistol 1 S:4 AP:0 D:1  
+[c6c930]Choppa[-]
+Melee S:User AP:-1 D:1 Sp:* 
+
+[dc61ed]Abilities[-]
+Beast Snagga
+'Ere We Go!
+Mob Rule

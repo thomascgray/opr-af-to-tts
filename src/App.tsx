@@ -93,6 +93,8 @@ export const getTopLevelSpecialRulesFromString = (line: string) => {
     .map((x) => x.replace(/\(\)/gm, ""));
 };
 
+const TOOLTIP_COLOUR_RED = "e84118";
+
 interface iSpecialRule {
   name: string;
   value?: number;
@@ -131,16 +133,22 @@ interface iAppState {
 }
 
 const state = proxy<iAppState>({
-  armyListRawText: `++ DAO Union [GF 935pts] ++
+  armyListRawText: `++ my cool tau dudes - DAO Union [GF 1030pts] ++
 
-Battle Suit Elite [1] Q3+ D3+ | 245pts | Ambush, Flying, Hero, Tough(6), 1x Spotter Drone(Spotting Laser)
-Bash (A4, AP(1)), 3x Suit-Ion (18", A1, Blast(3), AP(1)), Plasma Sword (A4, AP(1), Rending)
+Battle Suit Elite [1] Q3+ D3+ | 200pts | Ambush, Flying, Hero, Tough(6)
+Bash (A4, AP(1)), 3x Heavy Suit-Gun (24", A1, AP(1)), Suit-Fuse (12", A1, AP(4), Deadly(3))
 
-Battle Suit Elite [1] Q3+ D3+ | 300pts | Ambush, Flying, Hero, Tough(6), 1x Spotter Drone(Spotting Laser)
-Bash (A4, AP(1)), Suit-Missiles (30", A2, AP(2), Lock-On), Suit-Plasma (24", A2, AP(4)), Suit-Frag (24", A1, Blast(3), Indirect), Plasma Sword (A4, AP(1), Rending)
+Grunt Squad [5] Q5+ D4+ | 105pts | Good Shot
+5x CCWs (A1), 5x Pulse Rifles (30", A1, AP(1))
 
-Battle Suits [3] Q4+ D3+ | 390pts | Ambush, Flying, Tough(3), Shield Drone, 1x Energy Shield(Shield Wall), 1x Gun Drone(), 1x Spotter Drone(Spotting Laser)
-3x Bashes (A2), Suit-Burst (18", A2, Rending), Suit-Flamer (12", A3), Suit-Fuse (12", A1, AP(4), Deadly(3)), Suit-Ion (18", A1, Blast(3), AP(1)), Suit-Frag (24", A1, Blast(3), Indirect), 3x Plasma Sword (A2, AP(1), Rending), Pulse-Guns (18", A1, Rending)`,
+2x Grunt Squad [5] Q5+ D4+ | 90pts | Good Shot
+5x CCWs (A1), 5x Pulse Shotguns (12", A2, AP(1))
+
+Battle Suits [3] Q4+ D3+ | 420pts | Ambush, Flying, Tough(3), Shield Drone, 1x Energy Shield(Shield Wall), 2x Spotter Drone(Spotting Laser)
+3x Bashes (A2), Suit-Gun (24", A1, AP(1)), Suit-Burst (18", A2, Rending), Suit-Flamer (12", A3), Suit-Missiles (30", A2, AP(2), Lock-On), Suit-Plasma (24", A2, AP(4)), Suit-Frag (24", A1, Blast(3), Indirect), 2x Plasma Sword (A2, AP(1), Rending)
+
+Gun Drones [5] Q5+ D4+ | 125pts | Fearless, Flying, Good Shot
+5x Tasers (A1), 5x Twin Pulse-Guns (18", A2, Rending)`,
   armySpecialRulesRawText: `AP: Targets get -X to Defense rolls when blocking hits.
 
 Ambush: This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere, over 9” away from enemy units. If both player have Ambush, they roll-off to see who deploys first, and then alternate in placing them.
@@ -151,7 +159,11 @@ Deadly: Assign each wound to one model, and multiply it by X. Note that these wo
 
 Defense: Gets +X to Defense rolls.
 
+Fearless: Gets +1 to morale tests.
+
 Flying: May move through all obstacles, and may ignore terrain effects.
+
+Good Shot: This model shoots at Quality 4+.
 
 Hero: May be deployed as part of one friendly unit, which may use its Quality value for morale tests. When taking hits, you must use the unit’s Defense value, until all non-hero models are killed.
 
@@ -446,19 +458,42 @@ function App() {
             const activeSpecialRules = unit.specialRules.filter(
               (s) => s.quantity > 0
             );
+
+            const activeWeaponNamesCommaSeparated = activeWeapons
+              .map((x) => x.name)
+              .join(", ");
+
+            const activeSpecialRulesList = activeSpecialRules
+              .map((sr) => {
+                const definition = stateView.armySpecialRulesDict.find(
+                  (x) => x.name === sr.name
+                )?.definition;
+                return `${sr.name}: ${definition}`;
+              })
+              .join("\r\n");
+
+            const activeWeaponsList = activeWeapons
+              .map((w) => {
+                return `[b]${w.name}[/b] [sub]${w.definition}[/sub]`;
+              })
+              .join("\r\n");
             return (
-              <div key={unit.id + "tts"} className="bg-slate-300 p-4">
-                <span
-                  contentEditable={true}
-                  className="block whitespace-pre text-xs"
-                >
-                  {unit.name} [sub]w/{" "}
-                  {activeWeapons.map((x) => x.name).join(", ")}[/sub]
-                </span>
-                <span className="block whitespace-pre text-xs">
-                  [sub]w/ {activeSpecialRules.map((x) => x.name).join(", ")}
-                  [/sub]
-                </span>
+              <div key={unit.id + "tts"} className="bg-slate-300 p-4 space-y-1">
+                <textarea
+                  value={`${unit.name}
+[7ed6df][sup]${activeWeaponNamesCommaSeparated}[/sup][-]
+[sub][2ecc71][i]QUA[/i][-]     [3498db][i]DEF[/i][-][/sub]
+[2ecc71][b]${unit.qua}[/b]+[-]      [3498db][b]${unit.def}[/b]+[-]`}
+                  className="block whitespace-pre text-xs w-full h-20"
+                />
+                <textarea
+                  value={`${activeWeaponsList}
+----------
+${activeSpecialRulesList}`}
+                  className="block whitespace-pre text-xs w-full h-20"
+                />
+
+                <textarea value={``} />
 
                 {unit.individualSpecialRules
                   .filter((isp) =>
