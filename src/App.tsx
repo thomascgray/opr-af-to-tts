@@ -188,9 +188,9 @@ Tough: This model must take X wounds before being killed. If a model with tough 
 });
 
 const updateWeaponQuantity = (upId: string, wpId: string, quantity: number) => {
-  const unitProfile = state.unitProfiles.find((up) => up.id === upId);
-  if (unitProfile) {
-    const weapon = unitProfile.weapons.find((wp) => wp.id === wpId);
+  const unit = state.unitProfiles.find((up) => up.id === upId);
+  if (unit) {
+    const weapon = unit.weapons.find((wp) => wp.id === wpId);
     if (weapon) {
       weapon.quantity = quantity;
     }
@@ -202,9 +202,9 @@ const updateSpecialRuleQuantity = (
   srId: string,
   quantity: number
 ) => {
-  const unitProfile = state.unitProfiles.find((up) => up.id === upId);
-  if (unitProfile) {
-    const specialRule = unitProfile.specialRules.find((wp) => wp.id === srId);
+  const unit = state.unitProfiles.find((up) => up.id === upId);
+  if (unit) {
+    const specialRule = unit.specialRules.find((wp) => wp.id === srId);
     if (specialRule) {
       specialRule.quantity = quantity;
     }
@@ -331,190 +331,218 @@ function App() {
 
       <hr className="my-5" />
 
-      <div className="flex flex-row space-x-2">
-        <div className="space-y-3 w-1/3">
-          {stateView.unitProfiles.map((unitProfile) => {
-            return (
-              <div key={unitProfile.id} className="bg-slate-300 p-2">
-                <div className="flex flex-row justify-between">
-                  <h3>{unitProfile.name}</h3>
-                  {!unitProfile.isGenerated && (
-                    <button
-                      onClick={() => {
-                        const i = state.unitProfiles.findIndex(
-                          (x) => x.id === unitProfile.id
-                        );
-                        state.unitProfiles.splice(i, 1);
-                      }}
-                      className="bg-slate-600 text-white rounded-full hover:scale-105  active:scale-95"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
+      <details>
+        <summary>Tutorial</summary>
+        <p>
+          OPR Army Forge does not know which models have which Weapons and
+          Special Rules attached.
+        </p>
+        <p>
+          Therefore, the model "definitions" below contain ALL items that are
+          associated with the unit.
+        </p>
+        <p>
+          Therefore, you must change the quantities of Weapons and Special Rules
+          per model. When a unit has models with different loadouts, you need to
+          "Duplicate" the model, and adjust the quantities of selected Weaponsa
+          and Special Rules.
+        </p>
+      </details>
+      <div className="flex flex-col space-y-2">
+        {stateView.unitProfiles.map((unit) => {
+          const activeWeapons = unit.weapons.filter((w) => w.quantity > 0);
+          const activeSpecialRules = unit.specialRules.filter(
+            (s) => s.quantity > 0
+          );
+
+          const activeWeaponNamesCommaSeparated = activeWeapons
+            .map((x) => {
+              if (x.quantity > 1) {
+                return `${x.quantity}x ${x.name}`;
+              }
+              return x.name;
+            })
+            .join(", ");
+
+          const activeSpecialRulesNames = activeSpecialRules
+            .map((x) => {
+              if (x.quantity > 1) {
+                return `${x.quantity}x ${x.name}`;
+              }
+              return x.name;
+            })
+            .join(", ");
+
+          const activeSpecialRulesList = activeSpecialRules
+            .map((sr) => {
+              const definition = stateView.armySpecialRulesDict.find(
+                (x) => x.name === sr.name
+              )?.definition;
+              return `${sr.name}: ${definition}`;
+            })
+            .join(", ");
+
+          const fullSpecialRulesForThisUnit = unit.individualSpecialRules
+            .filter((isp) =>
+              activeSpecialRules.find((sr) => sr.name.includes(isp))
+            )
+            .filter((isp) => stateView.armySpecialRulesDictNames.includes(isp))
+            .map((isp) => {
+              return `${isp}: ${
+                stateView.armySpecialRulesDict.find((x) => x.name === isp)
+                  ?.definition
+              }`;
+            })
+            .join("\r\n");
+
+          const activeWeaponsList = activeWeapons
+            .map((w) => {
+              return `[b]${w.name}[/b] [sub]${w.definition}[/sub]`;
+            })
+            .join("\r\n");
+
+          return (
+            <div key={unit.id} className="flex flex-row space-x-2">
+              <div className="space-y-3 w-1/3">
+                <div key={`${unit.id}-left`} className="bg-slate-300 p-2">
+                  <div className="flex flex-row justify-between">
+                    <h3>{unit.name}</h3>
+                    {!unit.isGenerated && (
+                      <button
+                        onClick={() => {
+                          const i = state.unitProfiles.findIndex(
+                            (x) => x.id === unit.id
+                          );
+                          state.unitProfiles.splice(i, 1);
+                        }}
+                        className="bg-slate-600 text-white rounded-full hover:scale-105  active:scale-95"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </button>
-                  )}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-row items-center space-x-2">
+                    <p>Q{unit.qua}+</p>
+                    <p>D{unit.def}+</p>
+                  </div>
+
+                  <div className="ml-4">
+                    {unit.weapons.map((weapon) => {
+                      return (
+                        <div
+                          key={weapon.id}
+                          className="space-y-1 flex flex-row items-center justify-between space-x-4"
+                        >
+                          <span className="flex flex-row items-center space-x-1 text-sm">
+                            <span className="font-bold">{weapon.name}</span>
+                            <span className="">{weapon.definition}</span>
+                          </span>
+
+                          <input
+                            className="w-10"
+                            min={0}
+                            onChange={(e) => {
+                              const value = parseInt(e.currentTarget.value);
+                              updateWeaponQuantity(unit.id, weapon.id, value);
+                            }}
+                            value={weapon.quantity}
+                            type="number"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="ml-4">
+                    {unit.specialRules.map((specialRule) => {
+                      return (
+                        <div
+                          key={specialRule.id}
+                          className="space-y-1 flex flex-row items-center justify-between space-x-4"
+                        >
+                          <span className="flex flex-row items-center space-x-1 text-sm">
+                            <span className="font-bold">
+                              {specialRule.name}
+                            </span>
+                            <span className="">{specialRule.definition}</span>
+                          </span>
+
+                          <input
+                            className="w-10"
+                            min={0}
+                            onChange={(e) => {
+                              const value = parseInt(e.currentTarget.value);
+                              updateSpecialRuleQuantity(
+                                unit.id,
+                                specialRule.id,
+                                value
+                              );
+                            }}
+                            value={specialRule.quantity}
+                            type="number"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const i = state.unitProfiles.findIndex(
+                        (x) => x.id === unit.id
+                      );
+                      state.unitProfiles.splice(i + 1, 0, {
+                        ..._.cloneDeep(state.unitProfiles[i]),
+                        isGenerated: false,
+                        id: nanoid(),
+                      });
+                    }}
+                    className="text-sm border border-slate-600 px-3 py-1 bg-slate-500 text-white hover:scale-105  active:scale-95"
+                  >
+                    Duplicate Model Profile
+                  </button>
                 </div>
-                <div className="flex flex-row items-center space-x-2">
-                  <p>Q{unitProfile.qua}+</p>
-                  <p>D{unitProfile.def}+</p>
-                </div>
-
-                <div className="ml-4">
-                  {unitProfile.weapons.map((weapon) => {
-                    return (
-                      <div
-                        key={weapon.id}
-                        className="space-y-1 flex flex-row items-center justify-between space-x-4"
-                      >
-                        <span className="flex flex-row items-center space-x-1 text-sm">
-                          <span className="font-bold">{weapon.name}</span>
-                          <span className="">{weapon.definition}</span>
-                        </span>
-
-                        <input
-                          className="w-10"
-                          min={0}
-                          onChange={(e) => {
-                            const value = parseInt(e.currentTarget.value);
-                            updateWeaponQuantity(
-                              unitProfile.id,
-                              weapon.id,
-                              value
-                            );
-                          }}
-                          value={weapon.quantity}
-                          type="number"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="ml-4">
-                  {unitProfile.specialRules.map((specialRule) => {
-                    return (
-                      <div
-                        key={specialRule.id}
-                        className="space-y-1 flex flex-row items-center justify-between space-x-4"
-                      >
-                        <span className="flex flex-row items-center space-x-1 text-sm">
-                          <span className="font-bold">{specialRule.name}</span>
-                          <span className="">{specialRule.definition}</span>
-                        </span>
-
-                        <input
-                          className="w-10"
-                          min={0}
-                          onChange={(e) => {
-                            const value = parseInt(e.currentTarget.value);
-                            updateSpecialRuleQuantity(
-                              unitProfile.id,
-                              specialRule.id,
-                              value
-                            );
-                          }}
-                          value={specialRule.quantity}
-                          type="number"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => {
-                    const i = state.unitProfiles.findIndex(
-                      (x) => x.id === unitProfile.id
-                    );
-                    state.unitProfiles.splice(i + 1, 0, {
-                      ..._.cloneDeep(state.unitProfiles[i]),
-                      isGenerated: false,
-                      id: nanoid(),
-                    });
-                  }}
-                  className="text-sm border border-slate-600 px-3 py-1 bg-slate-500 text-white hover:scale-105  active:scale-95"
-                >
-                  Duplicate Model Profile
-                </button>
               </div>
-            );
-          })}
-        </div>
 
-        <div className="space-y-3 w-2/3">
-          {stateView.unitProfiles.map((unit) => {
-            const activeWeapons = unit.weapons.filter((w) => w.quantity > 0);
-            const activeSpecialRules = unit.specialRules.filter(
-              (s) => s.quantity > 0
-            );
-
-            const activeWeaponNamesCommaSeparated = activeWeapons
-              .map((x) => x.name)
-              .join(", ");
-
-            const activeSpecialRulesList = activeSpecialRules
-              .map((sr) => {
-                const definition = stateView.armySpecialRulesDict.find(
-                  (x) => x.name === sr.name
-                )?.definition;
-                return `${sr.name}: ${definition}`;
-              })
-              .join("\r\n");
-
-            const activeWeaponsList = activeWeapons
-              .map((w) => {
-                return `[b]${w.name}[/b] [sub]${w.definition}[/sub]`;
-              })
-              .join("\r\n");
-            return (
-              <div key={unit.id + "tts"} className="bg-slate-300 p-4 space-y-1">
-                <textarea
-                  value={`${unit.name}
+              <div className="space-y-3 w-2/3">
+                <div
+                  key={unit.id + "tts"}
+                  className="bg-slate-300 p-4 space-y-1"
+                >
+                  <textarea
+                    value={`${unit.name}
 [7ed6df][sup]${activeWeaponNamesCommaSeparated}[/sup][-]
 [sub][2ecc71][i]QUA[/i][-]     [3498db][i]DEF[/i][-][/sub]
 [2ecc71][b]${unit.qua}[/b]+[-]      [3498db][b]${unit.def}[/b]+[-]`}
-                  className="block whitespace-pre text-xs w-full h-20"
-                />
-                <textarea
-                  value={`${activeWeaponsList}
+                    className="block whitespace-pre text-xs w-full h-20"
+                  />
+                  <textarea
+                    value={`[sup]Weapons[/sup]
+${activeWeaponsList}
 ----------
-${activeSpecialRulesList}`}
-                  className="block whitespace-pre text-xs w-full h-20"
-                />
-
-                <textarea value={``} />
-
-                {unit.individualSpecialRules
-                  .filter((isp) =>
-                    stateView.armySpecialRulesDictNames.includes(isp)
-                  )
-                  .map((isp) => {
-                    return (
-                      <span key={isp} className="block text-xs">
-                        {isp}:{" "}
-                        {
-                          stateView.armySpecialRulesDict.find(
-                            (x) => x.name === isp
-                          )?.definition
-                        }
-                      </span>
-                    );
-                  })}
+[sup]Special Rules[/sup]
+${activeSpecialRulesNames}
+${fullSpecialRulesForThisUnit}`}
+                    className="block whitespace-pre text-xs w-full h-20"
+                  />
+                </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
