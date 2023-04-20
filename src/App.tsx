@@ -103,6 +103,7 @@ interface iSpecialRule {
 interface iUnitProfile {
   id: string;
   name: string;
+  originalName: string;
   qua: number;
   def: number;
   isGenerated: boolean;
@@ -133,55 +134,8 @@ interface iAppState {
 }
 
 const state = proxy<iAppState>({
-  armyListRawText: `++ my cool tau dudes - DAO Union [GF 1030pts] ++
-
-Battle Suit Elite [1] Q3+ D3+ | 200pts | Ambush, Flying, Hero, Tough(6)
-Bash (A4, AP(1)), 3x Heavy Suit-Gun (24", A1, AP(1)), Suit-Fuse (12", A1, AP(4), Deadly(3))
-
-Grunt Squad [5] Q5+ D4+ | 105pts | Good Shot
-5x CCWs (A1), 5x Pulse Rifles (30", A1, AP(1))
-
-2x Grunt Squad [5] Q5+ D4+ | 90pts | Good Shot
-5x CCWs (A1), 5x Pulse Shotguns (12", A2, AP(1))
-
-Battle Suits [3] Q4+ D3+ | 420pts | Ambush, Flying, Tough(3), Shield Drone, 1x Energy Shield(Shield Wall), 2x Spotter Drone(Spotting Laser)
-3x Bashes (A2), Suit-Gun (24", A1, AP(1)), Suit-Burst (18", A2, Rending), Suit-Flamer (12", A3), Suit-Missiles (30", A2, AP(2), Lock-On), Suit-Plasma (24", A2, AP(4)), Suit-Frag (24", A1, Blast(3), Indirect), 2x Plasma Sword (A2, AP(1), Rending)
-
-Gun Drones [5] Q5+ D4+ | 125pts | Fearless, Flying, Good Shot
-5x Tasers (A1), 5x Twin Pulse-Guns (18", A2, Rending)`,
-  armySpecialRulesRawText: `AP: Targets get -X to Defense rolls when blocking hits.
-
-Ambush: This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere, over 9” away from enemy units. If both player have Ambush, they roll-off to see who deploys first, and then alternate in placing them.
-
-Blast: Ignores cover and multiplies hits by X, but can’t deal more than one hit per model in the target unit.
-
-Deadly: Assign each wound to one model, and multiply it by X. Note that these wounds don't carry over to other models if the target is killed.
-
-Defense: Gets +X to Defense rolls.
-
-Fearless: Gets +1 to morale tests.
-
-Flying: May move through all obstacles, and may ignore terrain effects.
-
-Good Shot: This model shoots at Quality 4+.
-
-Hero: May be deployed as part of one friendly unit, which may use its Quality value for morale tests. When taking hits, you must use the unit’s Defense value, until all non-hero models are killed.
-
-Indirect: May target enemies that are not in line of sight, and ignores cover from sight obstructions, but gets -1 to hit rolls when shooting after moving.
-
-Lock-On: Ignores all negative modifiers to hit rolls and range.
-
-Rending: Unmodified results of 6 to hit count as having AP(4), and ignore the regeneration rule.
-
-Shield Drone: This model and its unit count as having the Stealth special rule.
-
-Shield Wall: Attacks targeting units where all models have this rule count as having AP(-1), to a min. of AP(0).
-
-Spotting Laser: Once per activation, before attacking, this model may pick one enemy unit within 30” in line of sight and roll one die, on a 4+ place a marker on it. Friendly units may remove markers from their target to get +X to hit rolls when shooting, where X is the number of removed markers.
-
-Stealth: Enemies get -1 to hit rolls when shooting at this unit.
-
-Tough: This model must take X wounds before being killed. If a model with tough joins a unit without it, then it is removed last when the unit takes wounds. Note that you must continue to put wounds on the tough model with most wounds in the unit until it is killed, before starting to put them on the next tough model (heroes must be assigned wounds last).`,
+  armyListRawText: ``,
+  armySpecialRulesRawText: ``,
   armySpecialRulesDict: [],
   armySpecialRulesDictNames: [],
   unitProfiles: [],
@@ -212,7 +166,7 @@ const updateSpecialRuleQuantity = (
 };
 
 function App() {
-  const stateView = useSnapshot(state);
+  const stateView = useSnapshot(state, { sync: true });
 
   return (
     <div className="container mx-auto">
@@ -298,6 +252,7 @@ function App() {
                 name: pluralize.singular(
                   removeQuantityStringFromStartOfString(unitName).trim()
                 ),
+                originalName: unitName,
                 qua: unitQua,
                 def: unitDef,
                 weapons: weapons.map((weapon) => {
@@ -334,8 +289,8 @@ function App() {
 
       <hr className="my-5" />
 
-      <details>
-        <summary>Tutorial</summary>
+      <details className="text-sm">
+        <summary className="cursor-pointer">Tutorial</summary>
         <p>
           OPR Army Forge does not know which models have which Weapons and
           Special Rules attached.
@@ -407,9 +362,14 @@ function App() {
             .join("\r\n");
 
           return (
-            <div key={unit.id} className="flex flex-row space-x-2">
-              <div className="space-y-3 w-1/3">
-                <div key={`${unit.id}-left`} className="bg-slate-300 p-2">
+            <fieldset
+              className="border border-solid border-slate-600 p-4"
+              key={unit.id}
+            >
+              <legend>{unit.originalName}</legend>
+
+              <div key={unit.id} className="flex flex-row space-x-2">
+                <div className="editor-panel space-y-3 w-1/3">
                   <div className="flex flex-row justify-between">
                     <h3>{unit.name}</h3>
                     {!unit.isGenerated && (
@@ -420,7 +380,7 @@ function App() {
                           );
                           state.unitProfiles.splice(i, 1);
                         }}
-                        className="bg-slate-600 text-white rounded-full hover:scale-105  active:scale-95"
+                        className=" text-white rounded-full hover:scale-105  active:scale-95"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -444,6 +404,7 @@ function App() {
                     <p>D{unit.def}+</p>
                   </div>
 
+                  {/* weapons */}
                   <div className="ml-4">
                     {unit.weapons.map((weapon) => {
                       return (
@@ -471,6 +432,7 @@ function App() {
                     })}
                   </div>
 
+                  {/* special abilities */}
                   <div className="ml-4">
                     {unit.specialRules.map((specialRule) => {
                       return (
@@ -520,28 +482,28 @@ function App() {
                     Duplicate Model Profile
                   </button>
                 </div>
-              </div>
 
-              <div className="space-y-3 w-2/3">
-                <div
-                  key={unit.id + "tts"}
-                  className="bg-slate-300 p-4 space-y-1"
-                >
-                  <textarea
-                    value={`[b]${unit.name}[/b]
+                <div className="output-panel space-y-3 w-2/3">
+                  <div
+                    key={unit.id + "tts"}
+                    className="bg-slate-300 p-4 space-y-1"
+                  >
+                    <textarea
+                      value={`[b]${unit.name}[/b]
 [sup][eb4d4b]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][f0932b]${activeSpecialRulesNames}[-][/sup]
 [2ecc71][b]${unit.qua}[/b]+[-] / [3498db][b]${unit.def}[/b]+[-]`}
-                    className="block whitespace-pre text-xs w-full h-20"
-                  />
-                  <textarea
-                    value={`${activeWeaponsList}
+                      className="block whitespace-pre text-xs w-full h-20"
+                    />
+                    <textarea
+                      value={`${activeWeaponsList}
 ${fullSpecialRulesForThisUnit}`}
-                    className="block whitespace-pre text-xs w-full h-20"
-                  />
+                      className="block whitespace-pre text-xs w-full h-20"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </fieldset>
           );
         })}
       </div>
