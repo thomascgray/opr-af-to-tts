@@ -199,7 +199,7 @@ function App() {
       <div className="inputs flex flex-row space-x-5">
         <div className="w-1/2">
           <label className="block h-20">
-            <span className="block font-bold">Army List</span>
+            <span className="block font-bold">Army List Input</span>
             <span className="block text-sm text-stone-500">
               On{" "}
               <a
@@ -220,7 +220,7 @@ function App() {
 
         <div className="w-1/2">
           <label className="block h-20">
-            <span className="block font-bold">Army Special Rules</span>
+            <span className="block font-bold">Army Special Rules Input</span>
             <span className="block text-sm text-stone-500">
               On{" "}
               <a
@@ -245,6 +245,10 @@ function App() {
       </div>
 
       <button
+        disabled={
+          stateView.armyListRawText === "" ||
+          stateView.armySpecialRulesRawText === ""
+        }
         onClick={() => {
           // the army list
           const armyList = formatRawTextIntoLines(
@@ -338,7 +342,7 @@ function App() {
 
           state.unitProfiles = [...unitProfiles];
         }}
-        className="border border-stone-600 px-4 py-2 bg-stone-500 text-white hover:scale-105  active:scale-95"
+        className="border disabled:hover:scale-100 disabled:opacity-50 border-stone-600 px-4 py-2 bg-stone-500 text-white hover:scale-105  active:scale-95"
       >
         Generate
       </button>
@@ -352,14 +356,15 @@ function App() {
           Special Rules attached.
         </p>
         <p>
-          Therefore, the model "definitions" below contain ALL items that are
-          associated with the unit.
+          Therefore, we need to define which distinct models have which Weapons
+          and Special Rules, so that we can generate the correct name and
+          description for TTS.
         </p>
         <p>
-          Therefore, you must change the quantities of Weapons and Special Rules
-          per model. When a unit has models with different loadouts, you need to
-          "Duplicate" the model, and adjust the quantities of selected Weaponsa
-          and Special Rules.
+          The left column lets you change quantities of items and create
+          duplicates of the base "distinct model". This way, you can create a
+          duplicate, and then make sure each model has the right Weapons and
+          Special Rules.
         </p>
       </details>
       <div className="flex flex-col space-y-2">
@@ -565,14 +570,14 @@ function App() {
 [sup][eb4d4b]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][f0932b]${activeSpecialRulesNamesCommaSeparated}[-][/sup]
 [2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
-                          className="block whitespace-pre text-xs w-full"
+                          className="block whitespace-pre text-xs w-full h-10"
                         />
                         <textarea
                           rows={1}
                           onFocus={(e) => e.target.select()}
                           value={`${activeWeaponsList}
 ${fullSpecialRulesForThisUnit}`}
-                          className="block whitespace-pre text-xs w-full"
+                          className="block whitespace-pre text-xs w-full h-10"
                         />
                       </div>
                     </div>
