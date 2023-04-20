@@ -62,7 +62,7 @@ const extractQuaDef = (str: string) => {
 };
 
 const cleanFirstLineOfUnitProfile = (val: string) => {
-  val = val.replace(/\[\d\]/g, "|");
+  val = val.replace(/\[\d+\]/g, "|");
   return val;
 };
 
@@ -285,6 +285,10 @@ function App() {
               const [unitName, unitQuaDef, unitPoints, unitSpecialsRaw] =
                 firstLineParsed.split("|");
 
+              console.log("unitName", unitName);
+              console.log("unitQuaDef", unitQuaDef);
+              console.log("unitPoints", unitPoints);
+              console.log("unitSpecialsRaw", unitSpecialsRaw);
               //  work out all the specials from the the first row after the points
               const unitSpecials =
                 getTopLevelSpecialRulesFromString(unitSpecialsRaw);
