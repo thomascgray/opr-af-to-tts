@@ -120,8 +120,6 @@ interface iUnitProfile {
 }
 
 interface iAppState {
-  armyListRawText: string;
-  armySpecialRulesRawText: string;
   armySpecialRulesDict: {
     name: string;
     definition: string;
@@ -131,8 +129,6 @@ interface iAppState {
 }
 
 const state = proxy<iAppState>({
-  armyListRawText: ``,
-  armySpecialRulesRawText: ``,
   armySpecialRulesDict: [],
   armySpecialRulesDictNames: [],
   unitProfiles: [],
@@ -203,151 +199,581 @@ function App() {
     <div className="container mx-auto">
       <h1 className="text-xl font-bold">Grimdark Future Army Forge to TTS</h1>
       <div className="inputs flex flex-row space-x-5">
-        <div className="w-1/2">
-          <label className="block h-20">
-            <span className="block font-bold">Army List Input</span>
-            <span className="block text-sm text-stone-500">
-              On{" "}
-              <a
-                className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-                href="https://army-forge.onepagerules.com/"
-              >
-                Army Forge
-              </a>{" "}
-              → Menu (at top right) → "Share as Text" → Paste into the box below
-            </span>
+        <div className="w-full">
+          <label>
+            <span>Army Forge Share Link</span>
+            <input
+              type="text"
+              className="border border-solid border-stone-500 w-full"
+            />
           </label>
-          <textarea
-            value={stateView.armyListRawText}
-            onChange={(e) => (state.armyListRawText = e.currentTarget.value)}
-            className="border border-stone-600 w-full h-40 text-xs"
-          ></textarea>
-        </div>
-
-        <div className="w-1/2">
-          <label className="block h-20">
-            <span className="block font-bold">Army Special Rules Input</span>
-            <span className="block text-sm text-stone-500">
-              On{" "}
-              <a
-                className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-                href="https://army-forge.onepagerules.com/"
-              >
-                Army Forge
-              </a>{" "}
-              → View List (the "eye" icon, top right) → manually select and copy{" "}
-              <em>all</em> the text underneath "Special Rules" → Paste into the
-              box below
-            </span>
-          </label>
-          <textarea
-            value={stateView.armySpecialRulesRawText}
-            onChange={(e) =>
-              (state.armySpecialRulesRawText = e.currentTarget.value)
-            }
-            className="border border-stone-600 w-full h-40 text-xs"
-          ></textarea>
         </div>
       </div>
 
       <button
-        disabled={stateView.armyListRawText === ""}
         onClick={() => {
-          // the army list
-          const armyList = formatRawTextIntoLines(
-            stateView.armyListRawText
-          ).filter((x) => x !== "# Joined to:"); // remove random join to lines
+          const rawArmyData = {
+            id: "s7EwJKKX",
+            name: "Battle Brothers",
+            units: [
+              {
+                id: "FJRVn9S",
+                cost: 55,
+                name: "Master Brother",
+                size: 1,
+                defense: 3,
+                quality: 3,
+                specialRules: [
+                  { key: "fearless", name: "Fearless", rating: "" },
+                  { key: "hero", name: "Hero", rating: "" },
+                  { key: "tough", name: "Tough", rating: "3" },
+                ],
+                armyId: "78qp9l5alslt6yj8",
+                sortId: 0,
+                xp: 0,
+                notes: null,
+                traits: [],
+                combined: false,
+                joinToUnit: "q9CZl",
+                selectionId: "7J1K5",
+                loadout: [
+                  {
+                    id: "FN2DE",
+                    name: "CCW",
+                    label: "CCW",
+                    attacks: 1,
+                    specialRules: [],
+                    count: 1,
+                    originalCount: 1,
+                    type: "ArmyBookWeapon",
+                  },
+                  {
+                    id: "oU3Uc",
+                    name: "Heavy Rifle",
+                    label: "Heavy Rifle",
+                    range: 24,
+                    attacks: 1,
+                    specialRules: [
+                      { key: "ap", name: "AP", rating: "1", modify: false },
+                    ],
+                    count: 1,
+                    originalCount: 1,
+                    type: "ArmyBookWeapon",
+                  },
+                  {
+                    name: "Captain",
+                    type: "ArmyBookItem",
+                    label: "Captain (Advanced Tactics)",
+                    content: [
+                      {
+                        key: "advanced-tactics",
+                        name: "Advanced Tactics",
+                        type: "ArmyBookRule",
+                        label: "Advanced Tactics",
+                        rating: "",
+                        count: 1,
+                        dependencies: [],
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                    isModel: false,
+                  },
+                ],
+              },
+              {
+                id: "rsouUXt",
+                cost: 145,
+                name: "Battle Brothers",
+                size: 5,
+                defense: 3,
+                quality: 3,
+                specialRules: [
+                  { key: "fearless", name: "Fearless", rating: "" },
+                ],
+                armyId: "78qp9l5alslt6yj8",
+                sortId: 4,
+                xp: 0,
+                notes: null,
+                traits: [],
+                combined: false,
+                joinToUnit: null,
+                selectionId: "q9CZl",
+                loadout: [
+                  {
+                    id: "dzEXV",
+                    name: "CCWs",
+                    label: "CCWs",
+                    attacks: 1,
+                    specialRules: [],
+                    count: 5,
+                    originalCount: 5,
+                    type: "ArmyBookWeapon",
+                  },
+                  {
+                    uid: "wWjig",
+                    label: "Heavy Rifles",
+                    range: 24,
+                    attacks: 1,
+                    specialRules: [
+                      { key: "ap", name: "AP", rating: "1", modify: false },
+                    ],
+                    name: "Heavy Rifles",
+                    count: 4,
+                    originalCount: 5,
+                    type: "ArmyBookWeapon",
+                    dependencies: [
+                      {
+                        upgradeInstanceId: "URg9IfXxW",
+                        count: 1,
+                        type: "replace",
+                      },
+                    ],
+                  },
+                  {
+                    name: "Plasma Rifle",
+                    type: "ArmyBookWeapon",
+                    label: 'Plasma Rifle (24", A1, AP(4))',
+                    range: 24,
+                    attacks: 1,
+                    condition: "",
+                    specialRules: [
+                      {
+                        key: "ap",
+                        name: "AP",
+                        type: "ArmyBookRule",
+                        label: "AP(4)",
+                        modify: false,
+                        rating: "4",
+                        condition: "",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                  },
+                ],
+              },
+              {
+                id: "y59VWP0",
+                cost: 165,
+                name: "Support Brothers",
+                size: 3,
+                defense: 3,
+                quality: 3,
+                specialRules: [
+                  { key: "fearless", name: "Fearless", rating: "" },
+                  { key: "relentless", name: "Relentless", rating: "" },
+                ],
+                armyId: "78qp9l5alslt6yj8",
+                sortId: 5,
+                xp: 0,
+                notes: null,
+                traits: [],
+                combined: false,
+                joinToUnit: null,
+                selectionId: "dBUCe",
+                loadout: [
+                  {
+                    id: "UFSiL",
+                    name: "CCWs",
+                    label: "CCWs",
+                    attacks: 1,
+                    specialRules: [],
+                    count: 3,
+                    originalCount: 3,
+                    type: "ArmyBookWeapon",
+                  },
+                  {
+                    name: "Missile Launcher",
+                    type: "ArmyBookWeapon",
+                    label:
+                      'Missile Launcher (30", A1, AP(2), Deadly(3), Lock-On)',
+                    range: 30,
+                    attacks: 1,
+                    condition: "",
+                    specialRules: [
+                      {
+                        key: "ap",
+                        name: "AP",
+                        type: "ArmyBookRule",
+                        label: "AP(2)",
+                        modify: false,
+                        rating: "2",
+                      },
+                      {
+                        key: "deadly",
+                        name: "Deadly",
+                        type: "ArmyBookRule",
+                        label: "Deadly(3)",
+                        modify: false,
+                        rating: "3",
+                      },
+                      {
+                        key: "lock-on",
+                        name: "Lock-On",
+                        type: "ArmyBookRule",
+                        label: "Lock-On",
+                        modify: false,
+                        rating: "",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                  },
+                  {
+                    name: "Plasma Cannon",
+                    type: "ArmyBookWeapon",
+                    label: "Plasma Cannon (30”, A1, Blast(3), AP(4))",
+                    range: 30,
+                    attacks: 1,
+                    specialRules: [
+                      {
+                        key: "blast",
+                        name: "Blast",
+                        type: "ArmyBookRule",
+                        label: "Blast(3)",
+                        rating: "3",
+                      },
+                      {
+                        key: "ap",
+                        name: "AP",
+                        type: "ArmyBookRule",
+                        label: "AP(4)",
+                        rating: "4",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                  },
+                  {
+                    name: "Heavy Fusion Rifle",
+                    type: "ArmyBookWeapon",
+                    label: 'Heavy Fusion Rifle (18", A1, AP(4), Deadly(6))',
+                    range: 18,
+                    attacks: 1,
+                    condition: "",
+                    specialRules: [
+                      {
+                        key: "ap",
+                        name: "AP",
+                        type: "ArmyBookRule",
+                        label: "AP(4)",
+                        modify: false,
+                        rating: "4",
+                      },
+                      {
+                        key: "deadly",
+                        name: "Deadly",
+                        type: "ArmyBookRule",
+                        label: "Deadly(6)",
+                        modify: false,
+                        rating: "6",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                  },
+                ],
+              },
+              {
+                id: "G163lhb",
+                cost: 185,
+                name: "Heavy Exo-Suit",
+                size: 1,
+                defense: 2,
+                quality: 3,
+                specialRules: [
+                  { key: "fear", name: "Fear", rating: "" },
+                  { key: "fearless", name: "Fearless", rating: "" },
+                  { key: "tough", name: "Tough", rating: "6" },
+                ],
+                armyId: "78qp9l5alslt6yj8",
+                sortId: 17,
+                xp: 0,
+                notes: null,
+                traits: [],
+                combined: false,
+                joinToUnit: null,
+                selectionId: "jiN4_",
+                loadout: [
+                  {
+                    id: "efIjR",
+                    name: "Stomp",
+                    label: "Stomp",
+                    attacks: 2,
+                    specialRules: [
+                      { key: "ap", name: "AP", rating: "1", modify: false },
+                    ],
+                    count: 1,
+                    originalCount: 1,
+                    type: "ArmyBookWeapon",
+                  },
+                  {
+                    name: "Heavy Rifle Array",
+                    type: "ArmyBookWeapon",
+                    label: "Heavy Rifle Array (24”, A6, AP(1))",
+                    range: 24,
+                    attacks: 6,
+                    specialRules: [
+                      {
+                        key: "ap",
+                        name: "AP",
+                        type: "ArmyBookRule",
+                        label: "AP(1)",
+                        rating: "1",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                    isModel: false,
+                  },
+                  {
+                    name: "Twin Gravity Cannon",
+                    type: "ArmyBookWeapon",
+                    label: 'Twin Gravity Cannon (24", A2, Blast(3), Rending)',
+                    range: 24,
+                    attacks: 2,
+                    condition: "",
+                    specialRules: [
+                      {
+                        key: "blast",
+                        name: "Blast",
+                        type: "ArmyBookRule",
+                        label: "Blast(3)",
+                        modify: false,
+                        rating: "3",
+                      },
+                      {
+                        key: "rending",
+                        name: "Rending",
+                        type: "ArmyBookRule",
+                        label: "Rending",
+                        modify: false,
+                        rating: "",
+                      },
+                    ],
+                    count: 1,
+                    dependencies: [],
+                  },
+                ],
+              },
+            ],
+            points: 750,
+            gameSystem: "gf",
+            competitive: true,
+            pointsLimit: 750,
+            unitPreview: null,
+            campaignMode: false,
+            selectedUnitId: "q9CZl",
+            undoUnitRemove: [
+              {
+                id: "rsouUXt",
+                xp: 0,
+                cost: 145,
+                name: "Battle Brothers",
+                size: 5,
+                notes: null,
+                armyId: "78qp9l5alslt6yj8",
+                sortId: 4,
+                traits: [],
+                defense: 3,
+                loadout: [
+                  {
+                    id: "dzEXV",
+                    name: "CCWs",
+                    type: "ArmyBookWeapon",
+                    count: 5,
+                    label: "CCWs",
+                    attacks: 1,
+                    specialRules: [],
+                    originalCount: 5,
+                  },
+                  {
+                    uid: "wWjig",
+                    name: "Heavy Rifles",
+                    type: "ArmyBookWeapon",
+                    count: 5,
+                    label: "Heavy Rifles",
+                    range: 24,
+                    attacks: 1,
+                    specialRules: [
+                      { key: "ap", name: "AP", modify: false, rating: "1" },
+                    ],
+                    originalCount: 5,
+                  },
+                ],
+                quality: 3,
+                combined: false,
+                upgrades: ["A1", "D1"],
+                equipment: [
+                  {
+                    id: "dzEXV",
+                    name: "CCWs",
+                    type: "ArmyBookWeapon",
+                    count: 5,
+                    label: "CCWs",
+                    attacks: 1,
+                    specialRules: [],
+                    originalCount: 5,
+                  },
+                  {
+                    uid: "wWjig",
+                    name: "Heavy Rifles",
+                    type: "ArmyBookWeapon",
+                    count: 5,
+                    label: "Heavy Rifles",
+                    range: 24,
+                    attacks: 1,
+                    specialRules: [
+                      { key: "ap", name: "AP", modify: false, rating: "1" },
+                    ],
+                    originalCount: 5,
+                  },
+                ],
+                joinToUnit: null,
+                selectionId: "z-iI5",
+                specialRules: [
+                  { key: "fearless", name: "Fearless", rating: "" },
+                ],
+                selectedUpgrades: [],
+                disabledUpgradeSections: [],
+              },
+            ],
+            specialRules: [
+              {
+                id: 130,
+                name: "War Chant",
+                aliasedRuleId: null,
+                description:
+                  "For each unmodified result of 6 to hit when attacking in melee, the hero and its unit may roll 2 extra attacks. This rule doesn’t apply to newly generated attacks.",
+                hasRating: false,
+              },
+              {
+                id: 124,
+                name: "Advanced Tactics",
+                aliasedRuleId: null,
+                description:
+                  'Once per activation, before attacking, pick one other friendly unit within 12” of this model, which may move by up to 6".',
+                hasRating: false,
+              },
+              {
+                id: 127,
+                name: "Shield Wall",
+                aliasedRuleId: null,
+                description:
+                  "Attacks targeting units where all models have this rule count as having AP(-1), to a min. of AP(0).",
+                hasRating: false,
+              },
+              {
+                id: 126,
+                name: "Repair",
+                aliasedRuleId: null,
+                description:
+                  "Once per activation, if within 2” of a unit with Tough, roll one die. On a 2+ you may repair D3 wounds from the target.",
+                hasRating: false,
+              },
+              {
+                id: 129,
+                name: "Veteran Walker",
+                aliasedRuleId: null,
+                description:
+                  "This model gets +1 to its attack rolls for melee and shooting.",
+                hasRating: false,
+              },
+              {
+                id: 128,
+                name: "Veteran Infantry",
+                aliasedRuleId: null,
+                description:
+                  "This model gets +1 to hit rolls in melee and shooting.",
+                hasRating: false,
+              },
+              {
+                id: 125,
+                name: "Medical Training",
+                aliasedRuleId: null,
+                description:
+                  "This model and its unit get the Regeneration rule.",
+                hasRating: false,
+              },
+            ],
+          };
 
-          armyList.shift();
-          const rawUnitProfiles = _.chunk(armyList, 2);
-
-          // the special rules
-          const armySpecialRules = formatRawTextIntoLines(
-            stateView.armySpecialRulesRawText
-          ).map((line) => {
-            const i = line.indexOf(":");
-            const name = line.substring(0, i).trim();
-            const definition = line.substring(i + 1).trim();
+          const unitProfiles: iUnitProfile[] = rawArmyData.units.map((unit) => {
             return {
-              name,
-              definition,
+              id: nanoid(),
+              originalName: unit.name,
+              models: [
+                {
+                  id: nanoid(),
+                  isGenerated: true,
+                  name: pluralize.singular(
+                    removeQuantityStringFromStartOfString(unit.name).trim()
+                  ),
+                  originalName: unit.name,
+                  qua: unit.quality,
+                  def: unit.defense,
+                  weapons: unit.loadout.map((weapon) => {
+                    // const i = weapon.indexOf("(");
+                    // const weaponName = weapon.substring(0, i).trim();
+                    // const weaponDefinition = weapon.substring(i).trim();
+                    return {
+                      id: nanoid(),
+                      name: pluralize.singular(weapon.name),
+                      definition: `${weapon.attacks}`,
+                      quantity: 1,
+                    };
+                  }),
+                  individualSpecialRules:
+                    getAllIndividualSpecialRulesFromString(unitSpecialsRaw),
+                  specialRules: unitSpecials.map((specialRule) => {
+                    return {
+                      id: nanoid(),
+                      name: specialRule,
+                      definition: "",
+                      quantity: 1,
+                    };
+                  }),
+                },
+              ],
             };
           });
 
-          state.armySpecialRulesDict = armySpecialRules;
-          state.armySpecialRulesDictNames = armySpecialRules.map((x) => x.name);
+          // const unitProfiles = rawUnitProfiles.map(
+          //   (rawUnitProfile): iUnitProfile => {
+          //     const firstLineParsed = cleanFirstLineOfUnitProfile(
+          //       rawUnitProfile[0]
+          //     );
+          //     const [unitName, unitQuaDef, unitPoints, unitSpecialsRaw] =
+          //       firstLineParsed.split("|");
 
-          const unitProfiles = rawUnitProfiles.map(
-            (rawUnitProfile): iUnitProfile => {
-              const firstLineParsed = cleanFirstLineOfUnitProfile(
-                rawUnitProfile[0]
-              );
-              const [unitName, unitQuaDef, unitPoints, unitSpecialsRaw] =
-                firstLineParsed.split("|");
+          //     console.log("unitName", unitName);
+          //     console.log("unitQuaDef", unitQuaDef);
+          //     console.log("unitPoints", unitPoints);
+          //     console.log("unitSpecialsRaw", unitSpecialsRaw);
+          //     //  work out all the specials from the the first row after the points
+          //     const unitSpecials =
+          //       getTopLevelSpecialRulesFromString(unitSpecialsRaw);
 
-              console.log("unitName", unitName);
-              console.log("unitQuaDef", unitQuaDef);
-              console.log("unitPoints", unitPoints);
-              console.log("unitSpecialsRaw", unitSpecialsRaw);
-              //  work out all the specials from the the first row after the points
-              const unitSpecials =
-                getTopLevelSpecialRulesFromString(unitSpecialsRaw);
+          //     const [unitQua, unitDef] = extractQuaDef(unitQuaDef);
 
-              const [unitQua, unitDef] = extractQuaDef(unitQuaDef);
+          //     const secondLineParsed = cleanSecondLineOfUnitProfile(
+          //       rawUnitProfile[1]
+          //     );
 
-              const secondLineParsed = cleanSecondLineOfUnitProfile(
-                rawUnitProfile[1]
-              );
+          //     const weapons = splitNoParen(secondLineParsed)
+          //       .map((x) => x.trim())
+          //       .map((x) => removeQuantityStringFromStartOfString(x))
+          //       .map((x) => x.trim());
 
-              const weapons = splitNoParen(secondLineParsed)
-                .map((x) => x.trim())
-                .map((x) => removeQuantityStringFromStartOfString(x))
-                .map((x) => x.trim());
+          //     // we also need to get all the specials out of the weapons
 
-              // we also need to get all the specials out of the weapons
+          //     // return the final profile
 
-              // return the final profile
-              return {
-                id: nanoid(),
-                originalName: unitName,
-                models: [
-                  {
-                    id: nanoid(),
-                    isGenerated: true,
-                    name: pluralize.singular(
-                      removeQuantityStringFromStartOfString(unitName).trim()
-                    ),
-                    originalName: unitName,
-                    qua: unitQua,
-                    def: unitDef,
-                    weapons: weapons.map((weapon) => {
-                      const i = weapon.indexOf("(");
-                      const weaponName = weapon.substring(0, i).trim();
-                      const weaponDefinition = weapon.substring(i).trim();
-                      return {
-                        id: nanoid(),
-                        name: pluralize.singular(weaponName),
-                        definition: weaponDefinition,
-                        quantity: 1,
-                      };
-                    }),
-                    individualSpecialRules:
-                      getAllIndividualSpecialRulesFromString(unitSpecialsRaw),
-                    specialRules: unitSpecials.map((specialRule) => {
-                      return {
-                        id: nanoid(),
-                        name: specialRule,
-                        definition: "",
-                        quantity: 1,
-                      };
-                    }),
-                  },
-                ],
-              };
-            }
-          );
+          //   }
+          // );
 
-          state.unitProfiles = [...unitProfiles];
+          // state.unitProfiles = [...unitProfiles];
         }}
         className="border disabled:hover:scale-100 disabled:opacity-50 border-stone-600 px-4 py-2 bg-stone-500 text-white hover:scale-105  active:scale-95"
       >
