@@ -359,9 +359,9 @@ function App() {
           models.
         </p>
         <p>
-          Therefore, we need to define which distinct models have which Weapons
-          and Special Rules, so that we can generate the correct name and
-          description for TTS.
+          Therefore, we need to define <em>which</em> distinct models have{" "}
+          <em>which</em> Weapons and Special Rules, so that we can generate the
+          correct name and description for TTS.
         </p>
         <p>
           The left column lets you change quantities of items and create
@@ -572,7 +572,7 @@ function App() {
                           onClick={() => duplicateModel(unit.id, model.id)}
                           className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
                         >
-                          Duplicate "Distinct Model" Definition
+                          Duplicate this model definition
                         </button>
                       </div>
 
