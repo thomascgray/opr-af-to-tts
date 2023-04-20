@@ -243,7 +243,10 @@ function App() {
       <button
         onClick={() => {
           // the army list
-          const armyList = formatRawTextIntoLines(stateView.armyListRawText);
+          const armyList = formatRawTextIntoLines(
+            stateView.armyListRawText
+          ).filter((x) => x !== "# Joined to:"); // remove random join to lines
+
           armyList.shift();
           const rawUnitProfiles = _.chunk(armyList, 2);
 
@@ -360,7 +363,7 @@ function App() {
               if (x.quantity > 1) {
                 return `${x.quantity}x ${x.name}`;
               }
-              return x.name;
+              return `${x.name}`;
             })
             .join(", ");
 
@@ -369,7 +372,7 @@ function App() {
               if (x.quantity > 1) {
                 return `${x.quantity}x ${x.name}`;
               }
-              return x.name;
+              return `${x.name}`;
             })
             .join(", ");
 
@@ -388,16 +391,18 @@ function App() {
             )
             .filter((isp) => stateView.armySpecialRulesDictNames.includes(isp))
             .map((isp) => {
-              return `${isp}: ${
+              return `[f0932b]${isp}[-]
+[sup]${
                 stateView.armySpecialRulesDict.find((x) => x.name === isp)
                   ?.definition
-              }`;
+              }[/sup]`;
             })
             .join("\r\n");
 
           const activeWeaponsList = activeWeapons
             .map((w) => {
-              return `[b]${w.name}[/b] [sub]${w.definition}[/sub]`;
+              return `[eb4d4b]${w.name}[-]
+[sup]${w.definition}[/sup]`;
             })
             .join("\r\n");
 
@@ -523,18 +528,14 @@ function App() {
                   className="bg-slate-300 p-4 space-y-1"
                 >
                   <textarea
-                    value={`${unit.name}
-[7ed6df][sup]${activeWeaponNamesCommaSeparated}[/sup][-]
-[sub][2ecc71][i]QUA[/i][-]     [3498db][i]DEF[/i][-][/sub]
-[2ecc71][b]${unit.qua}[/b]+[-]      [3498db][b]${unit.def}[/b]+[-]`}
+                    value={`[b]${unit.name}[/b]
+[sup][eb4d4b]${activeWeaponNamesCommaSeparated}[-][/sup]
+[sup][f0932b]${activeSpecialRulesNames}[-][/sup]
+[2ecc71][b]${unit.qua}[/b]+[-] / [3498db][b]${unit.def}[/b]+[-]`}
                     className="block whitespace-pre text-xs w-full h-20"
                   />
                   <textarea
-                    value={`[sup]Weapons[/sup]
-${activeWeaponsList}
-----------
-[sup]Special Rules[/sup]
-${activeSpecialRulesNames}
+                    value={`${activeWeaponsList}
 ${fullSpecialRulesForThisUnit}`}
                     className="block whitespace-pre text-xs w-full h-20"
                   />
