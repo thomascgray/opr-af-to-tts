@@ -189,19 +189,24 @@ function App() {
   const stateView = useSnapshot(state, { sync: true });
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto mb-28">
       <h1 className="text-xl font-bold">Grimdark Future Army Forge to TTS</h1>
       <div className="inputs flex flex-row space-x-5">
         <div className="w-full">
-          <label>
-            <span>Army Forge Share Link</span>
+          <label className="">
+            <span className="block">Army Forge Share Link</span>
+            <span className="block text-xs text-stone-500">
+              Army Forge → Menu at the top right → Click "Share as Link" → Paste
+              that link into the box below
+            </span>
             <input
+              placeholder="https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
               value={stateView.armyListShareLink}
               onChange={(e) => {
                 state.armyListShareLink = e.currentTarget.value;
               }}
               type="text"
-              className="border border-solid border-stone-500 w-full py-1 px-2"
+              className="border my-2 border-solid border-stone-500 w-full py-1 px-2"
             />
           </label>
         </div>
@@ -211,32 +216,40 @@ function App() {
         onClick={onGenerate}
         className="border disabled:hover:scale-100 disabled:opacity-50 border-stone-600 px-4 py-2 bg-stone-500 text-white hover:scale-105  active:scale-95"
       >
-        Generate
+        Generate Definitions
       </button>
 
       <details className="text-sm mt-4">
-        <summary className="cursor-pointer">Tutorial</summary>
-        <p>
-          Army list definitions keep track of the whole "pool" of Weapons and
-          Special Rules associated with an entire unit - <em>not</em> which
-          Weapons and Special Rules are associated with which individual,
-          distinct models.
-        </p>
-        <p>
-          Therefore, we need to define <em>which</em> distinct models have{" "}
-          <em>which</em> Weapons and Special Rules, so that we can generate the
-          correct name and description for TTS.
-        </p>
-        <p>
-          The left column lets you change quantities of items and create
-          duplicates of the base "distinct model", allowing you to create a
-          single entry for each <em>distinct</em> model in your army.
-        </p>
-        <p>
-          The right column then prints out 2 paragraphs of text for each
-          distinct model - these go in the TTS objects "Name" and "Description"
-          field, respectively.
-        </p>
+        <summary className="cursor-pointer">How-To / Tutorial</summary>
+        <div className="p-2 bg-stone-100 space-y-2">
+          <p>
+            Army list definitions keep track of the whole "pool" of Weapons and
+            Special Rules associated with an entire unit - <em>not</em> which
+            Weapons and Special Rules are associated with which individual,
+            distinct models.
+          </p>
+          <p>
+            Therefore, we need to define <em>which</em> distinct models have{" "}
+            <em>which</em> Weapons and Special Rules, so that we can generate
+            the correct name and description for TTS.
+          </p>
+          <p>
+            Paste your Army Forge "Share a link" URL into the box above and
+            click "Generate Definitions". This will generate, for each unit in
+            your army, a TTS-aligned "name" and "description" definition that
+            represents a model from that unit.
+          </p>
+          <p>
+            The left column lets you change quantities of items and create
+            duplicates of the base "distinct model", allowing you to create a
+            single entry for each <em>distinct</em> model in your army.
+          </p>
+          <p>
+            The right column then prints out 2 paragraphs of text for each
+            distinct model - these go in the TTS objects "Name" and
+            "Description" field, respectively.
+          </p>
+        </div>
       </details>
 
       <hr className="my-5" />
@@ -258,16 +271,6 @@ function App() {
                   const equippedLoadoutItems = model.loadout.filter(
                     (w) => w.quantity > 0
                   );
-
-                  const x = equippedLoadoutItems
-                    // @ts-ignore loadouts can definitely have content
-                    .map((l) => l.originalLoadout.content || [])
-                    .flat()
-                    .map((c) => c.specialRules || [])
-                    .flat()
-                    .filter((sr) => sr.type === "ArmyBookRule");
-
-                  console.log("x", JSON.stringify(x, null, 2));
 
                   // todo should include special rules from ITEMS, not from WEAPONS
                   const modelSpecialRules = model.originalSpecialRules
@@ -307,7 +310,7 @@ function App() {
                     )?.description;
                     return {
                       id: nanoid(),
-                      name: `${x.name} ()`,
+                      name: `${x.name}`,
                       definition,
                     };
                   });
@@ -337,16 +340,15 @@ function App() {
                       })),
                   ])
                     .map((w) => {
-                      return `[eb4d4b]${w.name}[-]
+                      return `[e74c3c]${w.name}[-]
 [sup]${w.definition}[/sup]`;
                     })
                     .join("\r\n");
 
                   const activeSpecialRulesFromItemsList =
                     loadoutActiveSpecialRules
-                      // .filter((l) => l.originalType === "ArmyBookRule")
                       .map((w) => {
-                        return `[f0932b]${w.name}[-]
+                        return `[f1c40f]${w.name}[-]
 [sup]${w.definition}[/sup]`;
                       })
                       .join("\r\n");
@@ -358,7 +360,7 @@ function App() {
                           <h3 className="text-base">
                             {model.name}
                             <br />
-                            <small className="text-[#eb4d4b] font-bold">
+                            <small className="text-[#e74c3c] font-bold">
                               {activeWeaponNamesCommaSeparated}
                             </small>
                           </h3>
@@ -443,7 +445,8 @@ function App() {
                             onChange={() => {}}
                             onFocus={(e) => e.target.select()}
                             value={`[b]${model.name}[/b]
-[sup][eb4d4b]${activeWeaponNamesCommaSeparated}[-][/sup]
+[sup][e74c3c]${activeWeaponNamesCommaSeparated}[-][/sup]
+[sup][f1c40f]${modelSpecialRules}[-][/sup]
 [2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
                             className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                           />
@@ -469,6 +472,4 @@ ${activeSpecialRulesFromItemsList}`}
 }
 
 export default App;
-// [sup][f0932b]${modelSpecialRules}[-][/sup]
-// todo now that we have structured data, we can make sure only the right models with the loadsouts
-// have those special rules associated with them
+// special rules are printing in output with empty brackets
