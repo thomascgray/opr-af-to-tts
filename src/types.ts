@@ -29,4 +29,9 @@ export interface iAppState {
   }[];
   armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
+  ui: {
+    includeFullSpecialRulesText: boolean;
+    modelWeaponOutputColour: string;
+    modelSpecialRulesOutputColour: string;
+  };
 }

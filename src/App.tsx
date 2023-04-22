@@ -11,6 +11,11 @@ const state = proxy<iAppState>({
   armySpecialRulesDict: [],
   armySpecialRulesDictNames: [],
   unitProfiles: [],
+  ui: {
+    includeFullSpecialRulesText: true,
+    modelWeaponOutputColour: "#e74c3c",
+    modelSpecialRulesOutputColour: "#f1c40f",
+  },
 });
 
 const removeQuantityStringFromStartOfString = (str: string) => {
@@ -219,7 +224,7 @@ function App() {
         Generate Definitions
       </button>
 
-      <details className="text-sm mt-4">
+      <details className="text-sm mt-5">
         <summary className="cursor-pointer">How-To / Tutorial</summary>
         <div className="p-2 bg-stone-100 space-y-2">
           <p>
@@ -253,6 +258,64 @@ function App() {
       </details>
 
       <hr className="my-5" />
+
+      <details className="text-sm my-5">
+        <summary className="cursor-pointer">Output Options</summary>
+        <div className="py-2 px-4 bg-stone-100 space-y-4">
+          <label className="flex flex-row items-center space-x-4">
+            <input
+              checked={stateView.ui.includeFullSpecialRulesText}
+              className="w-5 h-5"
+              type="checkbox"
+              onChange={(e) => {
+                state.ui.includeFullSpecialRulesText =
+                  !stateView.ui.includeFullSpecialRulesText;
+              }}
+            />
+            <div>
+              <p className="font-bold">Include Full Special Rules Text</p>
+              <p className="text-xs">
+                If enabled, the TTS output will include the full rules text for
+                each special rule on a model. If disabled, only the rules name
+                will be included.
+              </p>
+            </div>
+          </label>
+          <label className="flex flex-row items-center space-x-4">
+            <input
+              className="rounded-full"
+              type="color"
+              value={stateView.ui.modelWeaponOutputColour}
+              onChange={(e) => {
+                state.ui.modelWeaponOutputColour = e.currentTarget.value;
+              }}
+            />
+            <div>
+              <p>Model Weapon Output Colour</p>
+              <p>
+                The colour of the model's weapons details in the TTS output.
+              </p>
+            </div>
+          </label>
+          <label className="flex flex-row items-center space-x-4">
+            <input
+              className="rounded-full"
+              type="color"
+              value={stateView.ui.modelSpecialRulesOutputColour}
+              onChange={() => {}}
+            />
+            <div>
+              <p>Model Special Rules Output Colour</p>
+              <p>
+                The colour of the model's special rules details in the TTS
+                output.
+              </p>
+            </div>
+          </label>
+        </div>
+      </details>
+      {/* {stateView.unitProfiles.length >= 1 && (
+      )} */}
 
       <div className="flex flex-col space-y-2">
         {stateView.unitProfiles.map((unit) => {
@@ -354,109 +417,107 @@ function App() {
                       .join("\r\n");
 
                   return (
-                    <div key={unit.id} className="flex flex-row space-x-2">
-                      <div className="editor-panel space-y-3 w-1/3">
-                        <div className="flex flex-row justify-between relative">
-                          <h3 className="text-base">
-                            {model.name}
-                            <br />
-                            <small className="text-[#e74c3c] font-bold">
-                              {activeWeaponNamesCommaSeparated}
-                            </small>
-                          </h3>
-                          {!model.isGenerated && (
-                            <button
-                              onClick={() => {
-                                deleteModel(unit.id, model.id);
-                              }}
-                              title="Delete this distinct model definition"
-                              className="bg-stone-500 absolute top-0 right-0 text-white rounded-full hover:scale-105  active:scale-95"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </div>
-
-                        {/* weapons */}
-
-                        <div className="space-y-1 ">
-                          {model.loadout.map((loadoutItem) => {
-                            return (
-                              <div
-                                key={loadoutItem.id}
-                                className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
-                              >
-                                <span className="flex flex-row items-center space-x-1 ">
-                                  <span className="font-bold">
-                                    {loadoutItem.name}
-                                  </span>
-                                  <span>{loadoutItem.definition}</span>
-                                </span>
-
-                                <input
-                                  className="w-10 p-1"
-                                  min={0}
-                                  onChange={(e) => {
-                                    const value = parseInt(
-                                      e.currentTarget.value
-                                    );
-                                    updateWeaponQuantity(
-                                      unit.id,
-                                      model.id,
-                                      loadoutItem.id,
-                                      value
-                                    );
-                                  }}
-                                  value={loadoutItem.quantity}
-                                  type="number"
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-
+                    <div key={unit.id} className="relative">
+                      <h3 className="text-base">
+                        {model.name}
+                        <br />
+                        <small className="text-[#e74c3c] font-bold">
+                          {activeWeaponNamesCommaSeparated}
+                        </small>
+                      </h3>
+                      {!model.isGenerated && (
                         <button
-                          onClick={() => duplicateModel(unit.id, model.id)}
-                          className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                          onClick={() => {
+                            deleteModel(unit.id, model.id);
+                          }}
+                          title="Delete this distinct model definition"
+                          className="border border-solid border-red-500 p-1 absolute top-0 right-0 text-red-600 rounded-full hover:scale-105 active:scale-95"
                         >
-                          Duplicate this model definition
+                          <svg
+                            width="15"
+                            height="15"
+                            viewBox="0 0 15 15"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z"
+                              fill="currentColor"
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                            ></path>
+                          </svg>
                         </button>
-                      </div>
+                      )}
+                      <div className="flex flex-row space-x-2">
+                        <div className="editor-panel space-y-3 w-1/3">
+                          {/* weapons */}
+                          <div className="space-y-1 ">
+                            {model.loadout.map((loadoutItem) => {
+                              return (
+                                <div
+                                  key={loadoutItem.id}
+                                  className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
+                                >
+                                  <span className="flex flex-row items-center space-x-1 ">
+                                    <span className="font-bold">
+                                      {loadoutItem.name}
+                                    </span>
+                                    <span>{loadoutItem.definition}</span>
+                                  </span>
 
-                      <div className="output-panel space-y-3 w-2/3">
-                        <div
-                          key={model.id + "tts"}
-                          className="bg-stone-300 p-4 space-y-1"
-                        >
-                          <textarea
-                            onChange={() => {}}
-                            onFocus={(e) => e.target.select()}
-                            value={`[b]${model.name}[/b]
+                                  <input
+                                    className="w-10 p-1"
+                                    min={0}
+                                    onChange={(e) => {
+                                      const value = parseInt(
+                                        e.currentTarget.value
+                                      );
+                                      updateWeaponQuantity(
+                                        unit.id,
+                                        model.id,
+                                        loadoutItem.id,
+                                        value
+                                      );
+                                    }}
+                                    value={loadoutItem.quantity}
+                                    type="number"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          <button
+                            onClick={() => duplicateModel(unit.id, model.id)}
+                            className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                          >
+                            Duplicate this model definition
+                          </button>
+                        </div>
+
+                        <div className="output-panel space-y-3 w-2/3">
+                          <div
+                            key={model.id + "tts"}
+                            className="bg-stone-300 p-4 space-y-1"
+                          >
+                            <textarea
+                              onChange={() => {}}
+                              onFocus={(e) => e.target.select()}
+                              value={`[b]${model.name}[/b]
 [sup][e74c3c]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][f1c40f]${modelSpecialRules}[-][/sup]
 [2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
-                            className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
-                          />
-                          <textarea
-                            onChange={() => {}}
-                            onFocus={(e) => e.target.select()}
-                            value={`${activeWeaponsList}
-${activeSpecialRulesFromItemsList}`}
-                            className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
-                          />
+                              className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                            />
+                            <textarea
+                              onChange={() => {}}
+                              onFocus={(e) => e.target.select()}
+                              value={`${activeWeaponsList}
+  ${activeSpecialRulesFromItemsList}`}
+                              className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
