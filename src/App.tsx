@@ -1,22 +1,16 @@
 import * as _ from "lodash";
 import pluralize from "pluralize";
 import { nanoid } from "nanoid";
-import { proxy, useSnapshot } from "valtio";
+import { useSnapshot } from "valtio";
 import * as ArmyForgeTypes from "./army-forge-types";
-import { iUnitProfile, iAppState } from "./types";
+import { iUnitProfile } from "./types";
 import { coreSpecialRules } from "./data";
-
-const state = proxy<iAppState>({
-  armyListShareLink: "",
-  armySpecialRulesDict: [],
-  armySpecialRulesDictNames: [],
-  unitProfiles: [],
-  ui: {
-    includeFullSpecialRulesText: true,
-    modelWeaponOutputColour: "#e74c3c",
-    modelSpecialRulesOutputColour: "#f1c40f",
-  },
-});
+import {
+  state,
+  updateWeaponQuantity,
+  duplicateModel,
+  deleteModel,
+} from "./state";
 
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
@@ -148,46 +142,6 @@ const onGenerate = async () => {
   ];
 
   state.unitProfiles = unitProfiles;
-};
-
-const updateWeaponQuantity = (
-  upId: string,
-  mId: string,
-  wpId: string,
-  quantity: number
-) => {
-  const unit = state.unitProfiles.find((up) => up.id === upId);
-  if (unit) {
-    const model = unit.models.find((m) => m.id === mId);
-    if (model) {
-      const weapon = model.loadout.find((wp) => wp.id === wpId);
-      if (weapon) {
-        weapon.quantity = quantity;
-      }
-    }
-  }
-};
-
-const duplicateModel = (upId: string, mId: string) => {
-  const unit = state.unitProfiles.find((up) => up.id === upId);
-  if (unit) {
-    const model = unit.models.find((m) => m.id === mId);
-    if (model) {
-      unit.models.push({
-        ..._.cloneDeep(model),
-        isGenerated: false,
-        id: nanoid(),
-      });
-    }
-  }
-};
-
-const deleteModel = (upId: string, mId: string) => {
-  const unit = state.unitProfiles.find((up) => up.id === upId);
-  if (unit) {
-    const modelIndex = unit.models.findIndex((m) => m.id === mId);
-    unit.models.splice(modelIndex, 1);
-  }
 };
 
 function App() {
@@ -533,4 +487,3 @@ function App() {
 }
 
 export default App;
-// special rules are printing in output with empty brackets
