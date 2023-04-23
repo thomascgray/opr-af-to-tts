@@ -4,9 +4,9 @@ _(Everything is very WIP, including the name!)_
 
 ## Use the app right here: https://grimdark-future-af-to-tts.netlify.app/
 
-### A webapp to take lists from Army Forge and turn them into Tabletop Simulator object name and descriptions.
+### A webapp to take lists from [OPR's](https://www.onepagerules.com/) [Army Forge](https://army-forge.onepagerules.com/) and turn them into Tabletop Simulator object name and descriptions.
 
-With a tiny bit of setup and some copy and pasting, you can...
+**With a tiny bit of setup and some copy and pasting, you can...**
 | Go from this... | ...to this! |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | ![alt text](https://i.imgur.com/NfK9sN4.png "Screenshot") | ![alt text](https://i.imgur.com/vMjeaJd.png "Screenshot")![alt text](https://i.imgur.com/irM4fby.png "Screenshot") |
