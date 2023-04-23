@@ -10,6 +10,7 @@ export enum eNetworkRequestState {
 export interface iUnitProfile {
   id: string;
   originalName: string;
+  originalModelCountInUnit: number;
   models: {
     id: string;
     name: string;
@@ -23,6 +24,7 @@ export interface iUnitProfile {
       name: string;
       definition: string;
       quantity: number;
+      includeInName: boolean;
       originalLoadout: ArmyForgeTypes.IUpgradeGains;
     }[];
   }[];

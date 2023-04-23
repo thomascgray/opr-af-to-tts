@@ -8,6 +8,7 @@ import { coreSpecialRules } from "./data";
 import {
   state,
   updateWeaponQuantity,
+  updateWeaponIncludeInName,
   duplicateModel,
   deleteModel,
 } from "./state";
@@ -120,6 +121,7 @@ const onGenerate = async () => {
     return {
       id: nanoid(),
       originalName: unit.name,
+      originalModelCountInUnit: unit.size,
       models: [
         {
           id: nanoid(),
@@ -134,9 +136,10 @@ const onGenerate = async () => {
           loadout: unit.loadout.map((loadoutItem) => {
             return {
               id: nanoid(),
+              includeInName: false,
               name: pluralize.singular(loadoutItem.name),
               definition: generateLoadoutItemDefinition(loadoutItem),
-              quantity: 1,
+              quantity: Math.max(loadoutItem.count / unit.size, 1),
               originalLoadout: loadoutItem,
             };
           }),
@@ -372,12 +375,14 @@ function App() {
         {stateView.unitProfiles.map((unit) => {
           return (
             <fieldset
-              className="border border-solid border-stone-600 p-4 text-xs"
+              className="even:bg-stone-100 border border-solid border-stone-300 p-4 text-xs"
               key={unit.id}
             >
-              <legend className="px-2">
-                Unit: {unit.originalName} - Qua: {unit.models[0].qua}+ / Def:{" "}
-                {unit.models[0].def}+
+              <legend className="px-2 space-x-2">
+                <span className="text-lg">{unit.originalName}</span>
+                <span className="text-sm">
+                  {unit.originalModelCountInUnit} models
+                </span>
               </legend>
 
               <div className="flex flex-col space-y-2">
@@ -385,6 +390,19 @@ function App() {
                   const equippedLoadoutItems = model.loadout.filter(
                     (w) => w.quantity > 0
                   );
+
+                  let modelNameString = `${model.name}`;
+                  const loadoutNames = equippedLoadoutItems
+                    .filter((l) => l.includeInName)
+                    .map((l) => {
+                      if (l.quantity > 1) {
+                        return `${l.quantity}x ${l.name}`;
+                      }
+                      return l.name;
+                    });
+                  if (loadoutNames.length >= 1) {
+                    modelNameString += ` w/ ${loadoutNames.join(", ")}`;
+                  }
 
                   const modelSpecialRules = [
                     ...model.originalSpecialRules,
@@ -395,7 +413,6 @@ function App() {
                       .flat(),
                   ]
                     .map((sr) => {
-                      console.log("sr", JSON.stringify(sr, null, 2));
                       if (sr.rating) {
                         return `${sr.name}(${sr.rating})`;
                       }
@@ -532,10 +549,8 @@ function App() {
                       .join("\r\n");
 
                   return (
-                    <div key={unit.id} className="relative">
+                    <div key={model.id} className="relative">
                       <h3 className="text-base">
-                        {model.name}
-                        <br />
                         <small className="text-[#e74c3c] font-bold">
                           {activeWeaponNamesCommaSeparated}
                         </small>
@@ -558,8 +573,8 @@ function App() {
                             <path
                               d="M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z"
                               fill="currentColor"
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
+                              fillRule="evenodd"
+                              clipRule="evenodd"
                             ></path>
                           </svg>
                         </button>
@@ -574,11 +589,26 @@ function App() {
                                   key={loadoutItem.id}
                                   className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
                                 >
-                                  <span className="flex flex-row items-center space-x-1 ">
-                                    <span className="font-bold">
-                                      {loadoutItem.name}
+                                  <span className="flex flex-row items-center space-x-1">
+                                    <input
+                                      title="Check to include this item in the model name"
+                                      checked={loadoutItem.includeInName}
+                                      onChange={(e) => {
+                                        updateWeaponIncludeInName(
+                                          unit.id,
+                                          model.id,
+                                          loadoutItem.id,
+                                          !loadoutItem.includeInName
+                                        );
+                                      }}
+                                      type="checkbox"
+                                    />
+                                    <span className="flex flex-row items-center space-x-1 ">
+                                      <span className="font-bold">
+                                        {loadoutItem.name}
+                                      </span>
+                                      <span>{loadoutItem.definition}</span>
                                     </span>
-                                    <span>{loadoutItem.definition}</span>
                                   </span>
 
                                   <input
@@ -619,7 +649,7 @@ function App() {
                             <textarea
                               onChange={() => {}}
                               onFocus={(e) => e.target.select()}
-                              value={`[b]${model.name}[/b]
+                              value={`[b]${modelNameString}[/b]
 [sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]
 [2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
