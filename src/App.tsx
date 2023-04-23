@@ -288,6 +288,34 @@ function App() {
                 </p>
               </div>
             </label>
+
+            <label className="flex flex-row items-center space-x-4">
+              <input
+                checked={
+                  stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules
+                }
+                className="w-5 h-5"
+                type="checkbox"
+                onChange={(e) => {
+                  state.ttsOutputConfig.useShorterVersionOfCoreSpecialRules =
+                    !stateView.ttsOutputConfig
+                      .useShorterVersionOfCoreSpecialRules;
+                }}
+              />
+              <div>
+                <p className="font-bold">
+                  Use Shortened Version of Core Special Rules Text
+                </p>
+                <p className="text-xs">
+                  If enabled, special rule's text for "core" special rules will
+                  be a "shortened" version of that rule, to stop the TTS
+                  description being super long on models that have lots of
+                  special rules. Disable this to output the full special rules
+                  text.
+                </p>
+              </div>
+            </label>
+
             <label className="flex flex-row items-center space-x-4">
               <input
                 className="border border-stone-500 px-2 py-1 w-20"
@@ -345,9 +373,16 @@ function App() {
                     (w) => w.quantity > 0
                   );
 
-                  // todo should include special rules from ITEMS, not from WEAPONS
-                  const modelSpecialRules = model.originalSpecialRules
+                  const modelSpecialRules = [
+                    ...model.originalSpecialRules,
+                    ...model.loadout
+                      .filter((l) => l.originalLoadout.type === "ArmyBookItem")
+                      // @ts-ignore loadouts can definitely have content
+                      .map((l) => l.originalLoadout.content)
+                      .flat(),
+                  ]
                     .map((sr) => {
+                      console.log("sr", JSON.stringify(sr, null, 2));
                       if (sr.rating) {
                         return `${sr.name}(${sr.rating})`;
                       }
@@ -378,9 +413,46 @@ function App() {
                     ]),
                     "key"
                   ).map((x) => {
-                    const definition = stateView.armySpecialRulesDict.find(
+                    const specialRule = stateView.armySpecialRulesDict.find(
                       (sr) => sr.name === x.name
-                    )?.description;
+                    );
+                    let definition = "";
+                    if (
+                      stateView.ttsOutputConfig
+                        .useShorterVersionOfCoreSpecialRules &&
+                      specialRule?.shortDescription
+                    ) {
+                      definition = specialRule?.shortDescription || "";
+                    } else {
+                      definition = specialRule?.description || "";
+                    }
+                    return {
+                      id: nanoid(),
+                      name: `${x.name}`,
+                      definition,
+                    };
+                  });
+
+                  const activeSpecialRulesFromNotLoadout = _.uniqBy(
+                    _.flattenDeep([
+                      // get all the special rules from the loadout
+                      ...unit.models.map((m) => m.originalSpecialRules || []),
+                    ]),
+                    "key"
+                  ).map((x) => {
+                    const specialRule = stateView.armySpecialRulesDict.find(
+                      (sr) => sr.name === x.name
+                    );
+                    let definition = "";
+                    if (
+                      stateView.ttsOutputConfig
+                        .useShorterVersionOfCoreSpecialRules &&
+                      specialRule?.shortDescription
+                    ) {
+                      definition = specialRule?.shortDescription || "";
+                    } else {
+                      definition = specialRule?.description || "";
+                    }
                     return {
                       id: nanoid(),
                       name: `${x.name}`,
@@ -420,6 +492,20 @@ function App() {
 
                   const activeSpecialRulesFromItemsList =
                     loadoutActiveSpecialRules
+                      .map((w) => {
+                        if (
+                          stateView.ttsOutputConfig.includeFullSpecialRulesText
+                        ) {
+                          return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
+[sup]${w.definition}[/sup]`;
+                        } else {
+                          return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
+                        }
+                      })
+                      .join("\r\n");
+
+                  const activeSpecialRulesFromNotItemsList =
+                    activeSpecialRulesFromNotLoadout
                       .map((w) => {
                         if (
                           stateView.ttsOutputConfig.includeFullSpecialRulesText
@@ -530,7 +616,8 @@ function App() {
                               onChange={() => {}}
                               onFocus={(e) => e.target.select()}
                               value={`${activeWeaponsList}
-${activeSpecialRulesFromItemsList}`}
+${activeSpecialRulesFromItemsList}
+${activeSpecialRulesFromNotItemsList}`}
                               className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                             />
                           </div>
@@ -549,3 +636,7 @@ ${activeSpecialRulesFromItemsList}`}
 }
 
 export default App;
+
+// need to put psychic into the name field
+// need to include all special rules in description cus could be army special rules
+// should we do some kind of "simplified" version for the big rules text? e.g make "Tough" fewer words?

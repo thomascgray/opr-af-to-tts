@@ -10,6 +10,7 @@ export const state = proxy<iAppState>({
   unitProfiles: [],
   ttsOutputConfig: {
     includeFullSpecialRulesText: true,
+    useShorterVersionOfCoreSpecialRules: true,
     modelWeaponOutputColour: "#e74c3c",
     modelSpecialRulesOutputColour: "#f1c40f",
   },

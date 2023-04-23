@@ -33,11 +33,13 @@ export interface iAppState {
   armySpecialRulesDict: {
     name: string;
     description: string;
+    shortDescription?: string;
   }[];
   armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
   ttsOutputConfig: {
     includeFullSpecialRulesText: boolean;
+    useShorterVersionOfCoreSpecialRules: boolean;
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;
   };

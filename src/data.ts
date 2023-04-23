@@ -2,12 +2,14 @@ export const coreSpecialRules = [
   {
     name: "Aircraft",
     description:
-      "This model doesn't physically interact with other models and terrain,can't seize objectives, and can't be moved into contact with. Units targeting aircraft get -12'' range and -1 to hit rolls. When activated, this model must always move 18''-36'' in a straight line (without turning), and if it goes off-table, then its activation ends, and it must be placed on any table edge again.",
+      "This model doesn't physically interact with other models and terrain, can't seize objectives, and can't be moved into contact with. Units targeting aircraft get -12'' range and -1 to hit rolls. When activated, this model must always move 18''-36'' in a straight line (without turning), and if it goes off-table, then its activation ends, and it must be placed on any table edge again.",
   },
   {
     name: "Ambush",
     description:
       "This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere, over 9'' away from enemy units. If both player have Ambush, they roll-off to see who deploys first, and then alternate in placing them.",
+    shortDescription:
+      "May be kept in reserve instead of deploying, and then deployed at the start of any round after the first (at least 9'' away from enemy units).",
   },
   {
     name: "AP",
@@ -50,6 +52,8 @@ export const coreSpecialRules = [
     name: "Hero",
     description:
       "May be deployed as part of one friendly unit, which may use its Quality value for morale tests. When taking hits, you must use the unit's Defense value, until all non-hero models are killed.",
+    shortDescription:
+      "May be deployed as part of a unit, which may then use this model's Quality value for morale tests.",
   },
   {
     name: "Immobile",
@@ -77,6 +81,8 @@ export const coreSpecialRules = [
     name: "Psychic",
     description:
       "May cast one spell during its activation, at any point before attacking. Pick a spell and a target in line of sight, and roll D6+X. If the result is equal or higher than the number in brackets, you may resolve the effects. Enemy psychics within 18'' and line of sight of the caster may roll D6+X at the same time, and if the result is higher the spell is blocked. Psychics may only either try to cast or try to block a spell each round.",
+    shortDescription:
+      "May cast one spell during its activation, at any point before attacking. See Psychic rule for details.",
   },
   {
     name: "Regeneration",
@@ -96,6 +102,8 @@ export const coreSpecialRules = [
     name: "Scout",
     description:
       "This model may be deployed after all other units, and may then move by up to 12'', ignoring terrain. If both of the players have Scout, they roll-off to see who deploys first, and then alternate in placing and moving them.",
+    shortDescription:
+      "May be deployed after all other units, and may then move by up to 12'', ignoring terrain.",
   },
   {
     name: "Slow",
@@ -119,6 +127,7 @@ export const coreSpecialRules = [
     name: "Tough",
     description:
       "This model must take X wounds before being killed. If a model with tough joins a unit without it, then it is removed last when the unit takes wounds. Note that you must continue to put wounds on the tough model with most wounds in the unit until it is killed, before starting to put them on the next tough model (heroes must be assigned wounds last).",
+    shortDescription: "This model takes X wounds before being killed.",
   },
   {
     name: "Transport",
