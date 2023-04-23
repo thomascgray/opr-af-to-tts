@@ -170,6 +170,19 @@ function App() {
   return (
     <div className="container mx-auto mb-28">
       <h1 className="text-xl font-bold">Grimdark Future Army Forge to TTS</h1>
+      <span className="block text-xs text-stone-500 my-3">
+        This tool is very very beta/WIP! If you find any bugs, please report
+        them on the{" "}
+        <a
+          target="_blank"
+          className="text-blue-700 underline visited:text-purple-700"
+          href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
+        >
+          github issues page
+        </a>
+        .
+      </span>
+
       <div className="inputs flex flex-row space-x-5">
         <div className="w-full">
           <label className="">
@@ -636,7 +649,3 @@ ${activeSpecialRulesFromNotItemsList}`}
 }
 
 export default App;
-
-// need to put psychic into the name field
-// need to include all special rules in description cus could be army special rules
-// should we do some kind of "simplified" version for the big rules text? e.g make "Tough" fewer words?
