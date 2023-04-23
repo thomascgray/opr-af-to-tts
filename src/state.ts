@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { iAppState } from "./types";
+import { eNetworkRequestState, iAppState } from "./types";
 import { nanoid } from "nanoid";
 import * as _ from "lodash";
 
@@ -8,10 +8,13 @@ export const state = proxy<iAppState>({
   armySpecialRulesDict: [],
   armySpecialRulesDictNames: [],
   unitProfiles: [],
-  ui: {
+  ttsOutputConfig: {
     includeFullSpecialRulesText: true,
     modelWeaponOutputColour: "#e74c3c",
     modelSpecialRulesOutputColour: "#f1c40f",
+  },
+  networkState: {
+    fetchArmyList: eNetworkRequestState.IDLE,
   },
 });
 

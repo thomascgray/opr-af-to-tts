@@ -1,5 +1,12 @@
 import * as ArmyForgeTypes from "./army-forge-types";
 
+export enum eNetworkRequestState {
+  IDLE = "IDLE",
+  PENDING = "PENDING",
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR",
+}
+
 export interface iUnitProfile {
   id: string;
   originalName: string;
@@ -29,9 +36,12 @@ export interface iAppState {
   }[];
   armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
-  ui: {
+  ttsOutputConfig: {
     includeFullSpecialRulesText: boolean;
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;
+  };
+  networkState: {
+    fetchArmyList: eNetworkRequestState;
   };
 }
