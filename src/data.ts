@@ -16,6 +16,10 @@ export const coreSpecialRules = [
     description: "Targets get -X to Defense rolls when blocking hits.",
   },
   {
+    name: "Artillery",
+    description: "Counts as having Defense 2+ against shooting attacks",
+  },
+  {
     name: "Blast",
     description:
       "Ignores cover and multiplies hits by X, but can't deal more than one hit per model in the target unit.",
@@ -72,6 +76,11 @@ export const coreSpecialRules = [
   {
     name: "Lock-On",
     description: "Ignores all negative modifiers to hit rolls and range.",
+  },
+  {
+    name: "Phalanx",
+    description:
+      "Enemies charging units where all models have this rule don't count as having charged (for special rules), and they must take a dangerous terrain test before attacking (only roll up to as many dice as models with phalanx).",
   },
   {
     name: "Poison",
@@ -133,5 +142,12 @@ export const coreSpecialRules = [
     name: "Transport",
     description:
       "May transport up to X other models. Units embark by moving into contact, and may use any action to disembark, but only move by up to 6''. Units may also be deployed inside of a transport. If a unit is inside a transport when it is destroyed, then it takes a dangerous terrain test, is immediately Pinned, and surviving models must be placed within 6'' of the transport before it is removed.",
+  },
+  {
+    name: "Wizard",
+    description:
+      "May cast one spell during its activation, at any point before attacking. Pick a spell and a target in line of sight, and roll D6+X. If the result is equal or higher than the number in brackets, you may resolve the effects. Enemy wizards within 18'' and line of sight of the caster may roll D6+X at the same time, and if the result is higher the spell is blocked. Wizards may only either try to cast or try to block a spell each round.",
+    shortDescription:
+      "May cast one spell during its activation, at any point before attacking. See Wizard rule for details.",
   },
 ];

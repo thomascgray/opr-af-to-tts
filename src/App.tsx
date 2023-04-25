@@ -383,7 +383,8 @@ function App() {
                 <legend className="px-2 space-x-2 bg-white">
                   <span className="text-lg">{unit.originalName}</span>
                   <span className="text-sm">
-                    {unit.originalModelCountInUnit} models
+                    {unit.originalModelCountInUnit} model
+                    {unit.originalModelCountInUnit > 1 ? "s" : ""}
                   </span>
                 </legend>
 
