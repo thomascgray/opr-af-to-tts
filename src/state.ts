@@ -57,13 +57,13 @@ export const updateWeaponIncludeInName = (
         weapon.includeInName = includeInName;
 
         // if we're turning it on and the weapon is currently quantity 0, also set it to quantity 1
-        if (weapon.includeInName && weapon.quantity <= 0) {
-          weapon.quantity = 1;
-        }
-        // if we're turning it off and its currently set to quantity 1 exactly, set it to quantity 0
-        if (!weapon.includeInName && weapon.quantity >= 1) {
-          weapon.quantity = 0;
-        }
+        // if (weapon.includeInName && weapon.quantity <= 0) {
+        //   weapon.quantity = 1;
+        // }
+        // // if we're turning it off and its currently set to quantity 1 exactly, set it to quantity 0
+        // if (!weapon.includeInName && weapon.quantity >= 1) {
+        //   weapon.quantity = 0;
+        // }
       }
     }
   }
