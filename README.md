@@ -1,8 +1,8 @@
-# Grimdark Future Roster-To-TTS
+# OPR Roster-To-TTS
 
 _(Everything is very WIP, including the name!)_
 
-## Use the app right here: https://grimdark-future-af-to-tts.netlify.app/
+## Use the app right here: https://opr-af-to-tts.netlify.app/
 
 ### A webapp to take lists from [OPR's](https://www.onepagerules.com/) [Army Forge](https://army-forge.onepagerules.com/) and turn them into Tabletop Simulator object name and descriptions.
 
