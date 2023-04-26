@@ -41,10 +41,16 @@ export interface iAppState {
   armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
   ttsOutputConfig: {
-    includeFullSpecialRulesText: boolean;
+    includeCoreSpecialRules: boolean;
+    includeArmySpecialRules: boolean;
     useShorterVersionOfCoreSpecialRules: boolean;
+    includeFullSpecialRulesText: boolean;
+    includeWeaponsListInName: boolean;
+    includeSpecialRulesListInName: boolean;
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;
+    modelQuaOutputColour: string;
+    modelDefOutputColour: string;
   };
   networkState: {
     fetchArmyList: eNetworkRequestState;
