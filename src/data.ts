@@ -20,6 +20,11 @@ export const coreSpecialRules = [
     description: "Counts as having Defense 2+ against shooting attacks",
   },
   {
+    name: "Battle Standard",
+    description:
+      "Always counts as having dealt +1 wound for seeing who won melee.",
+  },
+  {
     name: "Blast",
     description:
       "Ignores cover and multiplies hits by X, but can't deal more than one hit per model in the target unit.",
@@ -78,6 +83,11 @@ export const coreSpecialRules = [
     description: "Ignores all negative modifiers to hit rolls and range.",
   },
   {
+    name: "Musician",
+    description:
+      "Always counts as having dealt +1 wound for seeing who won melee.",
+  },
+  {
     name: "Phalanx",
     description:
       "Enemies charging units where all models have this rule don't count as having charged (for special rules), and they must take a dangerous terrain test before attacking (only roll up to as many dice as models with phalanx).",
@@ -106,6 +116,11 @@ export const coreSpecialRules = [
     name: "Rending",
     description:
       "Unmodified results of 6 to hit count as having AP(4), and ignore the regeneration rule.",
+  },
+  {
+    name: "Sergeant",
+    description:
+      "One model gets +1 to hit when shooting or in melee (pick one).",
   },
   {
     name: "Scout",

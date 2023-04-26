@@ -15,6 +15,7 @@ import {
 import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
+import { OutputFAQ } from "./components/OutputFAQ";
 
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
@@ -120,7 +121,7 @@ const onGenerate = async () => {
   }
 
   const unitProfiles: iUnitProfile[] = data.units.map((unit) => {
-    return {
+    const unitProfile: iUnitProfile = {
       id: nanoid(),
       originalName: unit.name,
       originalModelCountInUnit: unit.size,
@@ -149,6 +150,31 @@ const onGenerate = async () => {
         },
       ],
     };
+
+    // hack to insert the special rules that DONT exist in the loadout
+    // into the loadout, so they are selectable
+    unit.selectedUpgrades.forEach((selectedUpgrade) => {
+      if (
+        unitProfile.models[0].loadout.find(
+          (l) => l.originalLoadout.label === selectedUpgrade.option.label
+        )
+      ) {
+        return;
+      }
+      unitProfile.models[0].loadout.push({
+        id: nanoid(),
+        includeInName: false,
+        name: pluralize.singular(selectedUpgrade.option.label),
+        definition: "",
+        quantity: 1,
+        originalLoadout: {
+          // @ts-ignore again, loadouts CAN have `content`
+          content: selectedUpgrade.option.gains,
+        },
+      });
+    });
+
+    return unitProfile;
   });
 
   state.armySpecialRulesDict = [
@@ -183,11 +209,12 @@ function App() {
   );
 
   return (
-    <div className="container mx-auto mb-28">
+    <div className="container mx-auto mt-4 mb-28">
       <h1 className="text-xl font-bold">OPR Army Forge to TTS</h1>
+      <Tutorial />
       <span className="block text-xs text-stone-500">
-        This tool is very very beta/WIP! If you find any bugs, please report
-        them on the{" "}
+        This tool is under active development! If you find any bugs, please
+        report them on the{" "}
         <a
           target="_blank"
           className="text-blue-700 underline visited:text-purple-700"
@@ -260,13 +287,9 @@ function App() {
         </span>
       </button>
 
-      <div className="flex flex-row space-x-2 mt-6">
-        <div className="text-sm w-1/2">
-          <Tutorial />
-        </div>
-        <div className="text-sm w-1/2">
-          <OutputOptions />
-        </div>
+      <div className="text-sm mt-6 space-y-2">
+        <OutputOptions />
+        <OutputFAQ />
       </div>
 
       <hr className="my-5" />
@@ -287,8 +310,8 @@ function App() {
                   </span>
                 </legend>
 
-                <div className="flex flex-col space-y-2">
-                  {unit.models.map((model) => {
+                <div className="flex flex-col space-y-6">
+                  {unit.models.map((model, modelIndex) => {
                     const equippedLoadoutItems = model.loadout.filter(
                       (w) => w.quantity > 0
                     );
@@ -324,7 +347,7 @@ function App() {
                       })
                       .join(", ");
 
-                    const loadoutActiveSpecialRules = _.uniqBy(
+                    const activeSpecialRulesFromLoadout = _.uniqBy(
                       _.flattenDeep([
                         // get all the special rules from the loadout
                         ...equippedLoadoutItems.map(
@@ -347,6 +370,21 @@ function App() {
                       ]),
                       "key"
                     ).map((x) => {
+                      const isCoreSpecialRule = coreSpecialRules.some(
+                        (csr) => csr.name === x.name
+                      );
+                      if (
+                        !stateView.ttsOutputConfig.includeArmySpecialRules &&
+                        !isCoreSpecialRule
+                      ) {
+                        return null;
+                      }
+                      if (
+                        !stateView.ttsOutputConfig.includeCoreSpecialRules &&
+                        isCoreSpecialRule
+                      ) {
+                        return null;
+                      }
                       const specialRule = stateView.armySpecialRulesDict.find(
                         (sr) => sr.name === x.name
                       );
@@ -374,6 +412,21 @@ function App() {
                       ]),
                       "key"
                     ).map((x) => {
+                      const isCoreSpecialRule = coreSpecialRules.some(
+                        (csr) => csr.name === x.name
+                      );
+                      if (
+                        !stateView.ttsOutputConfig.includeArmySpecialRules &&
+                        !isCoreSpecialRule
+                      ) {
+                        return null;
+                      }
+                      if (
+                        !stateView.ttsOutputConfig.includeCoreSpecialRules &&
+                        isCoreSpecialRule
+                      ) {
+                        return null;
+                      }
                       const specialRule = stateView.armySpecialRulesDict.find(
                         (sr) => sr.name === x.name
                       );
@@ -425,8 +478,11 @@ function App() {
                       .join("\r\n");
 
                     const activeSpecialRulesFromItemsList =
-                      loadoutActiveSpecialRules
+                      activeSpecialRulesFromLoadout
                         .map((w) => {
+                          if (w === null) {
+                            return "";
+                          }
                           if (
                             stateView.ttsOutputConfig
                               .includeFullSpecialRulesText
@@ -437,11 +493,15 @@ function App() {
                             return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
                           }
                         })
+                        .filter((x) => x !== "")
                         .join("\r\n");
 
                     const activeSpecialRulesFromNotItemsList =
                       activeSpecialRulesFromNotLoadout
                         .map((w) => {
+                          if (w === null) {
+                            return "";
+                          }
                           if (
                             stateView.ttsOutputConfig
                               .includeFullSpecialRulesText
@@ -452,15 +512,31 @@ function App() {
                             return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
                           }
                         })
+                        .filter((x) => x !== "")
                         .join("\r\n");
+
+                    const nameFieldLines = [
+                      `[b]${modelNameString}[/b]`,
+                      stateView.ttsOutputConfig.includeWeaponsListInName
+                        ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
+                        : "",
+                      stateView.ttsOutputConfig.includeSpecialRulesListInName
+                        ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
+                        : "",
+                      `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
+                    ].filter((x) => x !== "");
+
+                    const descriptionFieldLines: string[] = [
+                      `${activeWeaponsList}`,
+                      `${activeSpecialRulesFromItemsList}`,
+                      `${activeSpecialRulesFromNotItemsList}`,
+                    ];
 
                     return (
                       <div key={model.id} className="relative">
-                        <h3 className="text-base">
-                          <small className="text-[#e74c3c] font-bold">
-                            {activeWeaponNamesCommaSeparated}
-                          </small>
-                        </h3>
+                        <p className="text-sm">
+                          Model Definition {modelIndex + 1}
+                        </p>
                         {!model.isGenerated && (
                           <button
                             onClick={() => {
@@ -487,13 +563,21 @@ function App() {
                         )}
                         <div className="flex flex-row space-x-2">
                           <div className="editor-panel space-y-3 w-1/3">
-                            {/* weapons */}
-                            <div className="space-y-1 ">
+                            {/* loadout items */}
+                            <div className="space-y-1">
                               {model.loadout.map((loadoutItem) => {
                                 return (
                                   <div
                                     key={loadoutItem.id}
-                                    className="flex flex-row items-center justify-between bg-stone-300 py-1 px-2"
+                                    className={classnames(
+                                      "flex flex-row items-center justify-between  py-1 px-2",
+                                      {
+                                        "bg-stone-100 text-stone-500":
+                                          loadoutItem.quantity <= 0,
+                                        "bg-stone-300 text-black":
+                                          loadoutItem.quantity >= 1,
+                                      }
+                                    )}
                                   >
                                     <span className="flex flex-row items-center space-x-1 ">
                                       <span className="font-bold">
@@ -504,7 +588,7 @@ function App() {
 
                                     <span className="flex flex-row items-center space-x-2">
                                       <input
-                                        className="w-10 p-1"
+                                        className="w-12 p-1 text-lg font-bold text-center"
                                         min={0}
                                         onChange={(e) => {
                                           const value = parseInt(
@@ -557,18 +641,17 @@ function App() {
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={`[b]${modelNameString}[/b]
-[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]
-[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]
-[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`}
+                                value={nameFieldLines
+                                  .filter((x) => x !== "")
+                                  .join("\r\n")}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={`${activeWeaponsList}
-${activeSpecialRulesFromItemsList}
-${activeSpecialRulesFromNotItemsList}`}
+                                value={descriptionFieldLines
+                                  .filter((x) => x !== "")
+                                  .join("\r\n")}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                             </div>

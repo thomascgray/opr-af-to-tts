@@ -1,74 +1,88 @@
 import { state } from "../state";
 import { useSnapshot } from "valtio";
-
+import classnames from "classnames";
 export const OutputOptions = () => {
   const stateView = useSnapshot(state, { sync: true });
   return (
-    <details className="">
+    <details>
       <summary className="cursor-pointer">Output Options</summary>
       <div className="py-2 px-4 bg-stone-100 space-y-4">
-        <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeCoreSpecialRules}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeCoreSpecialRules =
-                !stateView.ttsOutputConfig.includeCoreSpecialRules;
-            }}
-          />
-          <div className="w-10/12">
-            <p className="font-bold">Include Core Special Rules</p>
-            <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the relevant
-              core special rules.
-            </p>
-          </div>
-        </label>
+        <div className="flex flex-row items-start">
+          <div className="space-y-4 w-1/2">
+            <label className="flex flex-row items-center space-x-4">
+              <input
+                checked={stateView.ttsOutputConfig.includeCoreSpecialRules}
+                className="w-5 h-5"
+                type="checkbox"
+                onChange={(e) => {
+                  state.ttsOutputConfig.includeCoreSpecialRules =
+                    !stateView.ttsOutputConfig.includeCoreSpecialRules;
+                }}
+              />
+              <div className="w-10/12">
+                <p className="font-bold">Include Core Special Rules</p>
+                <p className="text-xs">
+                  If enabled, the TTS "descripton" outputs will include the
+                  relevant core special rules.
+                </p>
+              </div>
+            </label>
 
-        <label className="flex flex-row items-center space-x-4 ml-4">
-          <input
-            checked={
-              stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules
-            }
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.useShorterVersionOfCoreSpecialRules =
-                !stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules;
-            }}
-          />
-          <div className="w-10/12">
-            <p className="font-bold">
-              Use Shortened Version of Core Special Rules Text
-            </p>
-            <p className="text-xs">
-              If enabled, special rule's text for "core" special rules will be a
-              "shortened" version of that rule, to stop the TTS description
-              being super long on models that have lots of special rules.
-              Disable this to output the full special rules text.
-            </p>
+            <label
+              className={classnames(
+                "flex flex-row items-center space-x-4 ml-4",
+                {
+                  "opacity-50":
+                    !stateView.ttsOutputConfig.includeCoreSpecialRules,
+                }
+              )}
+            >
+              <input
+                checked={
+                  stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules
+                }
+                className="w-5 h-5"
+                type="checkbox"
+                onChange={(e) => {
+                  state.ttsOutputConfig.useShorterVersionOfCoreSpecialRules =
+                    !stateView.ttsOutputConfig
+                      .useShorterVersionOfCoreSpecialRules;
+                }}
+              />
+              <div className="w-10/12">
+                <p className="font-bold">
+                  Use Shortened Version of Core Special Rules Text
+                </p>
+                <p className="text-xs">
+                  If enabled, special rule's text for "core" special rules will
+                  be a "shortened" version of that rule, to stop the TTS
+                  description being super long on models that have lots of
+                  special rules. Disable this to output the full special rules
+                  text.
+                </p>
+              </div>
+            </label>
           </div>
-        </label>
 
-        <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeArmySpecialRules}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeArmySpecialRules =
-                !stateView.ttsOutputConfig.includeArmySpecialRules;
-            }}
-          />
-          <div className="w-10/12">
-            <p className="font-bold">Include Army Special Rules</p>
-            <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the relevant
-              army special rules.
-            </p>
-          </div>
-        </label>
+          <label className="flex flex-row items-center space-x-4 w-1/2">
+            <input
+              checked={stateView.ttsOutputConfig.includeArmySpecialRules}
+              className="w-5 h-5"
+              type="checkbox"
+              onChange={(e) => {
+                state.ttsOutputConfig.includeArmySpecialRules =
+                  !stateView.ttsOutputConfig.includeArmySpecialRules;
+              }}
+            />
+            <div className="w-10/12">
+              <p className="font-bold">Include Army Special Rules</p>
+              <p className="text-xs">
+                If enabled, the TTS "descripton" outputs will include the
+                relevant army special rules.
+              </p>
+            </div>
+          </label>
+        </div>
 
         <label className="flex flex-row items-center space-x-4">
           <input
