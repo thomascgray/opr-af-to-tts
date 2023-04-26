@@ -9,25 +9,24 @@ export const OutputOptions = () => {
       <div className="py-2 px-4 bg-stone-100 space-y-4">
         <label className="flex flex-row items-center space-x-4">
           <input
-            checked={stateView.ttsOutputConfig.includeFullSpecialRulesText}
+            checked={stateView.ttsOutputConfig.includeCoreSpecialRules}
             className="w-5 h-5"
             type="checkbox"
             onChange={(e) => {
-              state.ttsOutputConfig.includeFullSpecialRulesText =
-                !stateView.ttsOutputConfig.includeFullSpecialRulesText;
+              state.ttsOutputConfig.includeCoreSpecialRules =
+                !stateView.ttsOutputConfig.includeCoreSpecialRules;
             }}
           />
-          <div>
-            <p className="font-bold">Include Full Special Rules Text</p>
+          <div className="w-10/12">
+            <p className="font-bold">Include Core Special Rules</p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" output will include the full
-              rules text for each special rule on a model. If disabled, only the
-              special rule's name will be included.
+              If enabled, the TTS "descripton" outputs will include the relevant
+              core special rules.
             </p>
           </div>
         </label>
 
-        <label className="flex flex-row items-center space-x-4">
+        <label className="flex flex-row items-center space-x-4 ml-4">
           <input
             checked={
               stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules
@@ -39,7 +38,7 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules;
             }}
           />
-          <div>
+          <div className="w-10/12">
             <p className="font-bold">
               Use Shortened Version of Core Special Rules Text
             </p>
@@ -48,6 +47,121 @@ export const OutputOptions = () => {
               "shortened" version of that rule, to stop the TTS description
               being super long on models that have lots of special rules.
               Disable this to output the full special rules text.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeArmySpecialRules}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeArmySpecialRules =
+                !stateView.ttsOutputConfig.includeArmySpecialRules;
+            }}
+          />
+          <div className="w-10/12">
+            <p className="font-bold">Include Army Special Rules</p>
+            <p className="text-xs">
+              If enabled, the TTS "descripton" outputs will include the relevant
+              army special rules.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeFullSpecialRulesText}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeFullSpecialRulesText =
+                !stateView.ttsOutputConfig.includeFullSpecialRulesText;
+            }}
+          />
+          <div className="w-10/12">
+            <p className="font-bold">Include Full Special Rules Text</p>
+            <p className="text-xs">
+              If enabled, the TTS "descripton" output will include the full
+              rules text for each special rule on a model. If disabled, only the
+              special rule's name will be included.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeWeaponsListInName}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeWeaponsListInName =
+                !stateView.ttsOutputConfig.includeWeaponsListInName;
+            }}
+          />
+          <div className="w-10/12">
+            <p className="font-bold">Include "Loadout List" in model name</p>
+            <p className="text-xs">
+              If enabled, the TTS "name" output will include a comma separated,
+              colour coded list of the model's equipped loadout under the
+              model's name.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeSpecialRulesListInName}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeSpecialRulesListInName =
+                !stateView.ttsOutputConfig.includeSpecialRulesListInName;
+            }}
+          />
+          <div className="w-10/12">
+            <p className="font-bold">
+              Include "Special Rules List" in model name
+            </p>
+            <p className="text-xs">
+              If enabled, the TTS "name" output will include a comma separated,
+              colour coded list of the model's relevant special rules under the
+              model's name.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            className="border border-stone-500 px-2 py-1 w-20"
+            value={stateView.ttsOutputConfig.modelQuaOutputColour}
+            onChange={(e) => {
+              state.ttsOutputConfig.modelQuaOutputColour =
+                e.currentTarget.value;
+            }}
+          />
+          <div>
+            <p className="font-bold">Model Quality Output Colour</p>
+            <p className="text-xs">
+              HEX code for the model's quality value in the TTS output.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            className="border border-stone-500 px-2 py-1 w-20"
+            value={stateView.ttsOutputConfig.modelDefOutputColour}
+            onChange={(e) => {
+              state.ttsOutputConfig.modelDefOutputColour =
+                e.currentTarget.value;
+            }}
+          />
+          <div>
+            <p className="font-bold">Model Defense Output Colour</p>
+            <p className="text-xs">
+              HEX code for the model's defense value in the TTS output.
             </p>
           </div>
         </label>

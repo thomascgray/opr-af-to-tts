@@ -173,6 +173,15 @@ function App() {
   const TTS_SPECIAL_RULES_COLOUR =
     stateView.ttsOutputConfig.modelSpecialRulesOutputColour.replace("#", "");
 
+  const TTS_QUA_COLOUR = stateView.ttsOutputConfig.modelQuaOutputColour.replace(
+    "#",
+    ""
+  );
+  const TTS_DEF_COLOUR = stateView.ttsOutputConfig.modelDefOutputColour.replace(
+    "#",
+    ""
+  );
+
   return (
     <div className="container mx-auto mb-28">
       <h1 className="text-xl font-bold">OPR Army Forge to TTS</h1>
@@ -551,7 +560,7 @@ function App() {
                                 value={`[b]${modelNameString}[/b]
 [sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]
 [sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]
-[2ecc71][b]${model.qua}[/b]+[-] / [3498db][b]${model.def}[/b]+[-]`}
+[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                               <textarea

@@ -10,9 +10,15 @@ export const state = proxy<iAppState>({
   unitProfiles: [],
   ttsOutputConfig: {
     includeFullSpecialRulesText: true,
+    includeCoreSpecialRules: true,
+    includeArmySpecialRules: true,
+    includeWeaponsListInName: true,
+    includeSpecialRulesListInName: true,
     useShorterVersionOfCoreSpecialRules: true,
     modelWeaponOutputColour: "#e74c3c",
     modelSpecialRulesOutputColour: "#f1c40f",
+    modelQuaOutputColour: "#2ecc71",
+    modelDefOutputColour: "#3498db",
   },
   networkState: {
     fetchArmyList: eNetworkRequestState.IDLE,
