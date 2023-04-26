@@ -210,8 +210,8 @@ function App() {
 
   return (
     <div className="container mx-auto mt-4 mb-28">
-      <h1 className="text-xl font-bold">OPR Army Forge to TTS</h1>
-      <Tutorial />
+      <h1 className="text-2xl font-bold">OPR Army Forge to TTS</h1>
+
       <span className="block text-xs text-stone-500">
         This tool is under active development! If you find any bugs, please
         report them on the{" "}
@@ -225,10 +225,10 @@ function App() {
         .
       </span>
 
-      <div className="inputs flex flex-row space-x-5">
+      <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
-          <label className="">
-            <span className="block">Army Forge Share Link</span>
+          <label>
+            <span className="block font-bold">Army Forge Share Link</span>
             <span className="block text-xs text-stone-500">
               <a
                 target="_blank"
@@ -288,6 +288,7 @@ function App() {
       </button>
 
       <div className="text-sm mt-6 space-y-2">
+        <Tutorial />
         <OutputOptions />
         <OutputFAQ />
       </div>
