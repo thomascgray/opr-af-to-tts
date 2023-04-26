@@ -136,6 +136,12 @@ export const OutputOptions = () => {
         </label>
 
         <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor: stateView.ttsOutputConfig.modelQuaOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
           <input
             className="border border-stone-500 px-2 py-1 w-20"
             value={stateView.ttsOutputConfig.modelQuaOutputColour}
@@ -144,8 +150,9 @@ export const OutputOptions = () => {
                 e.currentTarget.value;
             }}
           />
+
           <div>
-            <p className="font-bold">Model Quality Output Colour</p>
+            <p className="font-bold">Model Quality Stat Output Colour</p>
             <p className="text-xs">
               HEX code for the model's quality value in the TTS output.
             </p>
@@ -153,6 +160,12 @@ export const OutputOptions = () => {
         </label>
 
         <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor: stateView.ttsOutputConfig.modelDefOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
           <input
             className="border border-stone-500 px-2 py-1 w-20"
             value={stateView.ttsOutputConfig.modelDefOutputColour}
@@ -162,7 +175,7 @@ export const OutputOptions = () => {
             }}
           />
           <div>
-            <p className="font-bold">Model Defense Output Colour</p>
+            <p className="font-bold">Model Defense Stat Output Colour</p>
             <p className="text-xs">
               HEX code for the model's defense value in the TTS output.
             </p>
@@ -170,6 +183,13 @@ export const OutputOptions = () => {
         </label>
 
         <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor:
+                stateView.ttsOutputConfig.modelWeaponOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
           <input
             className="border border-stone-500 px-2 py-1 w-20"
             value={stateView.ttsOutputConfig.modelWeaponOutputColour}
@@ -179,13 +199,21 @@ export const OutputOptions = () => {
             }}
           />
           <div>
-            <p className="font-bold">Model Weapon Output Colour</p>
+            <p className="font-bold">Model Loadout Output Colour</p>
             <p className="text-xs">
-              HEX code for the model's weapons details in the TTS output.
+              HEX code for the model's loadouts details in the TTS output.
             </p>
           </div>
         </label>
+
         <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor:
+                stateView.ttsOutputConfig.modelSpecialRulesOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
           <input
             className="border border-stone-500 px-2 py-1 w-20"
             value={stateView.ttsOutputConfig.modelSpecialRulesOutputColour}
