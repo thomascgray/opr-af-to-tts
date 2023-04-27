@@ -15,13 +15,14 @@ export const state = proxy<iAppState>({
     includeWeaponsListInName: true,
     includeSpecialRulesListInName: true,
     useShorterVersionOfCoreSpecialRules: true,
-    modelWeaponOutputColour: "#e74c3c",
-    modelSpecialRulesOutputColour: "#f1c40f",
-    modelQuaOutputColour: "#2ecc71",
-    modelDefOutputColour: "#3498db",
+    modelWeaponOutputColour: "#ef4444",
+    modelSpecialRulesOutputColour: "#f97316",
+    modelQuaOutputColour: "#4ade80",
+    modelDefOutputColour: "#06b6d4",
   },
   networkState: {
-    fetchArmyList: eNetworkRequestState.IDLE,
+    fetchArmyFromArmyForge: eNetworkRequestState.IDLE,
+    saveArmyListAsBBToDB: eNetworkRequestState.IDLE,
   },
 });
 

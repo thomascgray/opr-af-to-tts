@@ -7,28 +7,35 @@ export enum eNetworkRequestState {
   ERROR = "ERROR",
 }
 
+export interface iUnitProfileModelTTSOutput {
+  nameOutput: string;
+  descriptionOutput: string;
+}
+
+export interface iUnitProfileModel {
+  id: string;
+  name: string;
+  originalName: string;
+  qua: number;
+  def: number;
+  isGenerated: boolean;
+  originalSpecialRules: any[];
+  loadout: {
+    id: string;
+    name: string;
+    definition: string;
+    quantity: number;
+    includeInName: boolean;
+    originalLoadout: ArmyForgeTypes.IUpgradeGains;
+  }[];
+}
+
 export interface iUnitProfile {
   id: string;
   originalName: string;
   originalUnit: ArmyForgeTypes.ISelectedUnit;
   originalModelCountInUnit: number;
-  models: {
-    id: string;
-    name: string;
-    originalName: string;
-    qua: number;
-    def: number;
-    isGenerated: boolean;
-    originalSpecialRules: any[];
-    loadout: {
-      id: string;
-      name: string;
-      definition: string;
-      quantity: number;
-      includeInName: boolean;
-      originalLoadout: ArmyForgeTypes.IUpgradeGains;
-    }[];
-  }[];
+  models: iUnitProfileModel[];
 }
 
 export interface iAppState {
@@ -53,6 +60,7 @@ export interface iAppState {
     modelDefOutputColour: string;
   };
   networkState: {
-    fetchArmyList: eNetworkRequestState;
+    fetchArmyFromArmyForge: eNetworkRequestState;
+    saveArmyListAsBBToDB: eNetworkRequestState;
   };
 }

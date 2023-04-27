@@ -3,7 +3,12 @@ import pluralize from "pluralize";
 import { nanoid } from "nanoid";
 import { useSnapshot } from "valtio";
 import * as ArmyForgeTypes from "./army-forge-types";
-import { eNetworkRequestState, iUnitProfile } from "./types";
+import {
+  eNetworkRequestState,
+  iAppState,
+  iUnitProfile,
+  iUnitProfileModel,
+} from "./types";
 import { coreSpecialRules } from "./data";
 import {
   state,
@@ -16,6 +21,7 @@ import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
 import { OutputFAQ } from "./components/OutputFAQ";
+import ky from "ky";
 
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
@@ -94,8 +100,8 @@ const generateLoadoutItemDefinition = (
   return `(${chunks.join(", ")})`;
 };
 
-const onGenerate = async () => {
-  state.networkState.fetchArmyList = eNetworkRequestState.PENDING;
+const onGenerateDefinitions = async () => {
+  state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.PENDING;
   const id = extractIdFromUrl(state.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
 
@@ -106,15 +112,15 @@ const onGenerate = async () => {
       );
       // @ts-ignore
       if (data && data.error) {
-        state.networkState.fetchArmyList = eNetworkRequestState.ERROR;
+        state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
         return;
       }
-      state.networkState.fetchArmyList = eNetworkRequestState.SUCCESS;
+      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.SUCCESS;
     } catch (e) {
-      state.networkState.fetchArmyList = eNetworkRequestState.ERROR;
+      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
     }
   } else {
-    state.networkState.fetchArmyList = eNetworkRequestState.IDLE;
+    state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
   }
   if (!data) {
     return;
@@ -191,22 +197,257 @@ const onGenerate = async () => {
   state.unitProfiles = unitProfiles;
 };
 
+const onGenerateShareableId = async () => {
+  const modelOutputs: any[] = [];
+
+  state.unitProfiles.forEach((unitProfile) => {
+    unitProfile.models.forEach((model) => {
+      const [name, description] = generateUnitOutput(
+        unitProfile,
+        model,
+        state.ttsOutputConfig
+      );
+
+      modelOutputs.push({
+        unitName: unitProfile.originalName,
+        name,
+        description,
+      });
+    });
+  });
+
+  let data;
+
+  try {
+    data = await ky
+      .post("/.netlify/functions/save-list", {
+        json: {
+          list_json: modelOutputs,
+        },
+      })
+      .json();
+  } catch (e) {
+    console.error(e);
+  }
+
+  console.log("data", JSON.stringify(data, null, 2));
+};
+
+const generateUnitOutput = (
+  unit: iUnitProfile,
+  model: iUnitProfileModel,
+  ttsOutputConfig: iAppState["ttsOutputConfig"]
+) => {
+  const TTS_WEAPON_COLOUR = ttsOutputConfig.modelWeaponOutputColour.replace(
+    "#",
+    ""
+  );
+  const TTS_SPECIAL_RULES_COLOUR =
+    ttsOutputConfig.modelSpecialRulesOutputColour.replace("#", "");
+
+  const TTS_QUA_COLOUR = ttsOutputConfig.modelQuaOutputColour.replace("#", "");
+  const TTS_DEF_COLOUR = ttsOutputConfig.modelDefOutputColour.replace("#", "");
+
+  const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
+
+  let modelNameString = `${model.name}`;
+  const loadoutNames = equippedLoadoutItems
+    .filter((l) => l.includeInName)
+    .map((l) => {
+      if (l.quantity > 1) {
+        return `${l.quantity}x ${l.name}`;
+      }
+      return l.name;
+    });
+  if (loadoutNames.length >= 1) {
+    modelNameString += ` w/ ${loadoutNames.join(", ")}`;
+  }
+
+  const modelSpecialRules = [
+    ...model.originalSpecialRules,
+    ...model.loadout
+      .filter((l) => l.originalLoadout.type === "ArmyBookItem")
+      // @ts-ignore loadouts can definitely have content
+      .map((l) => l.originalLoadout.content)
+      .flat(),
+  ]
+    .map((sr) => {
+      if (sr.rating) {
+        return `${sr.name}(${sr.rating})`;
+      }
+      return sr.name;
+    })
+    .join(", ");
+
+  const activeSpecialRulesFromLoadout = _.uniqBy(
+    _.flattenDeep([
+      // get all the special rules from the loadout
+      ...equippedLoadoutItems.map((l) => l.originalLoadout.specialRules || []),
+      // get all the content from the loadout THAT is a special rule
+      ...equippedLoadoutItems
+        // @ts-ignore loadouts can definitely have content
+        .map((l) => l.originalLoadout.content || [])
+        .flat()
+        .filter((c) => c.type === "ArmyBookRule"),
+      // AND get all the special rules from all the contents individually
+      ...equippedLoadoutItems
+        // @ts-ignore loadouts can definitely have content
+        .map((l) => l.originalLoadout.content || [])
+        .flat()
+        .map((c) => c.specialRules || [])
+        .flat()
+        .filter((sr) => sr.type === "ArmyBookRule"),
+    ]),
+    "key"
+  ).map((x) => {
+    const isCoreSpecialRule = coreSpecialRules.some(
+      (csr) => csr.name === x.name
+    );
+    if (!ttsOutputConfig.includeArmySpecialRules && !isCoreSpecialRule) {
+      return null;
+    }
+    if (!ttsOutputConfig.includeCoreSpecialRules && isCoreSpecialRule) {
+      return null;
+    }
+    const specialRule = state.armySpecialRulesDict.find(
+      (sr) => sr.name === x.name
+    );
+    let definition = "";
+    if (
+      ttsOutputConfig.useShorterVersionOfCoreSpecialRules &&
+      specialRule?.shortDescription
+    ) {
+      definition = specialRule?.shortDescription || "";
+    } else {
+      definition = specialRule?.description || "";
+    }
+    return {
+      id: nanoid(),
+      name: `${x.name}`,
+      definition,
+    };
+  });
+
+  const activeSpecialRulesFromNotLoadout = _.uniqBy(
+    _.flattenDeep([
+      // get all the special rules from the loadout
+      ...unit.models.map((m) => m.originalSpecialRules || []),
+    ]),
+    "key"
+  ).map((x) => {
+    const isCoreSpecialRule = coreSpecialRules.some(
+      (csr) => csr.name === x.name
+    );
+    if (!ttsOutputConfig.includeArmySpecialRules && !isCoreSpecialRule) {
+      return null;
+    }
+    if (!ttsOutputConfig.includeCoreSpecialRules && isCoreSpecialRule) {
+      return null;
+    }
+    const specialRule = state.armySpecialRulesDict.find(
+      (sr) => sr.name === x.name
+    );
+    let definition = "";
+    if (
+      ttsOutputConfig.useShorterVersionOfCoreSpecialRules &&
+      specialRule?.shortDescription
+    ) {
+      definition = specialRule?.shortDescription || "";
+    } else {
+      definition = specialRule?.description || "";
+    }
+    return {
+      id: nanoid(),
+      name: `${x.name}`,
+      definition,
+    };
+  });
+
+  const activeWeaponNamesCommaSeparated = equippedLoadoutItems
+    .map((x) => {
+      if (x.quantity > 1) {
+        return `${x.quantity}x ${x.name}`;
+      }
+      return `${x.name}`;
+    })
+    .join(", ");
+
+  // this should somehow include things like gundrones, where its an ITEM that gives you weapons
+  const activeWeaponsList = _.flattenDeep([
+    ...equippedLoadoutItems.filter(
+      (l) => l.originalLoadout.type === "ArmyBookWeapon"
+    ),
+    ...equippedLoadoutItems
+      // @ts-ignore loadouts can definitely have content
+      .map((l) => l.originalLoadout.content || [])
+      .flat()
+      .filter((c) => c.type === "ArmyBookWeapon")
+      .map((ci) => ({
+        name: ci.name,
+        definition: ci.label.replace(ci.name, "").trim(),
+      })),
+  ])
+    .map((w) => {
+      return `[${TTS_WEAPON_COLOUR}]${w.name}[-]
+[sup]${w.definition}[/sup]`;
+    })
+    .join("\r\n");
+
+  const activeSpecialRulesFromItemsList = activeSpecialRulesFromLoadout
+    .map((w) => {
+      if (w === null) {
+        return "";
+      }
+      if (ttsOutputConfig.includeFullSpecialRulesText) {
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
+[sup]${w.definition}[/sup]`;
+      } else {
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
+      }
+    })
+    .filter((x) => x !== "")
+    .join("\r\n");
+
+  const activeSpecialRulesFromNotItemsList = activeSpecialRulesFromNotLoadout
+    .map((w) => {
+      if (w === null) {
+        return "";
+      }
+      if (ttsOutputConfig.includeFullSpecialRulesText) {
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
+[sup]${w.definition}[/sup]`;
+      } else {
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
+      }
+    })
+    .filter((x) => x !== "")
+    .join("\r\n");
+
+  const nameLines = [
+    `[b]${modelNameString}[/b]`,
+    ttsOutputConfig.includeWeaponsListInName
+      ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
+      : "",
+    ttsOutputConfig.includeSpecialRulesListInName
+      ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
+      : "",
+    `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
+  ].filter((x) => x !== "");
+
+  const descriptionFieldLines: string[] = [
+    `${activeWeaponsList}`,
+    `${activeSpecialRulesFromItemsList}`,
+    `${activeSpecialRulesFromNotItemsList}`,
+  ];
+
+  return [
+    nameLines.filter((x) => x !== "").join("\r\n"),
+    descriptionFieldLines.filter((x) => x !== "").join("\r\n"),
+  ];
+};
+
 function App() {
   const stateView = useSnapshot(state, { sync: true });
-
-  const TTS_WEAPON_COLOUR =
-    stateView.ttsOutputConfig.modelWeaponOutputColour.replace("#", "");
-  const TTS_SPECIAL_RULES_COLOUR =
-    stateView.ttsOutputConfig.modelSpecialRulesOutputColour.replace("#", "");
-
-  const TTS_QUA_COLOUR = stateView.ttsOutputConfig.modelQuaOutputColour.replace(
-    "#",
-    ""
-  );
-  const TTS_DEF_COLOUR = stateView.ttsOutputConfig.modelDefOutputColour.replace(
-    "#",
-    ""
-  );
 
   return (
     <div className="container mx-auto mt-4 mb-28">
@@ -254,18 +495,18 @@ function App() {
       </div>
 
       <button
-        onClick={onGenerate}
+        onClick={onGenerateDefinitions}
         className={classnames(
           " bg-stone-500 border-stone-600 text-white border px-4 py-2 hover:scale-105 active:scale-95",
           {
             "opacity-80":
-              stateView.networkState.fetchArmyList ===
+              stateView.networkState.fetchArmyFromArmyForge ===
               eNetworkRequestState.PENDING,
           }
         )}
       >
         <span className="flex flex-row space-x-2 items-center">
-          {stateView.networkState.fetchArmyList ===
+          {stateView.networkState.fetchArmyFromArmyForge ===
             eNetworkRequestState.PENDING && (
             <svg
               className="animate-spin"
@@ -313,226 +554,11 @@ function App() {
 
                 <div className="flex flex-col space-y-6">
                   {unit.models.map((model, modelIndex) => {
-                    const equippedLoadoutItems = model.loadout.filter(
-                      (w) => w.quantity > 0
+                    const [nameOutput, descriptionOutput] = generateUnitOutput(
+                      unit as iUnitProfile,
+                      model as iUnitProfileModel,
+                      stateView.ttsOutputConfig
                     );
-
-                    let modelNameString = `${model.name}`;
-                    const loadoutNames = equippedLoadoutItems
-                      .filter((l) => l.includeInName)
-                      .map((l) => {
-                        if (l.quantity > 1) {
-                          return `${l.quantity}x ${l.name}`;
-                        }
-                        return l.name;
-                      });
-                    if (loadoutNames.length >= 1) {
-                      modelNameString += ` w/ ${loadoutNames.join(", ")}`;
-                    }
-
-                    const modelSpecialRules = [
-                      ...model.originalSpecialRules,
-                      ...model.loadout
-                        .filter(
-                          (l) => l.originalLoadout.type === "ArmyBookItem"
-                        )
-                        // @ts-ignore loadouts can definitely have content
-                        .map((l) => l.originalLoadout.content)
-                        .flat(),
-                    ]
-                      .map((sr) => {
-                        if (sr.rating) {
-                          return `${sr.name}(${sr.rating})`;
-                        }
-                        return sr.name;
-                      })
-                      .join(", ");
-
-                    const activeSpecialRulesFromLoadout = _.uniqBy(
-                      _.flattenDeep([
-                        // get all the special rules from the loadout
-                        ...equippedLoadoutItems.map(
-                          (l) => l.originalLoadout.specialRules || []
-                        ),
-                        // get all the content from the loadout THAT is a special rule
-                        ...equippedLoadoutItems
-                          // @ts-ignore loadouts can definitely have content
-                          .map((l) => l.originalLoadout.content || [])
-                          .flat()
-                          .filter((c) => c.type === "ArmyBookRule"),
-                        // AND get all the special rules from all the contents individually
-                        ...equippedLoadoutItems
-                          // @ts-ignore loadouts can definitely have content
-                          .map((l) => l.originalLoadout.content || [])
-                          .flat()
-                          .map((c) => c.specialRules || [])
-                          .flat()
-                          .filter((sr) => sr.type === "ArmyBookRule"),
-                      ]),
-                      "key"
-                    ).map((x) => {
-                      const isCoreSpecialRule = coreSpecialRules.some(
-                        (csr) => csr.name === x.name
-                      );
-                      if (
-                        !stateView.ttsOutputConfig.includeArmySpecialRules &&
-                        !isCoreSpecialRule
-                      ) {
-                        return null;
-                      }
-                      if (
-                        !stateView.ttsOutputConfig.includeCoreSpecialRules &&
-                        isCoreSpecialRule
-                      ) {
-                        return null;
-                      }
-                      const specialRule = stateView.armySpecialRulesDict.find(
-                        (sr) => sr.name === x.name
-                      );
-                      let definition = "";
-                      if (
-                        stateView.ttsOutputConfig
-                          .useShorterVersionOfCoreSpecialRules &&
-                        specialRule?.shortDescription
-                      ) {
-                        definition = specialRule?.shortDescription || "";
-                      } else {
-                        definition = specialRule?.description || "";
-                      }
-                      return {
-                        id: nanoid(),
-                        name: `${x.name}`,
-                        definition,
-                      };
-                    });
-
-                    const activeSpecialRulesFromNotLoadout = _.uniqBy(
-                      _.flattenDeep([
-                        // get all the special rules from the loadout
-                        ...unit.models.map((m) => m.originalSpecialRules || []),
-                      ]),
-                      "key"
-                    ).map((x) => {
-                      const isCoreSpecialRule = coreSpecialRules.some(
-                        (csr) => csr.name === x.name
-                      );
-                      if (
-                        !stateView.ttsOutputConfig.includeArmySpecialRules &&
-                        !isCoreSpecialRule
-                      ) {
-                        return null;
-                      }
-                      if (
-                        !stateView.ttsOutputConfig.includeCoreSpecialRules &&
-                        isCoreSpecialRule
-                      ) {
-                        return null;
-                      }
-                      const specialRule = stateView.armySpecialRulesDict.find(
-                        (sr) => sr.name === x.name
-                      );
-                      let definition = "";
-                      if (
-                        stateView.ttsOutputConfig
-                          .useShorterVersionOfCoreSpecialRules &&
-                        specialRule?.shortDescription
-                      ) {
-                        definition = specialRule?.shortDescription || "";
-                      } else {
-                        definition = specialRule?.description || "";
-                      }
-                      return {
-                        id: nanoid(),
-                        name: `${x.name}`,
-                        definition,
-                      };
-                    });
-
-                    const activeWeaponNamesCommaSeparated = equippedLoadoutItems
-                      .map((x) => {
-                        if (x.quantity > 1) {
-                          return `${x.quantity}x ${x.name}`;
-                        }
-                        return `${x.name}`;
-                      })
-                      .join(", ");
-
-                    // this should somehow include things like gundrones, where its an ITEM that gives you weapons
-                    const activeWeaponsList = _.flattenDeep([
-                      ...equippedLoadoutItems.filter(
-                        (l) => l.originalLoadout.type === "ArmyBookWeapon"
-                      ),
-                      ...equippedLoadoutItems
-                        // @ts-ignore loadouts can definitely have content
-                        .map((l) => l.originalLoadout.content || [])
-                        .flat()
-                        .filter((c) => c.type === "ArmyBookWeapon")
-                        .map((ci) => ({
-                          name: ci.name,
-                          definition: ci.label.replace(ci.name, "").trim(),
-                        })),
-                    ])
-                      .map((w) => {
-                        return `[${TTS_WEAPON_COLOUR}]${w.name}[-]
-[sup]${w.definition}[/sup]`;
-                      })
-                      .join("\r\n");
-
-                    const activeSpecialRulesFromItemsList =
-                      activeSpecialRulesFromLoadout
-                        .map((w) => {
-                          if (w === null) {
-                            return "";
-                          }
-                          if (
-                            stateView.ttsOutputConfig
-                              .includeFullSpecialRulesText
-                          ) {
-                            return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
-[sup]${w.definition}[/sup]`;
-                          } else {
-                            return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
-                          }
-                        })
-                        .filter((x) => x !== "")
-                        .join("\r\n");
-
-                    const activeSpecialRulesFromNotItemsList =
-                      activeSpecialRulesFromNotLoadout
-                        .map((w) => {
-                          if (w === null) {
-                            return "";
-                          }
-                          if (
-                            stateView.ttsOutputConfig
-                              .includeFullSpecialRulesText
-                          ) {
-                            return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
-[sup]${w.definition}[/sup]`;
-                          } else {
-                            return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
-                          }
-                        })
-                        .filter((x) => x !== "")
-                        .join("\r\n");
-
-                    const nameFieldLines = [
-                      `[b]${modelNameString}[/b]`,
-                      stateView.ttsOutputConfig.includeWeaponsListInName
-                        ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
-                        : "",
-                      stateView.ttsOutputConfig.includeSpecialRulesListInName
-                        ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
-                        : "",
-                      `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
-                    ].filter((x) => x !== "");
-
-                    const descriptionFieldLines: string[] = [
-                      `${activeWeaponsList}`,
-                      `${activeSpecialRulesFromItemsList}`,
-                      `${activeSpecialRulesFromNotItemsList}`,
-                    ];
-
                     return (
                       <div key={model.id} className="relative">
                         <p className="text-sm">
@@ -642,17 +668,13 @@ function App() {
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={nameFieldLines
-                                  .filter((x) => x !== "")
-                                  .join("\r\n")}
+                                value={nameOutput}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={descriptionFieldLines
-                                  .filter((x) => x !== "")
-                                  .join("\r\n")}
+                                value={descriptionOutput}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                             </div>
@@ -666,6 +688,41 @@ function App() {
             );
           }
         )}
+
+        {/* after army builder */}
+        <button
+          onClick={onGenerateShareableId}
+          className={classnames(
+            " bg-stone-500 border-stone-600 text-white border px-4 py-2 hover:scale-105 active:scale-95",
+            {
+              "opacity-80":
+                stateView.networkState.saveArmyListAsBBToDB ===
+                eNetworkRequestState.PENDING,
+            }
+          )}
+        >
+          <span className="flex flex-row space-x-2 items-center">
+            {stateView.networkState.saveArmyListAsBBToDB ===
+              eNetworkRequestState.PENDING && (
+              <svg
+                className="animate-spin"
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.90321 7.29677C1.90321 10.341 4.11041 12.4147 6.58893 12.8439C6.87255 12.893 7.06266 13.1627 7.01355 13.4464C6.96444 13.73 6.69471 13.9201 6.41109 13.871C3.49942 13.3668 0.86084 10.9127 0.86084 7.29677C0.860839 5.76009 1.55996 4.55245 2.37639 3.63377C2.96124 2.97568 3.63034 2.44135 4.16846 2.03202L2.53205 2.03202C2.25591 2.03202 2.03205 1.80816 2.03205 1.53202C2.03205 1.25588 2.25591 1.03202 2.53205 1.03202L5.53205 1.03202C5.80819 1.03202 6.03205 1.25588 6.03205 1.53202L6.03205 4.53202C6.03205 4.80816 5.80819 5.03202 5.53205 5.03202C5.25591 5.03202 5.03205 4.80816 5.03205 4.53202L5.03205 2.68645L5.03054 2.68759L5.03045 2.68766L5.03044 2.68767L5.03043 2.68767C4.45896 3.11868 3.76059 3.64538 3.15554 4.3262C2.44102 5.13021 1.90321 6.10154 1.90321 7.29677ZM13.0109 7.70321C13.0109 4.69115 10.8505 2.6296 8.40384 2.17029C8.12093 2.11718 7.93465 1.84479 7.98776 1.56188C8.04087 1.27898 8.31326 1.0927 8.59616 1.14581C11.4704 1.68541 14.0532 4.12605 14.0532 7.70321C14.0532 9.23988 13.3541 10.4475 12.5377 11.3662C11.9528 12.0243 11.2837 12.5586 10.7456 12.968L12.3821 12.968C12.6582 12.968 12.8821 13.1918 12.8821 13.468C12.8821 13.7441 12.6582 13.968 12.3821 13.968L9.38205 13.968C9.10591 13.968 8.88205 13.7441 8.88205 13.468L8.88205 10.468C8.88205 10.1918 9.10591 9.96796 9.38205 9.96796C9.65819 9.96796 9.88205 10.1918 9.88205 10.468L9.88205 12.3135L9.88362 12.3123C10.4551 11.8813 11.1535 11.3546 11.7585 10.6738C12.4731 9.86976 13.0109 8.89844 13.0109 7.70321Z"
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            )}
+            <span>Generate Shareable Link</span>
+          </span>
+        </button>
       </div>
     </div>
   );
