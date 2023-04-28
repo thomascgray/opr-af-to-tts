@@ -8,8 +8,10 @@ export enum eNetworkRequestState {
 }
 
 export interface iUnitProfileModelTTSOutput {
-  nameOutput: string;
-  descriptionOutput: string;
+  name: string;
+  loadoutCSV: string;
+  ttsNameOutput: string;
+  ttsDescriptionOutput: string;
 }
 
 export interface iUnitProfileModel {
@@ -40,6 +42,7 @@ export interface iUnitProfile {
 
 export interface iAppState {
   armyListShareLink: string;
+  shareableLinkForTTS?: string;
   armySpecialRulesDict: {
     name: string;
     description: string;

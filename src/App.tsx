@@ -8,6 +8,7 @@ import {
   iAppState,
   iUnitProfile,
   iUnitProfileModel,
+  iUnitProfileModelTTSOutput,
 } from "./types";
 import { coreSpecialRules } from "./data";
 import {
@@ -198,25 +199,35 @@ const onGenerateDefinitions = async () => {
 };
 
 const onGenerateShareableId = async () => {
-  const modelOutputs: any[] = [];
+  state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
+  state.shareableLinkForTTS = undefined;
+  const modelOutputs: {
+    unitName: string;
+    modelName: string;
+    loadoutCSV: string;
+    ttsNameOutput: string;
+    ttsDescriptionOutput: string;
+  }[] = [];
 
-  state.unitProfiles.forEach((unitProfile) => {
-    unitProfile.models.forEach((model) => {
-      const [name, description] = generateUnitOutput(
-        unitProfile,
-        model,
-        state.ttsOutputConfig
-      );
+  _.sortBy(state.unitProfiles, ["originalUnit.sortId"]).forEach(
+    (unitProfile) => {
+      unitProfile.models.forEach((model) => {
+        const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
+          generateUnitOutput(unitProfile, model, state.ttsOutputConfig);
 
-      modelOutputs.push({
-        unitName: unitProfile.originalName,
-        name,
-        description,
+        modelOutputs.push({
+          unitName: unitProfile.originalName,
+          modelName: name,
+          loadoutCSV,
+          ttsNameOutput,
+          ttsDescriptionOutput,
+        });
       });
-    });
-  });
+    }
+  );
 
   let data;
+  state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
 
   try {
     data = await ky
@@ -226,18 +237,21 @@ const onGenerateShareableId = async () => {
         },
       })
       .json();
+
+    const { listId } = data as any;
+    state.shareableLinkForTTS = `${window.location.href}.netlify/functions/save-list?listId=${listId}`;
+    state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;
   } catch (e) {
     console.error(e);
+    state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.ERROR;
   }
-
-  console.log("data", JSON.stringify(data, null, 2));
 };
 
 const generateUnitOutput = (
   unit: iUnitProfile,
   model: iUnitProfileModel,
   ttsOutputConfig: iAppState["ttsOutputConfig"]
-) => {
+): iUnitProfileModelTTSOutput => {
   const TTS_WEAPON_COLOUR = ttsOutputConfig.modelWeaponOutputColour.replace(
     "#",
     ""
@@ -440,10 +454,14 @@ const generateUnitOutput = (
     `${activeSpecialRulesFromNotItemsList}`,
   ];
 
-  return [
-    nameLines.filter((x) => x !== "").join("\r\n"),
-    descriptionFieldLines.filter((x) => x !== "").join("\r\n"),
-  ];
+  return {
+    name: modelNameString,
+    loadoutCSV: activeWeaponNamesCommaSeparated,
+    ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
+    ttsDescriptionOutput: descriptionFieldLines
+      .filter((x) => x !== "")
+      .join("\r\n"),
+  };
 };
 
 function App() {
@@ -554,11 +572,12 @@ function App() {
 
                 <div className="flex flex-col space-y-6">
                   {unit.models.map((model, modelIndex) => {
-                    const [nameOutput, descriptionOutput] = generateUnitOutput(
-                      unit as iUnitProfile,
-                      model as iUnitProfileModel,
-                      stateView.ttsOutputConfig
-                    );
+                    const { ttsNameOutput, ttsDescriptionOutput } =
+                      generateUnitOutput(
+                        unit as iUnitProfile,
+                        model as iUnitProfileModel,
+                        stateView.ttsOutputConfig
+                      );
                     return (
                       <div key={model.id} className="relative">
                         <p className="text-sm">
@@ -668,13 +687,13 @@ function App() {
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={nameOutput}
+                                value={ttsNameOutput}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                               <textarea
                                 onChange={() => {}}
                                 onFocus={(e) => e.target.select()}
-                                value={descriptionOutput}
+                                value={ttsDescriptionOutput}
                                 className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
                               />
                             </div>
@@ -691,6 +710,7 @@ function App() {
 
         {/* after army builder */}
         <button
+          disabled={stateView.shareableLinkForTTS === undefined}
           onClick={onGenerateShareableId}
           className={classnames(
             " bg-stone-500 border-stone-600 text-white border px-4 py-2 hover:scale-105 active:scale-95",
@@ -720,9 +740,23 @@ function App() {
                 ></path>
               </svg>
             )}
-            <span>Generate Shareable Link</span>
+            <span>Generate shareable link for TTS</span>
           </span>
         </button>
+        {stateView.shareableLinkForTTS && (
+          <div className="block space-y-2">
+            <p className="text-xs">
+              Copy and paste the link below into the TTS mod
+            </p>
+            <textarea
+              rows={1}
+              onChange={() => {}}
+              onFocus={(e) => e.target.select()}
+              value={stateView.shareableLinkForTTS}
+              className="block whitespace-pre text-lg w-full overflow-x-hidden bg-green-500 p-4 text-center text-white font-bold"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
