@@ -247,6 +247,7 @@ const onGenerateShareableId = async () => {
   }
 };
 
+// this is absolutely atrocious lmao, forgive me
 const generateUnitOutput = (
   unit: iUnitProfile,
   model: iUnitProfileModel,
@@ -264,7 +265,7 @@ const generateUnitOutput = (
 
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
-  let modelNameString = `${model.name}`;
+  let modelNameString = `[b]${model.name}[/b]`;
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
     .map((l) => {
@@ -339,6 +340,7 @@ const generateUnitOutput = (
       id: nanoid(),
       name: `${x.name}`,
       definition,
+      rating: x.rating,
     };
   });
 
@@ -374,6 +376,7 @@ const generateUnitOutput = (
       id: nanoid(),
       name: `${x.name}`,
       definition,
+      rating: x.rating,
     };
   });
 
@@ -399,11 +402,17 @@ const generateUnitOutput = (
       .map((ci) => ({
         name: ci.name,
         definition: ci.label.replace(ci.name, "").trim(),
+        quantity: ci.quantity,
       })),
   ])
     .map((w) => {
-      return `[${TTS_WEAPON_COLOUR}]${w.name}[-]
+      if (w.quantity > 1) {
+        return `[${TTS_WEAPON_COLOUR}]${w.quantity}x ${w.name}[-]
 [sup]${w.definition}[/sup]`;
+      } else {
+        return `[${TTS_WEAPON_COLOUR}]${w.name}[-]
+[sup]${w.definition}[/sup]`;
+      }
     })
     .join("\r\n");
 
@@ -412,11 +421,15 @@ const generateUnitOutput = (
       if (w === null) {
         return "";
       }
+      let name = w.name;
+      if (w.rating) {
+        name += ` (${w.rating})`;
+      }
       if (ttsOutputConfig.includeFullSpecialRulesText) {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
 [sup]${w.definition}[/sup]`;
       } else {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
       }
     })
     .filter((x) => x !== "")
@@ -427,25 +440,44 @@ const generateUnitOutput = (
       if (w === null) {
         return "";
       }
+      let name = w.name;
+      if (w.rating) {
+        name += ` (${w.rating})`;
+      }
       if (ttsOutputConfig.includeFullSpecialRulesText) {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
 [sup]${w.definition}[/sup]`;
       } else {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${w.name}[-]`;
+        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
       }
     })
     .filter((x) => x !== "")
     .join("\r\n");
 
+  // if the model has a Tough special rule, add its rating into the modelstringname
+  if (state.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
+    [
+      ...activeSpecialRulesFromLoadout,
+      ...activeSpecialRulesFromNotLoadout,
+    ].forEach((sr) => {
+      if (sr === null) {
+        return;
+      }
+      if (sr.name === "Tough") {
+        modelNameString += ` [2ecc71][${sr.rating}][-]`;
+      }
+    });
+  }
+
   const nameLines = [
     `[b]${modelNameString}[/b]`,
+    `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
     ttsOutputConfig.includeWeaponsListInName
       ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
       : "",
     ttsOutputConfig.includeSpecialRulesListInName
       ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
       : "",
-    `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
   ].filter((x) => x !== "");
 
   const descriptionFieldLines: string[] = [
@@ -549,28 +581,28 @@ function App() {
       <div className="text-sm mt-6 space-y-2">
         <Tutorial />
         <OutputOptions />
-        <OutputFAQ />
+        {/* <OutputFAQ /> */}
       </div>
 
       <hr className="my-5" />
 
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-10">
         {_.sortBy(stateView.unitProfiles, ["originalUnit.sortId"]).map(
           (unit) => {
             return (
               <fieldset
-                className="border border-solid border-stone-300 p-4 text-xs"
+                className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
                 key={unit.id}
               >
-                <legend className="px-2 space-x-2 bg-white">
-                  <span className="text-lg">{unit.originalName}</span>
+                <legend className="-ml-8 px-3 py-1 space-x-2 bg-white shadow-md border border-stone-200">
+                  <span className="text-lg font-bold">{unit.originalName}</span>
                   <span className="text-sm">
                     {unit.originalModelCountInUnit} model
                     {unit.originalModelCountInUnit > 1 ? "s" : ""}
                   </span>
                 </legend>
 
-                <div className="flex flex-col space-y-6">
+                <div className="flex flex-col space-y-10">
                   {unit.models.map((model, modelIndex) => {
                     const { ttsNameOutput, ttsDescriptionOutput } =
                       generateUnitOutput(
@@ -589,21 +621,21 @@ function App() {
                               deleteModel(unit.id, model.id);
                             }}
                             title="Delete this distinct model definition"
-                            className="border border-solid border-red-500 p-1 absolute top-0 right-0 text-red-600 rounded-full hover:scale-105 active:scale-95"
+                            className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
                           >
                             <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 15 15"
-                              fill="none"
                               xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={4}
+                              stroke="currentColor"
+                              className="w-4 h-4"
                             >
                               <path
-                                d="M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z"
-                                fill="currentColor"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                              ></path>
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                              />
                             </svg>
                           </button>
                         )}
@@ -708,12 +740,14 @@ function App() {
           }
         )}
 
+        <hr className="my-5" />
+
         {/* after army builder */}
         <button
-          disabled={stateView.shareableLinkForTTS === undefined}
+          disabled={stateView.unitProfiles.length <= 0}
           onClick={onGenerateShareableId}
           className={classnames(
-            " bg-stone-500 border-stone-600 text-white border px-4 py-2 hover:scale-105 active:scale-95",
+            " bg-stone-500 disabled:opacity-60 border-stone-600 text-white border px-4 py-2 enabled:hover:scale-105 enabled:active:scale-95",
             {
               "opacity-80":
                 stateView.networkState.saveArmyListAsBBToDB ===

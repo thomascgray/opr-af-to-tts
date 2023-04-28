@@ -29,8 +29,8 @@ export const Tutorial = () => {
               name be present in the model's TTS name.
             </li>
             <li>
-              Duplicate any more using the "Duplicate this model definition"
-              button.
+              Duplicate any model definition using the "Duplicate this model
+              definition" button.
             </li>
           </ul>
           <li>
@@ -38,6 +38,13 @@ export const Tutorial = () => {
             the right of each model definition) onto your TTS models
           </li>
         </ol>
+        <p className="font-bold">COMING SOON!</p>
+        <p>
+          At the bottom of the page you'll see a "Generare shareable link for
+          TTS" button. Right now, this builds you a link with a bunch of JSON
+          that there isn't much use for. In the near future, I'm hoping to have
+          a TTS Workshop mod to help you load models in.
+        </p>
       </div>
     </details>
   );

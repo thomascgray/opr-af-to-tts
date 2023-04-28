@@ -7,6 +7,10 @@ export const OutputOptions = () => {
     <details>
       <summary className="cursor-pointer">TTS Output Configuration</summary>
       <div className="py-2 px-4 bg-stone-100 space-y-4">
+        <p>
+          A whole bunch of options for you to configure what the output will be
+          on your TTS model's name and description fields.
+        </p>
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.includeCoreSpecialRules}
@@ -17,16 +21,18 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.includeCoreSpecialRules;
             }}
           />
-          <div className="w-10/12">
-            <p className="font-bold">Include Core Special Rules</p>
+          <div className="w-11/12">
+            <p className="font-bold">
+              Include "Core" special rules in model description
+            </p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the relevant
-              core special rules.
+              If enabled, the TTS "descripton" outputs will include the model's
+              relevant core special rules.
             </p>
           </div>
         </label>
 
-        <label
+        {/* <label
           className={classnames("flex flex-row items-center space-x-4 ml-4", {
             "opacity-50": !stateView.ttsOutputConfig.includeCoreSpecialRules,
           })}
@@ -42,7 +48,7 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules;
             }}
           />
-          <div className="w-10/12">
+          <div className="w-11/12">
             <p className="font-bold">
               Use Shortened Version of Core Special Rules Text
             </p>
@@ -53,8 +59,9 @@ export const OutputOptions = () => {
               Disable this to output the full special rules text.
             </p>
           </div>
-        </label>
-        <label className="flex flex-row items-center space-x-4 w-1/2">
+        </label> */}
+
+        <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.includeArmySpecialRules}
             className="w-5 h-5"
@@ -64,11 +71,13 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.includeArmySpecialRules;
             }}
           />
-          <div className="w-10/12">
-            <p className="font-bold">Include Army Special Rules</p>
+          <div className="w-11/12">
+            <p className="font-bold">
+              Include "army/loadout specific" special rules in model description
+            </p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the relevant
-              army special rules.
+              If enabled, the TTS "descripton" outputs will include the model's
+              relevant rules from the army, and from that model's loadout.
             </p>
           </div>
         </label>
@@ -83,8 +92,8 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.includeFullSpecialRulesText;
             }}
           />
-          <div className="w-10/12">
-            <p className="font-bold">Include Full Special Rules Text</p>
+          <div className="w-11/12">
+            <p className="font-bold">Include full special rules text</p>
             <p className="text-xs">
               If enabled, the TTS "descripton" output will include the full
               rules text for each special rule on a model. If disabled, only the
@@ -103,7 +112,7 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.includeWeaponsListInName;
             }}
           />
-          <div className="w-10/12">
+          <div className="w-11/12">
             <p className="font-bold">Include "Loadout List" in model name</p>
             <p className="text-xs">
               If enabled, the TTS "name" output will include a comma separated,
@@ -123,7 +132,7 @@ export const OutputOptions = () => {
                 !stateView.ttsOutputConfig.includeSpecialRulesListInName;
             }}
           />
-          <div className="w-10/12">
+          <div className="w-11/12">
             <p className="font-bold">
               Include "Special Rules List" in model name
             </p>
