@@ -1,3 +1,10 @@
+export enum GameSystem {
+  GF = "gf",
+  GFF = "gff",
+  AOF = "aof",
+  AOFS = "aofs",
+}
+
 export interface ListState {
   creationTime: string;
   name: string;
@@ -11,7 +18,7 @@ export interface ListState {
   competitive?: boolean;
   id?: string;
   key?: string;
-  gameSystem: string;
+  gameSystem: GameSystem;
 }
 
 export interface ISpecialRule {

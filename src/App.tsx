@@ -269,6 +269,7 @@ const generateUnitOutput = (
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
   let modelNameString = `[b]${model.name}[/b]`;
+  let modelNamePlainWithLoudoutString = model.name;
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
     .map((l) => {
@@ -279,6 +280,7 @@ const generateUnitOutput = (
     });
   if (loadoutNames.length >= 1) {
     modelNameString += ` w/ ${loadoutNames.join(", ")}`;
+    modelNamePlainWithLoudoutString += ` w/ ${loadoutNames.join(", ")}`;
   }
 
   const modelSpecialRules = [
@@ -457,19 +459,64 @@ const generateUnitOutput = (
     .filter((x) => x !== "")
     .join("\r\n");
 
+  const allApplicableSpecialRules = _.sortBy(
+    [...activeSpecialRulesFromLoadout, ...activeSpecialRulesFromNotLoadout],
+    "name"
+  );
+
+  const allApplicableSpecialRulesWithAddedUpRatings: any[] = [];
+  allApplicableSpecialRules.forEach((sr) => {
+    if (sr === null) {
+      return;
+    }
+    sr.rating = parseInt(sr.rating);
+    const existing = allApplicableSpecialRulesWithAddedUpRatings.find(
+      (x) => x.name === sr.name
+    );
+    if (existing) {
+      existing.rating += parseInt(sr.rating);
+    } else {
+      allApplicableSpecialRulesWithAddedUpRatings.push(sr);
+    }
+  });
+
+  // this currently contains more than 1 tough, so we need to make it so tough only
+  // appears once, and add up the tough ratings
+  const allApplicableSpecialRulesBBCode =
+    allApplicableSpecialRulesWithAddedUpRatings
+      .map((w) => {
+        if (w === null) {
+          return "";
+        }
+        let name = w.name;
+        if (w.rating) {
+          name += ` (${w.rating})`;
+        }
+        if (ttsOutputConfig.includeFullSpecialRulesText) {
+          return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
+[sup]${w.definition}[/sup]`;
+        } else {
+          return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
+        }
+      })
+      .filter((x) => x !== "")
+      .join("\r\n");
+
   // if the model has a Tough special rule, add its rating into the modelstringname
+  let totalToughRating = 0;
   if (state.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
-    [
-      ...activeSpecialRulesFromLoadout,
-      ...activeSpecialRulesFromNotLoadout,
-    ].forEach((sr) => {
+    allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
       if (sr === null) {
         return;
       }
       if (sr.name === "Tough") {
-        modelNameString += ` [${TTS_TOUGH_COLOUR}][${sr.rating}][-]`;
+        totalToughRating += parseInt(sr.rating);
       }
     });
+
+    if (totalToughRating >= 1) {
+      modelNameString += ` [${TTS_TOUGH_COLOUR}][${totalToughRating}][-]`;
+    }
   }
 
   const nameLines = [
@@ -485,12 +532,11 @@ const generateUnitOutput = (
 
   const descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,
-    `${activeSpecialRulesFromItemsList}`,
-    `${activeSpecialRulesFromNotItemsList}`,
+    `${allApplicableSpecialRulesBBCode}`,
   ];
 
   return {
-    name: model.name,
+    name: modelNamePlainWithLoudoutString,
     loadoutCSV: activeWeaponNamesCommaSeparated,
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
