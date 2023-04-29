@@ -550,7 +550,7 @@ function App() {
 
   return (
     <div className="container mx-auto mt-4 mb-28">
-      <h1 className="text-2xl font-bold">OPR Army Forge to TTS</h1>
+      <h1 className="text-3xl font-bold">OPR Army Forge to TTS</h1>
 
       <span className="block text-xs text-stone-500">
         This tool is under active development! If you find any bugs, please
@@ -693,7 +693,7 @@ function App() {
                               </button>
                             )}
                             <div className="flex flex-row space-x-2">
-                              <div className="editor-panel space-y-3 w-1/3">
+                              <div className="editor-panel space-y-3 w-2/4">
                                 {/* loadout items */}
                                 <div className="space-y-1">
                                   {model.loadout.map((loadoutItem) => {
@@ -766,22 +766,22 @@ function App() {
                                 </button>
                               </div>
 
-                              <div className="output-panel space-y-3 w-2/3">
+                              <div className="output-panel w-2/4">
                                 <div
                                   key={model.id + "tts"}
-                                  className="bg-stone-300 p-4 space-y-1"
+                                  className="bg-stone-300 px-4 pb-4 pt-3"
                                 >
+                                  <span className="block text-xs italic text-stone-600 mb-2">
+                                    TTS output preview (name and description)
+                                  </span>
                                   <textarea
                                     onChange={() => {}}
+                                    rows={5}
                                     onFocus={(e) => e.target.select()}
-                                    value={ttsNameOutput}
-                                    className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
-                                  />
-                                  <textarea
-                                    onChange={() => {}}
-                                    onFocus={(e) => e.target.select()}
-                                    value={ttsDescriptionOutput}
-                                    className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                                    value={`${ttsNameOutput}
+----------
+${ttsDescriptionOutput}`}
+                                    className="block font-mono whitespace-pre text-xs w-full overflow-x-hidden"
                                   />
                                 </div>
                               </div>
