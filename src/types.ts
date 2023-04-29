@@ -62,6 +62,7 @@ export interface iAppState {
     modelSpecialRulesOutputColour: string;
     modelQuaOutputColour: string;
     modelDefOutputColour: string;
+    modelToughOutputColour: string;
   };
   networkState: {
     fetchArmyFromArmyForge: eNetworkRequestState;

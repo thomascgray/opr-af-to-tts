@@ -10,7 +10,7 @@ export const Tutorial = () => {
             Link".
           </li>
           <li>Paste that link into the box above on this page.</li>
-          <li>Click "Generate Definitions".</li>
+          <li>Click "Generate Definitions" above.</li>
           <li>
             This app will then build a model definition for each unit in your
             army.
@@ -38,6 +38,12 @@ export const Tutorial = () => {
             the right of each model definition) onto your TTS models
           </li>
         </ol>
+        <p>
+          <span className="font-bold">Hint</span>
+          <br />
+          Check the "TTS Output Configuration" options below to adjust what is
+          included in each model's name and description fields in TTS.
+        </p>
         <p className="font-bold">COMING SOON!</p>
         <p>
           At the bottom of the page you'll see a "Generare shareable link for

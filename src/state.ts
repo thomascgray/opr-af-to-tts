@@ -21,6 +21,7 @@ export const state = proxy<iAppState>({
     modelSpecialRulesOutputColour: "#f472b6",
     modelQuaOutputColour: "#ef4444",
     modelDefOutputColour: "#0ea5e9",
+    modelToughOutputColour: "#2ecc71",
   },
   networkState: {
     fetchArmyFromArmyForge: eNetworkRequestState.IDLE,

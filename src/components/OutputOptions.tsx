@@ -1,6 +1,6 @@
 import { state } from "../state";
 import { useSnapshot } from "valtio";
-import classnames from "classnames";
+
 export const OutputOptions = () => {
   const stateView = useSnapshot(state, { sync: true });
   return (
@@ -9,7 +9,8 @@ export const OutputOptions = () => {
       <div className="py-2 px-4 bg-stone-100 space-y-4">
         <p>
           A whole bunch of options for you to configure what the output will be
-          on your TTS model's name and description fields.
+          and what colours it will use on your TTS model's name and description
+          fields.
         </p>
         <label className="flex flex-row items-center space-x-4">
           <input
@@ -145,6 +146,28 @@ export const OutputOptions = () => {
         </label>
 
         <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={
+              stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName
+            }
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeToughSpecialRuleRatingInName =
+                !stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">Include Tough rating in model name</p>
+            <p className="text-xs">
+              If enabled, if the model has the "Tough" special rule, then the
+              rating for that special rule will be displayed in square brackets
+              after the model's name.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
           <span
             style={{
               backgroundColor: stateView.ttsOutputConfig.modelQuaOutputColour,
@@ -235,6 +258,33 @@ export const OutputOptions = () => {
             <p className="font-bold">Model Special Rules Output Colour</p>
             <p className="text-xs">
               HEX code for the model's special rules details in the TTS output.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor: stateView.ttsOutputConfig.modelToughOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
+          <input
+            className="border border-stone-500 px-2 py-1 w-20"
+            value={stateView.ttsOutputConfig.modelToughOutputColour}
+            onChange={(e) => {
+              state.ttsOutputConfig.modelToughOutputColour =
+                e.currentTarget.value;
+            }}
+          />
+
+          <div>
+            <p className="font-bold">
+              Model Tough Special Rule Rating Output Colour
+            </p>
+            <p className="text-xs">
+              HEX code for the model's Tough rating, if it has one, in the TTS
+              output.
             </p>
           </div>
         </label>

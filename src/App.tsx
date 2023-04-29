@@ -262,7 +262,10 @@ const generateUnitOutput = (
 
   const TTS_QUA_COLOUR = ttsOutputConfig.modelQuaOutputColour.replace("#", "");
   const TTS_DEF_COLOUR = ttsOutputConfig.modelDefOutputColour.replace("#", "");
-
+  const TTS_TOUGH_COLOUR = ttsOutputConfig.modelToughOutputColour.replace(
+    "#",
+    ""
+  );
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
   let modelNameString = `[b]${model.name}[/b]`;
@@ -464,7 +467,7 @@ const generateUnitOutput = (
         return;
       }
       if (sr.name === "Tough") {
-        modelNameString += ` [2ecc71][${sr.rating}][-]`;
+        modelNameString += ` [${TTS_TOUGH_COLOUR}][${sr.rating}][-]`;
       }
     });
   }
@@ -584,214 +587,222 @@ function App() {
         {/* <OutputFAQ /> */}
       </div>
 
-      <hr className="my-5" />
+      {stateView.unitProfiles.length >= 1 && (
+        <>
+          <hr className="my-5" />
 
-      <div className="flex flex-col space-y-10">
-        {_.sortBy(stateView.unitProfiles, ["originalUnit.sortId"]).map(
-          (unit) => {
-            return (
-              <fieldset
-                className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
-                key={unit.id}
-              >
-                <legend className="-ml-8 px-3 py-1 space-x-2 bg-white shadow-md border border-stone-200">
-                  <span className="text-lg font-bold">{unit.originalName}</span>
-                  <span className="text-sm">
-                    {unit.originalModelCountInUnit} model
-                    {unit.originalModelCountInUnit > 1 ? "s" : ""}
-                  </span>
-                </legend>
+          <div className="flex flex-col space-y-10">
+            {_.sortBy(stateView.unitProfiles, ["originalUnit.sortId"]).map(
+              (unit) => {
+                return (
+                  <fieldset
+                    className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
+                    key={unit.id}
+                  >
+                    <legend className="-ml-8 px-3 py-1 space-x-2 bg-white shadow-md border border-stone-200">
+                      <span className="text-lg font-bold">
+                        {unit.originalName}
+                      </span>
+                      <span className="text-sm">
+                        {unit.originalModelCountInUnit} model
+                        {unit.originalModelCountInUnit > 1 ? "s" : ""}
+                      </span>
+                    </legend>
 
-                <div className="flex flex-col space-y-10">
-                  {unit.models.map((model, modelIndex) => {
-                    const { ttsNameOutput, ttsDescriptionOutput } =
-                      generateUnitOutput(
-                        unit as iUnitProfile,
-                        model as iUnitProfileModel,
-                        stateView.ttsOutputConfig
-                      );
-                    return (
-                      <div key={model.id} className="relative">
-                        <p className="text-sm">
-                          Model Definition {modelIndex + 1}
-                        </p>
-                        {!model.isGenerated && (
-                          <button
-                            onClick={() => {
-                              deleteModel(unit.id, model.id);
-                            }}
-                            title="Delete this distinct model definition"
-                            className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={4}
-                              stroke="currentColor"
-                              className="w-4 h-4"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                        <div className="flex flex-row space-x-2">
-                          <div className="editor-panel space-y-3 w-1/3">
-                            {/* loadout items */}
-                            <div className="space-y-1">
-                              {model.loadout.map((loadoutItem) => {
-                                return (
-                                  <div
-                                    key={loadoutItem.id}
-                                    className={classnames(
-                                      "flex flex-row items-center justify-between  py-1 px-2",
-                                      {
-                                        "bg-stone-100 text-stone-500":
-                                          loadoutItem.quantity <= 0,
-                                        "bg-stone-300 text-black":
-                                          loadoutItem.quantity >= 1,
-                                      }
-                                    )}
-                                  >
-                                    <span className="flex flex-row items-center space-x-1 ">
-                                      <span className="font-bold">
-                                        {loadoutItem.name}
-                                      </span>
-                                      <span>{loadoutItem.definition}</span>
-                                    </span>
+                    <div className="flex flex-col space-y-10">
+                      {unit.models.map((model, modelIndex) => {
+                        const { ttsNameOutput, ttsDescriptionOutput } =
+                          generateUnitOutput(
+                            unit as iUnitProfile,
+                            model as iUnitProfileModel,
+                            stateView.ttsOutputConfig
+                          );
+                        return (
+                          <div key={model.id} className="relative">
+                            <p className="text-sm">
+                              Model Definition {modelIndex + 1}
+                            </p>
+                            {!model.isGenerated && (
+                              <button
+                                onClick={() => {
+                                  deleteModel(unit.id, model.id);
+                                }}
+                                title="Delete this distinct model definition"
+                                className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={4}
+                                  stroke="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                            <div className="flex flex-row space-x-2">
+                              <div className="editor-panel space-y-3 w-1/3">
+                                {/* loadout items */}
+                                <div className="space-y-1">
+                                  {model.loadout.map((loadoutItem) => {
+                                    return (
+                                      <div
+                                        key={loadoutItem.id}
+                                        className={classnames(
+                                          "flex flex-row items-center justify-between  py-1 px-2",
+                                          {
+                                            "bg-stone-100 text-stone-500":
+                                              loadoutItem.quantity <= 0,
+                                            "bg-stone-300 text-black":
+                                              loadoutItem.quantity >= 1,
+                                          }
+                                        )}
+                                      >
+                                        <span className="flex flex-row items-center space-x-1 ">
+                                          <span className="font-bold">
+                                            {loadoutItem.name}
+                                          </span>
+                                          <span>{loadoutItem.definition}</span>
+                                        </span>
 
-                                    <span className="flex flex-row items-center space-x-2">
-                                      <input
-                                        className="w-12 p-1 text-lg font-bold text-center"
-                                        min={0}
-                                        onChange={(e) => {
-                                          const value = parseInt(
-                                            e.currentTarget.value
-                                          );
-                                          updateWeaponQuantity(
-                                            unit.id,
-                                            model.id,
-                                            loadoutItem.id,
-                                            value
-                                          );
-                                        }}
-                                        value={loadoutItem.quantity}
-                                        type="number"
-                                      />
-                                      <input
-                                        className=""
-                                        title="Check to include this item in the model name"
-                                        checked={loadoutItem.includeInName}
-                                        disabled={loadoutItem.quantity <= 0}
-                                        onChange={(e) => {
-                                          updateWeaponIncludeInName(
-                                            unit.id,
-                                            model.id,
-                                            loadoutItem.id,
-                                            !loadoutItem.includeInName
-                                          );
-                                        }}
-                                        type="checkbox"
-                                      />
-                                    </span>
-                                  </div>
-                                );
-                              })}
+                                        <span className="flex flex-row items-center space-x-2">
+                                          <input
+                                            className="w-12 p-1 text-lg font-bold text-center"
+                                            min={0}
+                                            onChange={(e) => {
+                                              const value = parseInt(
+                                                e.currentTarget.value
+                                              );
+                                              updateWeaponQuantity(
+                                                unit.id,
+                                                model.id,
+                                                loadoutItem.id,
+                                                value
+                                              );
+                                            }}
+                                            value={loadoutItem.quantity}
+                                            type="number"
+                                          />
+                                          <input
+                                            className=""
+                                            title="Check to include this item in the model name"
+                                            checked={loadoutItem.includeInName}
+                                            disabled={loadoutItem.quantity <= 0}
+                                            onChange={(e) => {
+                                              updateWeaponIncludeInName(
+                                                unit.id,
+                                                model.id,
+                                                loadoutItem.id,
+                                                !loadoutItem.includeInName
+                                              );
+                                            }}
+                                            type="checkbox"
+                                          />
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                <button
+                                  onClick={() =>
+                                    duplicateModel(unit.id, model.id)
+                                  }
+                                  className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                                >
+                                  Duplicate this model definition
+                                </button>
+                              </div>
+
+                              <div className="output-panel space-y-3 w-2/3">
+                                <div
+                                  key={model.id + "tts"}
+                                  className="bg-stone-300 p-4 space-y-1"
+                                >
+                                  <textarea
+                                    onChange={() => {}}
+                                    onFocus={(e) => e.target.select()}
+                                    value={ttsNameOutput}
+                                    className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                                  />
+                                  <textarea
+                                    onChange={() => {}}
+                                    onFocus={(e) => e.target.select()}
+                                    value={ttsDescriptionOutput}
+                                    className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
+                                  />
+                                </div>
+                              </div>
                             </div>
-
-                            <button
-                              onClick={() => duplicateModel(unit.id, model.id)}
-                              className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
-                            >
-                              Duplicate this model definition
-                            </button>
                           </div>
-
-                          <div className="output-panel space-y-3 w-2/3">
-                            <div
-                              key={model.id + "tts"}
-                              className="bg-stone-300 p-4 space-y-1"
-                            >
-                              <textarea
-                                onChange={() => {}}
-                                onFocus={(e) => e.target.select()}
-                                value={ttsNameOutput}
-                                className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
-                              />
-                              <textarea
-                                onChange={() => {}}
-                                onFocus={(e) => e.target.select()}
-                                value={ttsDescriptionOutput}
-                                className="block whitespace-pre text-xs w-full h-10 overflow-x-hidden"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </fieldset>
-            );
-          }
-        )}
-
-        <hr className="my-5" />
-
-        {/* after army builder */}
-        <button
-          disabled={stateView.unitProfiles.length <= 0}
-          onClick={onGenerateShareableId}
-          className={classnames(
-            " bg-stone-500 disabled:opacity-60 border-stone-600 text-white border px-4 py-2 enabled:hover:scale-105 enabled:active:scale-95",
-            {
-              "opacity-80":
-                stateView.networkState.saveArmyListAsBBToDB ===
-                eNetworkRequestState.PENDING,
-            }
-          )}
-        >
-          <span className="flex flex-row space-x-2 items-center">
-            {stateView.networkState.saveArmyListAsBBToDB ===
-              eNetworkRequestState.PENDING && (
-              <svg
-                className="animate-spin"
-                width="15"
-                height="15"
-                viewBox="0 0 15 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1.90321 7.29677C1.90321 10.341 4.11041 12.4147 6.58893 12.8439C6.87255 12.893 7.06266 13.1627 7.01355 13.4464C6.96444 13.73 6.69471 13.9201 6.41109 13.871C3.49942 13.3668 0.86084 10.9127 0.86084 7.29677C0.860839 5.76009 1.55996 4.55245 2.37639 3.63377C2.96124 2.97568 3.63034 2.44135 4.16846 2.03202L2.53205 2.03202C2.25591 2.03202 2.03205 1.80816 2.03205 1.53202C2.03205 1.25588 2.25591 1.03202 2.53205 1.03202L5.53205 1.03202C5.80819 1.03202 6.03205 1.25588 6.03205 1.53202L6.03205 4.53202C6.03205 4.80816 5.80819 5.03202 5.53205 5.03202C5.25591 5.03202 5.03205 4.80816 5.03205 4.53202L5.03205 2.68645L5.03054 2.68759L5.03045 2.68766L5.03044 2.68767L5.03043 2.68767C4.45896 3.11868 3.76059 3.64538 3.15554 4.3262C2.44102 5.13021 1.90321 6.10154 1.90321 7.29677ZM13.0109 7.70321C13.0109 4.69115 10.8505 2.6296 8.40384 2.17029C8.12093 2.11718 7.93465 1.84479 7.98776 1.56188C8.04087 1.27898 8.31326 1.0927 8.59616 1.14581C11.4704 1.68541 14.0532 4.12605 14.0532 7.70321C14.0532 9.23988 13.3541 10.4475 12.5377 11.3662C11.9528 12.0243 11.2837 12.5586 10.7456 12.968L12.3821 12.968C12.6582 12.968 12.8821 13.1918 12.8821 13.468C12.8821 13.7441 12.6582 13.968 12.3821 13.968L9.38205 13.968C9.10591 13.968 8.88205 13.7441 8.88205 13.468L8.88205 10.468C8.88205 10.1918 9.10591 9.96796 9.38205 9.96796C9.65819 9.96796 9.88205 10.1918 9.88205 10.468L9.88205 12.3135L9.88362 12.3123C10.4551 11.8813 11.1535 11.3546 11.7585 10.6738C12.4731 9.86976 13.0109 8.89844 13.0109 7.70321Z"
-                  fill="currentColor"
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
+                );
+              }
             )}
-            <span>Generate shareable link for TTS</span>
-          </span>
-        </button>
-        {stateView.shareableLinkForTTS && (
-          <div className="block space-y-2">
-            <p className="text-xs">
-              Copy and paste the link below into the TTS mod
-            </p>
-            <textarea
-              rows={1}
-              onChange={() => {}}
-              onFocus={(e) => e.target.select()}
-              value={stateView.shareableLinkForTTS}
-              className="block whitespace-pre text-lg w-full overflow-x-hidden bg-green-500 p-4 text-center text-white font-bold"
-            />
+
+            <hr className="my-5" />
+
+            {/* after army builder */}
+            <button
+              disabled={stateView.unitProfiles.length <= 0}
+              onClick={onGenerateShareableId}
+              className={classnames(
+                " bg-stone-500 disabled:opacity-60 border-stone-600 text-white border px-4 py-2 enabled:hover:scale-105 enabled:active:scale-95",
+                {
+                  "opacity-80":
+                    stateView.networkState.saveArmyListAsBBToDB ===
+                    eNetworkRequestState.PENDING,
+                }
+              )}
+            >
+              <span className="flex flex-row space-x-2 items-center">
+                {stateView.networkState.saveArmyListAsBBToDB ===
+                  eNetworkRequestState.PENDING && (
+                  <svg
+                    className="animate-spin"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.90321 7.29677C1.90321 10.341 4.11041 12.4147 6.58893 12.8439C6.87255 12.893 7.06266 13.1627 7.01355 13.4464C6.96444 13.73 6.69471 13.9201 6.41109 13.871C3.49942 13.3668 0.86084 10.9127 0.86084 7.29677C0.860839 5.76009 1.55996 4.55245 2.37639 3.63377C2.96124 2.97568 3.63034 2.44135 4.16846 2.03202L2.53205 2.03202C2.25591 2.03202 2.03205 1.80816 2.03205 1.53202C2.03205 1.25588 2.25591 1.03202 2.53205 1.03202L5.53205 1.03202C5.80819 1.03202 6.03205 1.25588 6.03205 1.53202L6.03205 4.53202C6.03205 4.80816 5.80819 5.03202 5.53205 5.03202C5.25591 5.03202 5.03205 4.80816 5.03205 4.53202L5.03205 2.68645L5.03054 2.68759L5.03045 2.68766L5.03044 2.68767L5.03043 2.68767C4.45896 3.11868 3.76059 3.64538 3.15554 4.3262C2.44102 5.13021 1.90321 6.10154 1.90321 7.29677ZM13.0109 7.70321C13.0109 4.69115 10.8505 2.6296 8.40384 2.17029C8.12093 2.11718 7.93465 1.84479 7.98776 1.56188C8.04087 1.27898 8.31326 1.0927 8.59616 1.14581C11.4704 1.68541 14.0532 4.12605 14.0532 7.70321C14.0532 9.23988 13.3541 10.4475 12.5377 11.3662C11.9528 12.0243 11.2837 12.5586 10.7456 12.968L12.3821 12.968C12.6582 12.968 12.8821 13.1918 12.8821 13.468C12.8821 13.7441 12.6582 13.968 12.3821 13.968L9.38205 13.968C9.10591 13.968 8.88205 13.7441 8.88205 13.468L8.88205 10.468C8.88205 10.1918 9.10591 9.96796 9.38205 9.96796C9.65819 9.96796 9.88205 10.1918 9.88205 10.468L9.88205 12.3135L9.88362 12.3123C10.4551 11.8813 11.1535 11.3546 11.7585 10.6738C12.4731 9.86976 13.0109 8.89844 13.0109 7.70321Z"
+                      fill="currentColor"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                )}
+                <span>Generate shareable link for TTS</span>
+              </span>
+            </button>
+            {stateView.shareableLinkForTTS && (
+              <div className="block space-y-2">
+                <p className="text-xs">
+                  Copy and paste the link below into the TTS mod
+                </p>
+                <textarea
+                  rows={1}
+                  onChange={() => {}}
+                  onFocus={(e) => e.target.select()}
+                  value={stateView.shareableLinkForTTS}
+                  className="block whitespace-pre text-lg w-full overflow-x-hidden bg-green-500 p-4 text-center text-white font-bold"
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }
