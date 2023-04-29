@@ -473,7 +473,7 @@ const generateUnitOutput = (
   }
 
   const nameLines = [
-    `[b]${modelNameString}[/b]`,
+    `${modelNameString}`,
     `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
     ttsOutputConfig.includeWeaponsListInName
       ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
@@ -490,7 +490,7 @@ const generateUnitOutput = (
   ];
 
   return {
-    name: modelNameString,
+    name: model.name,
     loadoutCSV: activeWeaponNamesCommaSeparated,
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
