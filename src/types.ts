@@ -7,6 +7,13 @@ export enum eNetworkRequestState {
   ERROR = "ERROR",
 }
 
+export interface iTotalShareableOutput {
+  units: {
+    name: string;
+    modelDefinitions: iUnitProfileModelTTSOutput[];
+  }[];
+}
+
 export interface iUnitProfileModelTTSOutput {
   name: string;
   loadoutCSV: string;

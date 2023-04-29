@@ -6,6 +6,7 @@ import * as ArmyForgeTypes from "./army-forge-types";
 import {
   eNetworkRequestState,
   iAppState,
+  iTotalShareableOutput,
   iUnitProfile,
   iUnitProfileModel,
   iUnitProfileModelTTSOutput,
@@ -201,27 +202,30 @@ const onGenerateDefinitions = async () => {
 const onGenerateShareableId = async () => {
   state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
   state.shareableLinkForTTS = undefined;
-  const modelOutputs: {
-    unitName: string;
-    modelName: string;
-    loadoutCSV: string;
-    ttsNameOutput: string;
-    ttsDescriptionOutput: string;
-  }[] = [];
+
+  const totalOutput: iTotalShareableOutput = {
+    units: [],
+  };
 
   _.sortBy(state.unitProfiles, ["originalUnit.sortId"]).forEach(
     (unitProfile) => {
+      let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
+
       unitProfile.models.forEach((model) => {
         const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
           generateUnitOutput(unitProfile, model, state.ttsOutputConfig);
 
-        modelOutputs.push({
-          unitName: unitProfile.originalName,
-          modelName: name,
+        thisUnitsModelDefinitions.push({
+          name,
           loadoutCSV,
           ttsNameOutput,
           ttsDescriptionOutput,
         });
+      });
+
+      totalOutput.units.push({
+        name: unitProfile.originalName,
+        modelDefinitions: thisUnitsModelDefinitions,
       });
     }
   );
@@ -233,7 +237,7 @@ const onGenerateShareableId = async () => {
     data = await ky
       .post("/.netlify/functions/save-list", {
         json: {
-          list_json: modelOutputs,
+          list_json: totalOutput,
         },
       })
       .json();
