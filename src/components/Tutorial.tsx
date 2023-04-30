@@ -35,7 +35,15 @@ export const Tutorial = () => {
           </ul>
           <li>
             Once you're done, hit "Generate shareable link for TTS" at the
-            bottom, and then paste that URL into the TTS mod.
+            bottom, and then paste that URL into{" "}
+            <a
+              target="_blank"
+              href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969376266"
+            >
+              {" "}
+              the TTS mod
+            </a>
+            .
           </li>
         </ol>
         <p>
