@@ -469,6 +469,9 @@ const generateUnitOutput = (
   const allApplicableSpecialRulesBBCode =
     allApplicableSpecialRulesWithAddedUpRatings
       .map((w) => {
+        const isCoreSpecialRule = state.coreSpecialRulesDict.some(
+          (csr) => csr.name === w.name
+        );
         if (w === null) {
           return "";
         }
@@ -476,11 +479,20 @@ const generateUnitOutput = (
         if (w.rating) {
           name += ` (${w.rating})`;
         }
-        if (ttsOutputConfig.includeFullSpecialRulesText) {
-          return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
+        if (isCoreSpecialRule) {
+          if (ttsOutputConfig.includeFullCoreSpecialRulesText) {
+            return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
 [sup]${w.definition}[/sup]`;
+          } else {
+            return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
+          }
         } else {
-          return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
+          if (ttsOutputConfig.includeFullArmySpecialRulesText) {
+            return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
+[sup]${w.definition}[/sup]`;
+          } else {
+            return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
+          }
         }
       })
       .filter((x) => x !== "")

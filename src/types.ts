@@ -65,7 +65,8 @@ export interface iAppState {
     includeCoreSpecialRules: boolean;
     includeArmySpecialRules: boolean;
     useShorterVersionOfCoreSpecialRules: boolean;
-    includeFullSpecialRulesText: boolean;
+    includeFullArmySpecialRulesText: boolean;
+    includeFullCoreSpecialRulesText: boolean;
     includeWeaponsListInName: boolean;
     includeSpecialRulesListInName: boolean;
     includeToughSpecialRuleRatingInName: boolean;

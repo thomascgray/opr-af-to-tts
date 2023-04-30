@@ -27,40 +27,33 @@ export const OutputOptions = () => {
               Include "Core" special rules in model description
             </p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the model's
+              If enabled, the TTS "description" outputs will include the model's
               relevant core special rules.
             </p>
           </div>
         </label>
 
-        {/* <label
-          className={classnames("flex flex-row items-center space-x-4 ml-4", {
-            "opacity-50": !stateView.ttsOutputConfig.includeCoreSpecialRules,
-          })}
-        >
+        <label className="flex flex-row items-center space-x-4">
           <input
-            checked={
-              stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules
-            }
+            checked={stateView.ttsOutputConfig.includeFullCoreSpecialRulesText}
             className="w-5 h-5"
             type="checkbox"
             onChange={(e) => {
-              state.ttsOutputConfig.useShorterVersionOfCoreSpecialRules =
-                !stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules;
+              state.ttsOutputConfig.includeFullCoreSpecialRulesText =
+                !stateView.ttsOutputConfig.includeFullCoreSpecialRulesText;
             }}
           />
           <div className="w-11/12">
             <p className="font-bold">
-              Use Shortened Version of Core Special Rules Text
+              Include the full text for core special rules
             </p>
             <p className="text-xs">
-              If enabled, special rule's text for "core" special rules will be a
-              "shortened" version of that rule, to stop the TTS description
-              being super long on models that have lots of special rules.
-              Disable this to output the full special rules text.
+              If enabled, the TTS "description" outputs will include the model's
+              relevant core special rules text in full. If disabled, only the
+              special rule's name will be included.
             </p>
           </div>
-        </label> */}
+        </label>
 
         <label className="flex flex-row items-center space-x-4">
           <input
@@ -74,30 +67,52 @@ export const OutputOptions = () => {
           />
           <div className="w-11/12">
             <p className="font-bold">
-              Include "army/loadout specific" special rules in model description
+              Include army special rules in model description
             </p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" outputs will include the model's
+              If enabled, the TTS "description" outputs will include the model's
               relevant rules from the army, and from that model's loadout.
             </p>
           </div>
         </label>
 
-        <label className="flex flex-row items-center space-x-4">
+        {/* <label className="flex flex-row items-center space-x-4">
           <input
-            checked={stateView.ttsOutputConfig.includeFullSpecialRulesText}
+            checked={stateView.ttsOutputConfig.includeFullArmySpecialRulesText}
             className="w-5 h-5"
             type="checkbox"
             onChange={(e) => {
-              state.ttsOutputConfig.includeFullSpecialRulesText =
-                !stateView.ttsOutputConfig.includeFullSpecialRulesText;
+              state.ttsOutputConfig.includeFullArmySpecialRulesText =
+                !stateView.ttsOutputConfig.includeFullArmySpecialRulesText;
             }}
           />
           <div className="w-11/12">
             <p className="font-bold">Include full special rules text</p>
             <p className="text-xs">
-              If enabled, the TTS "descripton" output will include the full
+              If enabled, the TTS "description" output will include the full
               rules text for each special rule on a model. If disabled, only the
+              special rule's name will be included.
+            </p>
+          </div>
+        </label> */}
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeFullArmySpecialRulesText}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeFullArmySpecialRulesText =
+                !stateView.ttsOutputConfig.includeFullArmySpecialRulesText;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              Include the full text for army special rules
+            </p>
+            <p className="text-xs">
+              If enabled, the TTS "description" outputs will include the model's
+              relevant army special rules text in full. If disabled, only the
               special rule's name will be included.
             </p>
           </div>

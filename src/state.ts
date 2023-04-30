@@ -11,7 +11,8 @@ export const state = proxy<iAppState>({
   armySpecialRulesDictNames: [],
   unitProfiles: [],
   ttsOutputConfig: {
-    includeFullSpecialRulesText: true,
+    includeFullArmySpecialRulesText: true,
+    includeFullCoreSpecialRulesText: false,
     includeCoreSpecialRules: true,
     includeArmySpecialRules: true,
     includeWeaponsListInName: false,
