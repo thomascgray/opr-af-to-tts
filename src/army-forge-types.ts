@@ -1,8 +1,9 @@
-export enum GameSystem {
+export enum eGameSystemInitials {
   GF = "gf",
   GFF = "gff",
   AOF = "aof",
   AOFS = "aofs",
+  AOFR = "aofr",
 }
 
 export interface ListState {
@@ -18,7 +19,7 @@ export interface ListState {
   competitive?: boolean;
   id?: string;
   key?: string;
-  gameSystem: GameSystem;
+  gameSystem: eGameSystemInitials;
 }
 
 export interface ISpecialRule {

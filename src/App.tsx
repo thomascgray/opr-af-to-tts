@@ -6,11 +6,11 @@ import * as ArmyForgeTypes from "./army-forge-types";
 import {
   eNetworkRequestState,
   iAppState,
+  iTotalShareableOutput,
   iUnitProfile,
   iUnitProfileModel,
   iUnitProfileModelTTSOutput,
 } from "./types";
-import { coreSpecialRules } from "./data";
 import {
   state,
   updateWeaponQuantity,
@@ -23,6 +23,7 @@ import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
 import { OutputFAQ } from "./components/OutputFAQ";
 import ky from "ky";
+import { getUrlSlugForGameSystem } from "./utils";
 
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
@@ -105,24 +106,42 @@ const onGenerateDefinitions = async () => {
   state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.PENDING;
   const id = extractIdFromUrl(state.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
-
-  if (id) {
-    try {
-      data = await fetch(`/.netlify/functions/get-army?armyId=${id}`).then(
-        (res) => res.json()
-      );
-      // @ts-ignore
-      if (data && data.error) {
-        state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
-        return;
-      }
-      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.SUCCESS;
-    } catch (e) {
-      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
-    }
-  } else {
-    state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
+  let coreRulesResponseData;
+  if (!id) {
+    return;
   }
+
+  try {
+    // get the army list
+    data = await fetch(`/.netlify/functions/get-army?armyId=${id}`).then(
+      (res) => res.json()
+    );
+    if (!data) {
+      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
+      return;
+    }
+    // then get the core rules for the game we're playing
+    const gameSystemUrlSlug = getUrlSlugForGameSystem(data?.gameSystem);
+    coreRulesResponseData = await fetch(
+      `https://army-forge-studio.onepagerules.com/api/public/game-systems/${gameSystemUrlSlug}/common-rules`
+    ).then((res) => res.json());
+
+    state.coreSpecialRulesDict = coreRulesResponseData.map((c: any) => {
+      return {
+        name: c.name,
+        description: c.description,
+      };
+    });
+    // @ts-ignore
+    if (data && data.error) {
+      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
+      return;
+    }
+    state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.SUCCESS;
+  } catch (e) {
+    state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
+  }
+
   if (!data) {
     return;
   }
@@ -185,7 +204,7 @@ const onGenerateDefinitions = async () => {
   });
 
   state.armySpecialRulesDict = [
-    ...coreSpecialRules,
+    ...state.coreSpecialRulesDict,
     // @ts-ignore interface doesn't include new specialRules array
     ...data.specialRules.map((sr) => {
       return {
@@ -201,27 +220,30 @@ const onGenerateDefinitions = async () => {
 const onGenerateShareableId = async () => {
   state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
   state.shareableLinkForTTS = undefined;
-  const modelOutputs: {
-    unitName: string;
-    modelName: string;
-    loadoutCSV: string;
-    ttsNameOutput: string;
-    ttsDescriptionOutput: string;
-  }[] = [];
+
+  const totalOutput: iTotalShareableOutput = {
+    units: [],
+  };
 
   _.sortBy(state.unitProfiles, ["originalUnit.sortId"]).forEach(
     (unitProfile) => {
+      let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
+
       unitProfile.models.forEach((model) => {
         const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
           generateUnitOutput(unitProfile, model, state.ttsOutputConfig);
 
-        modelOutputs.push({
-          unitName: unitProfile.originalName,
-          modelName: name,
+        thisUnitsModelDefinitions.push({
+          name,
           loadoutCSV,
           ttsNameOutput,
           ttsDescriptionOutput,
         });
+      });
+
+      totalOutput.units.push({
+        name: unitProfile.originalName,
+        modelDefinitions: thisUnitsModelDefinitions,
       });
     }
   );
@@ -233,7 +255,7 @@ const onGenerateShareableId = async () => {
     data = await ky
       .post("/.netlify/functions/save-list", {
         json: {
-          list_json: modelOutputs,
+          list_json: totalOutput,
         },
       })
       .json();
@@ -320,7 +342,7 @@ const generateUnitOutput = (
     ]),
     "key"
   ).map((x) => {
-    const isCoreSpecialRule = coreSpecialRules.some(
+    const isCoreSpecialRule = state.coreSpecialRulesDict.some(
       (csr) => csr.name === x.name
     );
     if (!ttsOutputConfig.includeArmySpecialRules && !isCoreSpecialRule) {
@@ -356,7 +378,7 @@ const generateUnitOutput = (
     ]),
     "key"
   ).map((x) => {
-    const isCoreSpecialRule = coreSpecialRules.some(
+    const isCoreSpecialRule = state.coreSpecialRulesDict.some(
       (csr) => csr.name === x.name
     );
     if (!ttsOutputConfig.includeArmySpecialRules && !isCoreSpecialRule) {
@@ -419,44 +441,6 @@ const generateUnitOutput = (
 [sup]${w.definition}[/sup]`;
       }
     })
-    .join("\r\n");
-
-  const activeSpecialRulesFromItemsList = activeSpecialRulesFromLoadout
-    .map((w) => {
-      if (w === null) {
-        return "";
-      }
-      let name = w.name;
-      if (w.rating) {
-        name += ` (${w.rating})`;
-      }
-      if (ttsOutputConfig.includeFullSpecialRulesText) {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-[sup]${w.definition}[/sup]`;
-      } else {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
-      }
-    })
-    .filter((x) => x !== "")
-    .join("\r\n");
-
-  const activeSpecialRulesFromNotItemsList = activeSpecialRulesFromNotLoadout
-    .map((w) => {
-      if (w === null) {
-        return "";
-      }
-      let name = w.name;
-      if (w.rating) {
-        name += ` (${w.rating})`;
-      }
-      if (ttsOutputConfig.includeFullSpecialRulesText) {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-[sup]${w.definition}[/sup]`;
-      } else {
-        return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
-      }
-    })
-    .filter((x) => x !== "")
     .join("\r\n");
 
   const allApplicableSpecialRules = _.sortBy(
