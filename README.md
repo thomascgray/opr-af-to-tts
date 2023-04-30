@@ -2,10 +2,6 @@
 
 ## Use the app right here: https://opr-af-to-tts.netlify.app/
 
-### A webapp to take lists from [OPR's](https://www.onepagerules.com/) [Army Forge](https://army-forge.onepagerules.com/) and turn them into Tabletop Simulator object name and descriptions.
+### A webapp to take lists from [OPR's](https://www.onepagerules.com/) [Army Forge](https://army-forge.onepagerules.com/) and allow the user to set and configure model definitons, which can then in turn be imported into Tabletop Simulator directly.
 
-1. Make your army on Army Forge
-2. Grab the "Share a link" URL
-3. Paste it into this app.
-4. Adjust the model equipment.
-5. Copy and paste the fields onto your models in tabletop simulator.
+To be used in conjunction with the sister TTS mod, "OPR AF to TTS Importer", available here: https://steamcommunity.com/sharedfiles/filedetails/?id=2969376266
