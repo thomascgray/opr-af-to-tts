@@ -7,6 +7,7 @@ export const state = proxy<iAppState>({
   armyListShareLink: "",
   shareableLinkForTTS: undefined,
   armySpecialRulesDict: [],
+  coreSpecialRulesDict: [],
   armySpecialRulesDictNames: [],
   unitProfiles: [],
   ttsOutputConfig: {
@@ -15,7 +16,7 @@ export const state = proxy<iAppState>({
     includeArmySpecialRules: true,
     includeWeaponsListInName: false,
     includeSpecialRulesListInName: false,
-    useShorterVersionOfCoreSpecialRules: true,
+    useShorterVersionOfCoreSpecialRules: false,
     includeToughSpecialRuleRatingInName: true,
     modelWeaponOutputColour: "#fde047",
     modelSpecialRulesOutputColour: "#f472b6",

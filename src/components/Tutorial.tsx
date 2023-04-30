@@ -34,8 +34,8 @@ export const Tutorial = () => {
             </li>
           </ul>
           <li>
-            Once you're done, manually copy and paste the BBC code (supplied on
-            the right of each model definition) onto your TTS models
+            Once you're done, hit "Generate shareable link for TTS" at the
+            bottom, and then paste that URL into the TTS mod.
           </li>
         </ol>
         <p>
@@ -43,13 +43,6 @@ export const Tutorial = () => {
           <br />
           Check the "TTS Output Configuration" options below to adjust what is
           included in each model's name and description fields in TTS.
-        </p>
-        <p className="font-bold">COMING SOON!</p>
-        <p>
-          At the bottom of the page you'll see a "Generare shareable link for
-          TTS" button. Right now, this builds you a link with a bunch of JSON
-          that there isn't much use for. In the near future, I'm hoping to have
-          a TTS Workshop mod to help you load models in.
         </p>
       </div>
     </details>

@@ -55,6 +55,10 @@ export interface iAppState {
     description: string;
     shortDescription?: string;
   }[];
+  coreSpecialRulesDict: {
+    name: string;
+    description: string;
+  }[];
   armySpecialRulesDictNames: string[];
   unitProfiles: iUnitProfile[];
   ttsOutputConfig: {
