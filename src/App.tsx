@@ -476,7 +476,7 @@ const generateUnitOutput = (
           return "";
         }
         let name = w.name;
-        if (w.rating) {
+        if (w.rating && w.name === "Tough") {
           name += ` (${w.rating})`;
         }
         if (isCoreSpecialRule) {
@@ -511,7 +511,7 @@ const generateUnitOutput = (
     });
 
     if (totalToughRating >= 1) {
-      modelNameString += ` [${TTS_TOUGH_COLOUR}][${totalToughRating}][-]`;
+      modelNameString += ` [${TTS_TOUGH_COLOUR}](${totalToughRating})[-]`;
     }
   }
 
