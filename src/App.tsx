@@ -177,28 +177,30 @@ const onGenerateDefinitions = async () => {
       ],
     };
 
-    // hack to insert the special rules that DONT exist in the loadout
-    // into the loadout, so they are selectable
-    unit.selectedUpgrades.forEach((selectedUpgrade) => {
-      if (
-        unitProfile.models[0].loadout.find(
-          (l) => l.originalLoadout.label === selectedUpgrade.option.label
-        )
-      ) {
-        return;
-      }
-      unitProfile.models[0].loadout.push({
-        id: nanoid(),
-        includeInName: false,
-        name: pluralize.singular(selectedUpgrade.option.label),
-        definition: "",
-        quantity: 1,
-        originalLoadout: {
-          // @ts-ignore again, loadouts CAN have `content`
-          content: selectedUpgrade.option.gains,
-        },
+    // some of the upgrades that a unit can take DON'T appear in the loadout
+    // by default. however, for these upgrades we DO want them to in "our" loadout
+    // so that they can be selected on and off. therefore, we do this sort-of
+    // hack where we manually insert them into the units loadout
+    unit.selectedUpgrades
+      .filter((su) => {
+        return (
+          su.option.gains.length === 1 &&
+          su.option.gains[0].type === "ArmyBookRule"
+        );
+      })
+      .forEach((su) => {
+        unitProfile.models[0].loadout.push({
+          id: nanoid(),
+          includeInName: false,
+          name: pluralize.singular(su.option.label),
+          definition: "",
+          quantity: 1,
+          originalLoadout: {
+            // @ts-ignore again, loadouts CAN have `content`
+            content: su.option.gains,
+          },
+        });
       });
-    });
 
     return unitProfile;
   });
