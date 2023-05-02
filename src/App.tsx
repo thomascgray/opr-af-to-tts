@@ -576,7 +576,16 @@ function App() {
                 Army Forge
               </a>
               → army listing → menu at the top right → click "Share as Link" →
-              paste that link into the box below
+              paste that link into the box below → define model definitions →
+              hit "Generate shareable link for TTS" at the bottom of the screen
+              → paste <em>that</em> URL into{" "}
+              <a
+                target="_blank"
+                className="text-blue-700 underline visited:text-purple-700"
+                href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
+              >
+                this mod
+              </a>
             </span>
             <input
               placeholder="https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
