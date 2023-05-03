@@ -299,7 +299,7 @@ const generateUnitOutput = (
   let modelNameString = `[b]${getModelNameForOutput(
     unit,
     model,
-    ttsOutputConfig.swapCustomNameBracketingForUnitsWithMultipleModels
+    ttsOutputConfig
   )}[/b]`;
   let modelNamePlainWithLoudoutString = model.name;
   const loadoutNames = equippedLoadoutItems
@@ -552,7 +552,10 @@ const generateUnitOutput = (
 };
 
 // accounts for custom names
-const getUnitNameForLegend = (unit: iUnitProfile) => {
+const getUnitNameForLegend = (
+  unit: iUnitProfile,
+  ttsOutputConfig: iAppState["ttsOutputConfig"]
+) => {
   if (unit.customName) {
     return (
       <>
@@ -567,16 +570,28 @@ const getUnitNameForLegend = (unit: iUnitProfile) => {
 const getModelNameForOutput = (
   unit: iUnitProfile,
   model: iUnitProfileModel,
-  swapOrdering: boolean
+  ttsOutputConfig: iAppState["ttsOutputConfig"]
 ) => {
-  if (swapOrdering && unit.originalModelCountInUnit > 1) {
+  const {
+    swapCustomNameBracketingForUnitsWithMultipleModels,
+    completelyReplaceNameWithCustomName,
+  } = ttsOutputConfig;
+
+  if (completelyReplaceNameWithCustomName && unit.customNameSingular) {
+    return unit.customNameSingular;
+  }
+
+  if (
+    swapCustomNameBracketingForUnitsWithMultipleModels &&
+    unit.originalModelCountInUnit > 1
+  ) {
     if (unit.customName) {
-      return `${unit.originalName} (${unit.customName})`;
+      return `${model.name} (${unit.customName})`;
     }
     return unit.originalName;
   }
   if (unit.customName) {
-    return `${unit.customName} (${unit.originalName})`;
+    return `${unit.customName} (${model.name})`;
   }
   return unit.originalName;
 };
@@ -692,7 +707,10 @@ function App() {
                   >
                     <legend className="-ml-8 px-3 py-1 space-x-2 bg-white shadow-md border border-stone-200">
                       <span className="text-lg">
-                        {getUnitNameForLegend(unit as iUnitProfile)}
+                        {getUnitNameForLegend(
+                          unit as iUnitProfile,
+                          stateView.ttsOutputConfig
+                        )}
                       </span>
                       <span className="text-sm">
                         {unit.originalModelCountInUnit} model

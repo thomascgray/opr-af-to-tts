@@ -195,6 +195,30 @@ export const OutputOptions = () => {
         </label>
 
         <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={
+              stateView.ttsOutputConfig.completelyReplaceNameWithCustomName
+            }
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.completelyReplaceNameWithCustomName =
+                !stateView.ttsOutputConfig.completelyReplaceNameWithCustomName;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              Completely replace original model names with any custom name
+            </p>
+            <p className="text-xs">
+              If enabled, then a unit with a custom name will have that custom
+              name completely replace the original, with the original not being
+              in brackets or anywhere else on the model.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
           <span
             style={{
               backgroundColor: stateView.ttsOutputConfig.modelQuaOutputColour,

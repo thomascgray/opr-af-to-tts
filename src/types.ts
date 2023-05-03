@@ -69,6 +69,7 @@ export interface iAppState {
     useShorterVersionOfCoreSpecialRules: boolean;
     includeFullArmySpecialRulesText: boolean;
     includeFullCoreSpecialRulesText: boolean;
+    completelyReplaceNameWithCustomName: boolean;
     swapCustomNameBracketingForUnitsWithMultipleModels: boolean;
     includeWeaponsListInName: boolean;
     includeSpecialRulesListInName: boolean;
