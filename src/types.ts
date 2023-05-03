@@ -42,6 +42,8 @@ export interface iUnitProfileModel {
 export interface iUnitProfile {
   id: string;
   originalName: string;
+  customName?: string;
+  customNameSingular?: string;
   originalUnit: ArmyForgeTypes.ISelectedUnit;
   originalModelCountInUnit: number;
   models: iUnitProfileModel[];
@@ -67,6 +69,7 @@ export interface iAppState {
     useShorterVersionOfCoreSpecialRules: boolean;
     includeFullArmySpecialRulesText: boolean;
     includeFullCoreSpecialRulesText: boolean;
+    swapCustomNameBracketingForUnitsWithMultipleModels: boolean;
     includeWeaponsListInName: boolean;
     includeSpecialRulesListInName: boolean;
     includeToughSpecialRuleRatingInName: boolean;

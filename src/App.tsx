@@ -151,6 +151,10 @@ const onGenerateDefinitions = async () => {
       id: nanoid(),
       originalName: unit.name,
       originalModelCountInUnit: unit.size,
+      customName: unit.customName,
+      customNameSingular: unit.customName
+        ? pluralize.singular(unit.customName)
+        : undefined,
       originalUnit: unit,
       models: [
         {
@@ -292,7 +296,11 @@ const generateUnitOutput = (
   );
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
-  let modelNameString = `[b]${model.name}[/b]`;
+  let modelNameString = `[b]${getModelNameForOutput(
+    unit,
+    model,
+    ttsOutputConfig.swapCustomNameBracketingForUnitsWithMultipleModels
+  )}[/b]`;
   let modelNamePlainWithLoudoutString = model.name;
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
@@ -543,6 +551,36 @@ const generateUnitOutput = (
   };
 };
 
+// accounts for custom names
+const getUnitNameForLegend = (unit: iUnitProfile) => {
+  if (unit.customName) {
+    return (
+      <>
+        <span className="font-bold mr-1">{unit.customName}</span>
+        <span>({unit.originalName})</span>
+      </>
+    );
+  }
+  return <span className="font-bold">{unit.originalName}</span>;
+};
+
+const getModelNameForOutput = (
+  unit: iUnitProfile,
+  model: iUnitProfileModel,
+  swapOrdering: boolean
+) => {
+  if (swapOrdering && unit.originalModelCountInUnit > 1) {
+    if (unit.customName) {
+      return `${unit.originalName} (${unit.customName})`;
+    }
+    return unit.originalName;
+  }
+  if (unit.customName) {
+    return `${unit.customName} (${unit.originalName})`;
+  }
+  return unit.originalName;
+};
+
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
@@ -653,8 +691,8 @@ function App() {
                     key={unit.id}
                   >
                     <legend className="-ml-8 px-3 py-1 space-x-2 bg-white shadow-md border border-stone-200">
-                      <span className="text-lg font-bold">
-                        {unit.originalName}
+                      <span className="text-lg">
+                        {getUnitNameForLegend(unit as iUnitProfile)}
                       </span>
                       <span className="text-sm">
                         {unit.originalModelCountInUnit} model

@@ -55,6 +55,8 @@ export const OutputOptions = () => {
           </div>
         </label>
 
+        <hr />
+
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.includeArmySpecialRules}
@@ -67,7 +69,7 @@ export const OutputOptions = () => {
           />
           <div className="w-11/12">
             <p className="font-bold">
-              Include army special rules in model description
+              Include "Army" special rules in model description
             </p>
             <p className="text-xs">
               If enabled, the TTS "description" outputs will include the model's
@@ -75,26 +77,6 @@ export const OutputOptions = () => {
             </p>
           </div>
         </label>
-
-        {/* <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeFullArmySpecialRulesText}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeFullArmySpecialRulesText =
-                !stateView.ttsOutputConfig.includeFullArmySpecialRulesText;
-            }}
-          />
-          <div className="w-11/12">
-            <p className="font-bold">Include full special rules text</p>
-            <p className="text-xs">
-              If enabled, the TTS "description" output will include the full
-              rules text for each special rule on a model. If disabled, only the
-              special rule's name will be included.
-            </p>
-          </div>
-        </label> */}
 
         <label className="flex flex-row items-center space-x-4">
           <input
@@ -117,6 +99,8 @@ export const OutputOptions = () => {
             </p>
           </div>
         </label>
+
+        <hr />
 
         <label className="flex flex-row items-center space-x-4">
           <input
@@ -178,6 +162,34 @@ export const OutputOptions = () => {
               If enabled, if the model has the "Tough" special rule, then the
               rating for that special rule will be displayed in square brackets
               after the model's name.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={
+              stateView.ttsOutputConfig
+                .swapCustomNameBracketingForUnitsWithMultipleModels
+            }
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.swapCustomNameBracketingForUnitsWithMultipleModels =
+                !stateView.ttsOutputConfig
+                  .swapCustomNameBracketingForUnitsWithMultipleModels;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              Swap custom name and original name ordering for units with
+              multiple models in them
+            </p>
+            <p className="text-xs">
+              If enabled, then a unit with a custom name and whose original
+              model size is greater than 1 will have the custom name in the
+              brackets in the output, instead of the original name. This often
+              looks better and makes more semantic sense.
             </p>
           </div>
         </label>
