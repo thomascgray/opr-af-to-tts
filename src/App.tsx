@@ -248,7 +248,7 @@ const onGenerateShareableId = async () => {
       });
 
       totalOutput.units.push({
-        name: unitProfile.originalName,
+        name: getUnitNameForSavedShareableOutput(unitProfile),
         modelDefinitions: thisUnitsModelDefinitions,
       });
     }
@@ -301,7 +301,11 @@ const generateUnitOutput = (
     model,
     ttsOutputConfig
   )}[/b]`;
-  let modelNamePlainWithLoudoutString = model.name;
+  let modelNamePlainWithLoudoutString = getModelNameForOutput(
+    unit,
+    model,
+    ttsOutputConfig
+  );
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
     .map((l) => {
@@ -565,6 +569,13 @@ const getUnitNameForLegend = (
     );
   }
   return <span className="font-bold">{unit.originalName}</span>;
+};
+
+const getUnitNameForSavedShareableOutput = (unit: iUnitProfile) => {
+  if (unit.customName) {
+    return `${unit.customName} (${unit.originalName})`;
+  }
+  return unit.originalName;
 };
 
 const getModelNameForOutput = (
