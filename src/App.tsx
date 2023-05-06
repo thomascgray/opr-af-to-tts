@@ -25,6 +25,38 @@ import { VersionHistory } from "./components/VersionHistory";
 import ky from "ky";
 import { getUrlSlugForGameSystem } from "./utils";
 
+const getItemByLooping = (array: any[], index: number) => {
+  let arrayLength = array.length;
+  let newIndex = index % arrayLength;
+  if (newIndex < 0) {
+    newIndex += arrayLength;
+  }
+  return array[newIndex];
+};
+
+function hexToTtsRgb(hex: string) {
+  hex = hex.replace("#", "");
+  let r = parseInt(hex.substring(0, 2), 16) / 255;
+  let g = parseInt(hex.substring(2, 4), 16) / 255;
+  let b = parseInt(hex.substring(4, 6), 16) / 255;
+  return [r, g, b];
+}
+
+const colourDictionary = [
+  "#fc5c65",
+  "#fd9644",
+  "#fed330",
+  "#26de81",
+  "#2bcbba",
+  "#45aaf2",
+  "#4b7bec",
+  "#a55eea",
+  "#55E6C1",
+  "#3B3B98",
+  "#D6A2E8",
+  "#f78fb3",
+];
+
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
     return str.substring(2);
@@ -232,8 +264,9 @@ const onGenerateShareableId = async () => {
   };
 
   _.sortBy(state.unitProfiles, ["originalUnit.sortId"]).forEach(
-    (unitProfile) => {
+    (unitProfile, unitIndex) => {
       let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
+      const unitId = nanoid();
 
       unitProfile.models.forEach((model) => {
         const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
@@ -250,6 +283,8 @@ const onGenerateShareableId = async () => {
       totalOutput.units.push({
         name: getUnitNameForSavedShareableOutput(unitProfile),
         modelDefinitions: thisUnitsModelDefinitions,
+        unitId,
+        unitColour: hexToTtsRgb(getItemByLooping(colourDictionary, unitIndex)),
       });
     }
   );

@@ -11,6 +11,8 @@ export interface iTotalShareableOutput {
   units: {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
+    unitId: string;
+    unitColour: number[];
   }[];
 }
 
