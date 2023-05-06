@@ -38,7 +38,8 @@ export const Tutorial = () => {
             bottom, and then paste that URL into{" "}
             <a
               target="_blank"
-              href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969376266"
+              className="text-blue-700 underline visited:text-purple-700"
+              href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
             >
               {" "}
               the TTS mod

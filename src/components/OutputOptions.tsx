@@ -218,6 +218,30 @@ export const OutputOptions = () => {
           </div>
         </label>
 
+        <hr />
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.disableSmallText}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.disableSmallText =
+                !stateView.ttsOutputConfig.disableSmallText;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">Disable small text</p>
+            <p className="text-xs">
+              If enabled, then none of the text in the name or description will
+              be small. Enable this if you have trouble reading the small text
+              in TTS.
+            </p>
+          </div>
+        </label>
+
+        <hr />
+
         <label className="flex flex-row items-center space-x-4">
           <span
             style={{

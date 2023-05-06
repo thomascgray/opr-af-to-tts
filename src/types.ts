@@ -74,6 +74,8 @@ export interface iAppState {
     includeWeaponsListInName: boolean;
     includeSpecialRulesListInName: boolean;
     includeToughSpecialRuleRatingInName: boolean;
+    disableSmallText: boolean;
+
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;
     modelQuaOutputColour: string;

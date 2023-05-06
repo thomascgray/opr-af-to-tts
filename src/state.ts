@@ -21,6 +21,8 @@ export const state = proxy<iAppState>({
     includeToughSpecialRuleRatingInName: true,
     swapCustomNameBracketingForUnitsWithMultipleModels: true,
     completelyReplaceNameWithCustomName: false,
+    disableSmallText: false,
+
     modelWeaponOutputColour: "#fde047",
     modelSpecialRulesOutputColour: "#f472b6",
     modelQuaOutputColour: "#ef4444",

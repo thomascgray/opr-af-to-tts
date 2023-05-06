@@ -21,7 +21,7 @@ import {
 import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
-import { OutputFAQ } from "./components/OutputFAQ";
+import { VersionHistory } from "./components/VersionHistory";
 import ky from "ky";
 import { getUrlSlugForGameSystem } from "./utils";
 
@@ -529,7 +529,7 @@ const generateUnitOutput = (
     }
   }
 
-  const nameLines = [
+  let nameLines = [
     `${modelNameString}`,
     `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
     ttsOutputConfig.includeWeaponsListInName
@@ -540,10 +540,20 @@ const generateUnitOutput = (
       : "",
   ].filter((x) => x !== "");
 
-  const descriptionFieldLines: string[] = [
+  let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,
     `${allApplicableSpecialRulesBBCode}`,
   ];
+
+  // loop through everything and remove all the small text
+  if (ttsOutputConfig.disableSmallText) {
+    nameLines = nameLines.map((n) =>
+      n.replace(/\[sup\]/g, "").replace(/\[\/sup\]/g, "")
+    );
+    descriptionFieldLines = descriptionFieldLines.map((n) =>
+      n.replace(/\[sup\]/g, "").replace(/\[\/sup\]/g, "")
+    );
+  }
 
   return {
     name: modelNamePlainWithLoudoutString,
@@ -612,9 +622,11 @@ function App() {
 
   return (
     <div className="container mx-auto mt-4 mb-28">
-      <h1 className="text-3xl font-bold">OPR Army Forge to TTS</h1>
+      <div className="flex flex-row items-end space-x-2">
+        <h1 className="text-4xl font-bold">OPR Army Forge to TTS</h1>
+      </div>
 
-      <span className="block text-xs text-stone-500">
+      <span className="mt-1 block text-sm text-stone-500">
         This tool is under active development! If you find any bugs, please
         report them on the{" "}
         <a
@@ -624,13 +636,17 @@ function App() {
         >
           github issues page
         </a>
-        .
+        . Thanks!
       </span>
+
+      <VersionHistory />
 
       <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
           <label>
-            <span className="block font-bold">Army Forge Share Link</span>
+            <span className="block font-bold text-xl">
+              Army Forge Share Link
+            </span>
             <span className="block text-xs text-stone-500">
               <a
                 target="_blank"
