@@ -6,6 +6,10 @@ export const VersionHistory = () => {
         <p className="font-bold text-lg">v 1.1</p>
         <ul className="list-disc ml-6">
           <li>
+            support for custom names, and a handful of TTS output config options
+            to go with it
+          </li>
+          <li>
             TTS output config option to disable small text. Will remove ALL the
             [sup] fields from the BB code.
           </li>
