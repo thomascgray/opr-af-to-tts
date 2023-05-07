@@ -1,6 +1,6 @@
 export const VersionHistory = () => {
   return (
-    <details className="">
+    <details className="text-sm">
       <summary className="cursor-pointer">Version History / Whats New</summary>
       <div className="p-2 bg-stone-100 space-y-2">
         <p className="font-bold text-lg">v 1.1</p>
