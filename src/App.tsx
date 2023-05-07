@@ -24,6 +24,7 @@ import { Tutorial } from "./components/Tutorial";
 import { VersionHistory } from "./components/VersionHistory";
 import ky from "ky";
 import { getUrlSlugForGameSystem } from "./utils";
+import { campaignTraits } from "./data";
 
 const getItemByLooping = (array: any[], index: number) => {
   let arrayLength = array.length;
@@ -43,18 +44,16 @@ function hexToTtsRgb(hex: string) {
 }
 
 const colourDictionary = [
-  "#fc5c65",
-  "#fd9644",
-  "#fed330",
-  "#26de81",
-  "#2bcbba",
-  "#45aaf2",
-  "#4b7bec",
-  "#a55eea",
-  "#55E6C1",
-  "#3B3B98",
-  "#D6A2E8",
-  "#f78fb3",
+  "#EA2027",
+  "#009432",
+  "#0652DD",
+  "#F79F1F",
+  "#12CBC4",
+  "#FDA7DF",
+  "#9980FA",
+  "#006266",
+  "#833471",
+  "#ED4C67",
 ];
 
 const removeQuantityStringFromStartOfString = (str: string) => {
@@ -192,6 +191,8 @@ const onGenerateDefinitions = async () => {
         {
           id: nanoid(),
           isGenerated: true,
+          xp: unit.xp || 0,
+          traits: unit.traits || [],
           name: pluralize.singular(
             removeQuantityStringFromStartOfString(unit.name).trim()
           ),
@@ -329,6 +330,8 @@ const generateUnitOutput = (
     "#",
     ""
   );
+  const TTS_CAMPAIGN_COLOUR =
+    ttsOutputConfig.modelCampaignStuffOutputColour.replace("#", "");
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
   let modelNameString = `[b]${getModelNameForOutput(
@@ -574,6 +577,21 @@ const generateUnitOutput = (
       ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
       : "",
   ].filter((x) => x !== "");
+
+  //   let campaignStuffText = "";
+  //   if (state.ttsOutputConfig.includeCampaignXp) {
+  //     campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.xp}XP[-]`;
+  //   }
+  //   if (state.ttsOutputConfig.includeCampaignTraits) {
+  //     if (state.ttsOutputConfig.includeCampaignTraitsFullText) {
+
+  //     } else {
+  //       campaignStuffText += `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
+  // [sup]${w.definition}[/sup]`;
+  //       // campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.traits.join()}XP[-]`;
+  //     }
+
+  //   }
 
   let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,

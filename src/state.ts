@@ -22,12 +22,16 @@ export const state = proxy<iAppState>({
     swapCustomNameBracketingForUnitsWithMultipleModels: true,
     completelyReplaceNameWithCustomName: false,
     disableSmallText: false,
+    includeCampaignXp: false,
+    includeCampaignTraits: false,
+    includeCampaignTraitsFullText: false,
 
     modelWeaponOutputColour: "#fde047",
     modelSpecialRulesOutputColour: "#f472b6",
     modelQuaOutputColour: "#ef4444",
     modelDefOutputColour: "#0ea5e9",
     modelToughOutputColour: "#2ecc71",
+    modelCampaignStuffOutputColour: "#a55eea",
   },
   networkState: {
     fetchArmyFromArmyForge: eNetworkRequestState.IDLE,
