@@ -7,11 +7,11 @@ export const VersionHistory = () => {
         <ul className="list-disc ml-6">
           <li>
             more scripting in the TTS mod itself! Now you can right click a
-            model and see "Activated" and "Pinned". As the name implies, this
-            will toggle and activated and pinned state against <em>all</em>{" "}
-            models in the given model's unit, and draws some shapes around the
-            model to make it nice and easily skimmable of which models are
-            activated. Maybe it'll prove useful!
+            model and see "Activated". As the name implies, this will toggle an
+            activated state against <em>all</em> models in the given model's
+            unit, and draws some shapes around the model to make it nice and
+            easily skimmable of which models are activated. Maybe it'll prove
+            useful!
           </li>
         </ul>
         <details>
