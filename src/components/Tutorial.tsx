@@ -16,7 +16,7 @@ export const Tutorial = () => {
             army.
           </li>
           <li>
-            It's then up to you to then assign quantities of loudout items onto
+            It's then up to you to then assign quantities of loadout items onto
             your model, as per your desired army:
           </li>
           <ul className="list-disc ml-4">
