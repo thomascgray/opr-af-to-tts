@@ -24,37 +24,6 @@ import { Tutorial } from "./components/Tutorial";
 import { VersionHistory } from "./components/VersionHistory";
 import ky from "ky";
 import { getUrlSlugForGameSystem } from "./utils";
-import { campaignTraits } from "./data";
-
-const getItemByLooping = (array: any[], index: number) => {
-  let arrayLength = array.length;
-  let newIndex = index % arrayLength;
-  if (newIndex < 0) {
-    newIndex += arrayLength;
-  }
-  return array[newIndex];
-};
-
-function hexToTtsRgb(hex: string) {
-  hex = hex.replace("#", "");
-  let r = parseInt(hex.substring(0, 2), 16) / 255;
-  let g = parseInt(hex.substring(2, 4), 16) / 255;
-  let b = parseInt(hex.substring(4, 6), 16) / 255;
-  return [r, g, b];
-}
-
-const colourDictionary = [
-  "#EA2027",
-  "#009432",
-  "#0652DD",
-  "#F79F1F",
-  "#12CBC4",
-  "#FDA7DF",
-  "#9980FA",
-  "#006266",
-  "#833471",
-  "#ED4C67",
-];
 
 const removeQuantityStringFromStartOfString = (str: string) => {
   if (/^\dx /.test(str)) {
@@ -206,7 +175,7 @@ const onGenerateDefinitions = async () => {
               includeInName: false,
               name: pluralize.singular(loadoutItem.name),
               definition: generateLoadoutItemDefinition(loadoutItem),
-              quantity: Math.max(loadoutItem.count / unit.size, 1),
+              quantity: Math.floor(Math.max(loadoutItem.count / unit.size, 1)),
               originalLoadout: loadoutItem,
             };
           }),
@@ -285,7 +254,6 @@ const onGenerateShareableId = async () => {
         name: getUnitNameForSavedShareableOutput(unitProfile),
         modelDefinitions: thisUnitsModelDefinitions,
         unitId,
-        unitColour: hexToTtsRgb(getItemByLooping(colourDictionary, unitIndex)),
       });
     }
   );
