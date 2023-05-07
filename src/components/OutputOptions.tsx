@@ -7,11 +7,6 @@ export const OutputOptions = () => {
     <details>
       <summary className="cursor-pointer">TTS Output Configuration</summary>
       <div className="py-2 px-4 bg-stone-100 space-y-4">
-        <p>
-          A whole bunch of options for you to configure what the output will be
-          and what colours it will use on your TTS model's name and description
-          fields.
-        </p>
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.includeCoreSpecialRules}
@@ -220,6 +215,66 @@ export const OutputOptions = () => {
 
         <hr />
 
+        {/* <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignXp}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeCampaignXp =
+                !stateView.ttsOutputConfig.includeCampaignXp;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">Include campaign XP</p>
+            <p className="text-xs">
+              If enabled, then model descriptions will include the units
+              campaign XP.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignXp}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeCampaignXp =
+                !stateView.ttsOutputConfig.includeCampaignXp;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">Include campaign traits</p>
+            <p className="text-xs">
+              If enabled, then model descriptions will include the units
+              campaign traits.
+            </p>
+          </div>
+        </label>
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignTraitsFullText}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={(e) => {
+              state.ttsOutputConfig.includeCampaignTraitsFullText =
+                !stateView.ttsOutputConfig.includeCampaignTraitsFullText;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">Include campaign traits full text</p>
+            <p className="text-xs">
+              If enabled, then for any campaign traits that the model has, the
+              full rules text of that trait will be included. If disabled, only
+              the name of the trait will be included.
+            </p>
+          </div>
+        </label>
+
+        <hr /> */}
+
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.disableSmallText}
@@ -363,6 +418,31 @@ export const OutputOptions = () => {
             </p>
           </div>
         </label>
+
+        {/* <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor:
+                stateView.ttsOutputConfig.modelCampaignStuffOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
+          <input
+            className="border border-stone-500 px-2 py-1 w-20"
+            value={stateView.ttsOutputConfig.modelCampaignStuffOutputColour}
+            onChange={(e) => {
+              state.ttsOutputConfig.modelCampaignStuffOutputColour =
+                e.currentTarget.value;
+            }}
+          />
+
+          <div>
+            <p className="font-bold">Model "Campaign Stuff" Output Colour</p>
+            <p className="text-xs">
+              HEX code for the model's campaign XP and Traits in the TTS output.
+            </p>
+          </div>
+        </label> */}
       </div>
     </details>
   );

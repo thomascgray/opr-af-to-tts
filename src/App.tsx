@@ -160,6 +160,8 @@ const onGenerateDefinitions = async () => {
         {
           id: nanoid(),
           isGenerated: true,
+          xp: unit.xp || 0,
+          traits: unit.traits || [],
           name: pluralize.singular(
             removeQuantityStringFromStartOfString(unit.name).trim()
           ),
@@ -173,7 +175,7 @@ const onGenerateDefinitions = async () => {
               includeInName: false,
               name: pluralize.singular(loadoutItem.name),
               definition: generateLoadoutItemDefinition(loadoutItem),
-              quantity: Math.max(loadoutItem.count / unit.size, 1),
+              quantity: Math.floor(Math.max(loadoutItem.count / unit.size, 1)),
               originalLoadout: loadoutItem,
             };
           }),
@@ -232,8 +234,9 @@ const onGenerateShareableId = async () => {
   };
 
   _.sortBy(state.unitProfiles, ["originalUnit.sortId"]).forEach(
-    (unitProfile) => {
+    (unitProfile, unitIndex) => {
       let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
+      const unitId = nanoid();
 
       unitProfile.models.forEach((model) => {
         const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
@@ -250,6 +253,7 @@ const onGenerateShareableId = async () => {
       totalOutput.units.push({
         name: getUnitNameForSavedShareableOutput(unitProfile),
         modelDefinitions: thisUnitsModelDefinitions,
+        unitId,
       });
     }
   );
@@ -294,6 +298,8 @@ const generateUnitOutput = (
     "#",
     ""
   );
+  const TTS_CAMPAIGN_COLOUR =
+    ttsOutputConfig.modelCampaignStuffOutputColour.replace("#", "");
   const equippedLoadoutItems = model.loadout.filter((w) => w.quantity > 0);
 
   let modelNameString = `[b]${getModelNameForOutput(
@@ -539,6 +545,21 @@ const generateUnitOutput = (
       ? `[sup][${TTS_SPECIAL_RULES_COLOUR}]${modelSpecialRules}[-][/sup]`
       : "",
   ].filter((x) => x !== "");
+
+  //   let campaignStuffText = "";
+  //   if (state.ttsOutputConfig.includeCampaignXp) {
+  //     campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.xp}XP[-]`;
+  //   }
+  //   if (state.ttsOutputConfig.includeCampaignTraits) {
+  //     if (state.ttsOutputConfig.includeCampaignTraitsFullText) {
+
+  //     } else {
+  //       campaignStuffText += `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
+  // [sup]${w.definition}[/sup]`;
+  //       // campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.traits.join()}XP[-]`;
+  //     }
+
+  //   }
 
   let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,

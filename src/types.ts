@@ -11,6 +11,7 @@ export interface iTotalShareableOutput {
   units: {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
+    unitId: string;
   }[];
 }
 
@@ -29,6 +30,8 @@ export interface iUnitProfileModel {
   def: number;
   isGenerated: boolean;
   originalSpecialRules: any[];
+  xp: number;
+  traits: string[];
   loadout: {
     id: string;
     name: string;
@@ -75,12 +78,16 @@ export interface iAppState {
     includeSpecialRulesListInName: boolean;
     includeToughSpecialRuleRatingInName: boolean;
     disableSmallText: boolean;
+    includeCampaignXp: boolean;
+    includeCampaignTraits: boolean;
+    includeCampaignTraitsFullText: boolean;
 
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;
     modelQuaOutputColour: string;
     modelDefOutputColour: string;
     modelToughOutputColour: string;
+    modelCampaignStuffOutputColour: string;
   };
   networkState: {
     fetchArmyFromArmyForge: eNetworkRequestState;
