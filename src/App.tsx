@@ -121,11 +121,12 @@ const onGenerateDefinitions = async () => {
       return;
     }
     // then get the core rules for the game we're playing
-    const gameSystemUrlSlug = getUrlSlugForGameSystem(data?.gameSystem);
+    const gameSystemUrlSlug = getUrlSlugForGameSystem(data.gameSystem);
     coreRulesResponseData = await fetch(
       `https://army-forge-studio.onepagerules.com/api/public/game-systems/${gameSystemUrlSlug}/common-rules`
     ).then((res) => res.json());
 
+    state.gameSystem = data.gameSystem;
     state.coreSpecialRulesDict = coreRulesResponseData.map((c: any) => {
       return {
         name: c.name,
@@ -230,6 +231,7 @@ const onGenerateShareableId = async () => {
   state.shareableLinkForTTS = undefined;
 
   const totalOutput: iTotalShareableOutput = {
+    gameSystem: state.gameSystem || ArmyForgeTypes.eGameSystemInitials.GF,
     units: [],
   };
 

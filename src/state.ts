@@ -6,6 +6,7 @@ import * as _ from "lodash";
 export const state = proxy<iAppState>({
   armyListShareLink: "",
   shareableLinkForTTS: undefined,
+  gameSystem: undefined,
   armySpecialRulesDict: [],
   coreSpecialRulesDict: [],
   armySpecialRulesDictNames: [],
