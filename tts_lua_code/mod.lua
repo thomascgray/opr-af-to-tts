@@ -1,8 +1,7 @@
 require("vscode/console")
 -- OPR AF to TTS by Tombola
--- This is a copy of the code that lives in https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810
--- I keep a copy in this repo to keep track of changes, so I can make issues against it if need be, etc.
 local army = {}
+local armyId = nil; -- the army ID relative to OPR AF to TTS
 local notecardGuid = 'e73b3a'
 local oprAfToTtsLink = ""
 local activeArmyListCardIndex = nil;
@@ -23,15 +22,14 @@ local perModelCode = [[
             radius            = 0,           --radius of the circle around the object
             steps             = 64,          --number of segments that make up the circle
             thickness         = 0.1,         --thickness of the circle line
-            vertical_position = 0.75,         --vertical height of the circle relative to the object
+            vertical_position = 0.5,         --vertical height of the circle relative to the object
         }
     
         isActivatedCircle = {
             color             = {46 / 255, 204 / 255, 113 / 255, 1}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
             steps             = 16,          --number of segments that make up the circle
-            thickness         = 0.7,         --thickness of the circle line
-            vertical_position = 0.4,         --vertical height of the circle relative to the object
+            thickness         = 0.1,         --thickness of the circle line
         }
 
         isPinnedCircle = {
@@ -45,6 +43,23 @@ local perModelCode = [[
         rebuildContext();
         rebuildStatusEffectThings();   
     end
+
+    function toggleStunned()
+        local decodedMemo = JSON.decode(self.memo)
+        local unitMates = getAllUnitMates()
+        
+        for _, unitMate in ipairs(unitMates) do
+            unitMate.memo = JSON.encode({
+                isActivated = decodedMemo['isActivated'],
+                isPinned = decodedMemo['isPinned'],
+                isStunned = not decodedMemo['isStunned'],
+                unitId = decodedMemo['unitId'],
+                armyId = decodedMemo['armyId'],
+            })
+            unitMate.call('rebuildContext');
+            unitMate.call('rebuildStatusEffectThings');
+        end
+    end
     
     function togglePinned()
         local decodedMemo = JSON.decode(self.memo)
@@ -54,8 +69,9 @@ local perModelCode = [[
             unitMate.memo = JSON.encode({
                 isActivated = decodedMemo['isActivated'],
                 isPinned = not decodedMemo['isPinned'],
-                isHighlightOn = decodedMemo['isHighlightOn'],
-                unitId = decodedMemo['unitId']
+                isStunned = decodedMemo['isStunned'],
+                unitId = decodedMemo['unitId'],
+                armyId = decodedMemo['armyId'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
@@ -70,8 +86,9 @@ local perModelCode = [[
             unitMate.memo = JSON.encode({
                 isActivated = not decodedMemo['isActivated'],
                 isPinned = decodedMemo['isPinned'],
-                isHighlightOn = decodedMemo['isHighlightOn'],
-                unitId = decodedMemo['unitId']
+                isStunned = decodedMemo['isStunned'],
+                unitId = decodedMemo['unitId'],
+                armyId = decodedMemo['armyId'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
@@ -80,9 +97,13 @@ local perModelCode = [[
 
     function getAllUnitMates()
         local decodedMemo = JSON.decode(self.memo)
-        local unitId = decodedMemo['unitId']
         local unitObjects = getObjectsWithTag('OPRAFTTS_unit_id_' .. decodedMemo['unitId'])
         return unitObjects
+    end
+    function getAllArmyMates()
+        local decodedMemo = JSON.decode(self.memo)
+        local armyObjects = getObjectsWithTag('OPRAFTTS_army_id_' .. decodedMemo['armyId'])
+        return armyObjects
     end
     
     function rebuildContext()
@@ -96,23 +117,50 @@ local perModelCode = [[
             self.addContextMenuItem("☐ Activated", toggleActivated, false)
         end
 
-        if (decodedMemo['isPinned']) then
-            self.addContextMenuItem("☑ Pinned", togglePinned, false)
-        else
-            self.addContextMenuItem("☐ Pinned", togglePinned, false)
-        end
+        -- if (decodedMemo['isStunned']) then
+        --     self.addContextMenuItem("☑ Stunned", toggleStunned, false)
+        -- else
+        --     self.addContextMenuItem("☐ Stunned", toggleStunned, false)
+        -- end
+
+        -- if (decodedMemo['isPinned']) then
+        --     self.addContextMenuItem("☑ Pinned", togglePinned, false)
+        -- else
+        --     self.addContextMenuItem("☐ Pinned", togglePinned, false)
+        -- end
     
-        self.addContextMenuItem("Measuring Circle", cycleMeasuringRadius, true)
+        self.addContextMenuItem("Deactivate Army", deactivateArmy)
+        self.addContextMenuItem("Measuring Aura", cycleMeasuringRadius, true)
+    end
+
+    function deactivateArmy()
+        local armyMates = getAllArmyMates();
+
+        for _, armyMate in ipairs(armyMates) do
+            local armyMateMemo = JSON.decode(armyMate.memo);
+            armyMate.memo = JSON.encode({
+                isActivated = false,
+                isPinned = armyMateMemo['isPinned'],
+                isStunned = armyMateMemo['isStunned'],
+                unitId = armyMateMemo['unitId'],
+                armyId = armyMateMemo['armyId']
+            })
+            armyMate.call('rebuildContext');
+            armyMate.call('rebuildStatusEffectThings');
+        end
     end
         
     function rebuildStatusEffectThings()
         local decodedMemo = JSON.decode(self.memo)
-    
+           
         local vectorPointsTable = {}
         
+        local scale = self.getScale();
+        local heightForCircles = 0.4 / scale['y'];
+
         if (measuringCircle.radius > 0) then
             table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(measuringCircle.radius, measuringCircle.steps, measuringCircle.vertical_position),
+                points    = getCircleVectorPoints(measuringCircle.radius, measuringCircle.steps, measuringCircle.vertical_position, true),
                 color     = measuringCircle.color,
                 thickness = measuringCircle.thickness,
                 rotation  = {0,0,0},
@@ -120,7 +168,7 @@ local perModelCode = [[
         end
         if (decodedMemo['isActivated']) then
             table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isActivatedCircle.radius, isActivatedCircle.steps, isActivatedCircle.vertical_position),
+                points    = getCircleVectorPoints(isActivatedCircle.radius, isActivatedCircle.steps, heightForCircles, true),
                 color     = isActivatedCircle.color,
                 thickness = isActivatedCircle.thickness,
                 rotation  = {0,0,0},
@@ -129,7 +177,7 @@ local perModelCode = [[
 
         if (decodedMemo['isPinned']) then
             table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isPinnedCircle.radius, isPinnedCircle.steps, isPinnedCircle.vertical_position),
+                points    = getCircleVectorPoints(isPinnedCircle.radius, isPinnedCircle.steps, heightForCircles, true),
                 color     = isPinnedCircle.color,
                 thickness = isPinnedCircle.thickness,
                 rotation  = {0,0,0},
@@ -140,18 +188,29 @@ local perModelCode = [[
     end
     
     -- code taken from https://pastebin.com/Y1tTQ8Yw with huge appreciation to the original author
-    function getCircleVectorPoints(radius, steps, y)
-        -- the extra black magic maths here are to get things JUST RIGHT
-        -- for battleforged-scale models
-        radius = radius + (((modelSizeX / 2) * 0.98) - 0.2)
-    
+    function getCircleVectorPoints(radius, steps, y, accountForScale)
+        local bounds = self.getBoundsNormalized();
+        local scale = self.getScale();
+
+        local halfOfBaseWidth = bounds['size']['x'] / 2;
+        local halfOfBaseLength = bounds['size']['z'] / 2;
+
+        local xRadius = radius + halfOfBaseWidth;
+        local zRadius = radius + halfOfBaseLength;
+
+        -- if we account for scale, then 3'' will always be 3'' even if the model is scaled up
+        if (accountForScale) then
+            xRadius = xRadius / scale['x'];
+            zRadius = zRadius / scale['z'];
+        end
+
         local t = {}
         local d,s,c,r = 360/steps, math.sin, math.cos, math.rad
         for i = 0,steps do
             table.insert(t, {
-                c(r(d*i))*radius,
-                y,
-                s(r(d*i))*radius
+                c(r(d*i)) * xRadius,                   -- x
+                y,                                  -- y
+                s(r(d*i)) * zRadius                 -- z
             })
         end
         return t
@@ -178,12 +237,17 @@ local perModelCode = [[
         end
     
         if measuringCircle.radius == 0 then
-            broadcastToAll("Measuring circle turned off", {1,1,1})
+            broadcastToAll("Measuring aura turned off", {1,1,1})
         else
-            broadcastToAll("Measuring circle set to " .. measuringCircle.radius .. "''", {1,1,1})
+            broadcastToAll("Measuring aura set to " .. measuringCircle.radius .. "''", {1,1,1})
         end
     
         rebuildStatusEffectThings();
+    end
+
+
+    function roundToTwoDecimalPlaces(number)
+        return math.floor(number * 100 + 0.5) / 100
     end
 ]]
 
@@ -315,6 +379,7 @@ function beginAssignment(player, _, id)
     nameToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsNameOutput']
     descriptionToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsDescriptionOutput']
     unitIdToAssign = army[unitIndex]['unitId']
+    unitIdToAssign = army[unitIndex]['unitId']
 
     broadcastToAll("Assigning '" .. nameOfModelAssigning .. "'")
 end
@@ -330,12 +395,16 @@ function assignNameAndDescriptionToSelectedObjects()
         target.setDescription(descriptionToAssign)
         target.setLuaScript(perModelCode);
         target.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
+        target.addTag('OPRAFTTS_army_id_' .. armyId)
         target.memo = JSON.encode({
             isActivated = false,
             isPinned = false,
-            isHighlightOn = false,
+            isStunned = false,
             unitId = unitIdToAssign,
+            armyId = armyId,
         })
+
+        target.reload();
     end
 
     broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to " .. tablelength(selectedObjects) .. " objects!")
@@ -373,12 +442,19 @@ function onObjectPickUp(player_color, picked_up_object)
     picked_up_object.setDescription(descriptionToAssign)
     picked_up_object.setLuaScript(perModelCode);
     picked_up_object.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
+    picked_up_object.addTag('OPRAFTTS_army_id_' .. armyId)
     picked_up_object.memo = JSON.encode({
         isActivated = false,
         isPinned = false,
-        isHighlightOn = false,
+        isStunned = false,
         unitId = unitIdToAssign,
+        armyId = armyId,
     })
+    picked_up_object.drop();
+    -- picked_up_object.reload();
+    Wait.time(function ()
+        picked_up_object.reload();
+    end, 1)
 
     broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to 1 object!")
 
@@ -404,6 +480,7 @@ function handleResponse(response)
 
     local data = JSON.decode(response.text)
 
+    armyId = data['listId'];
     local units = {}
     for _, unitDefinition in ipairs(data['listJson']['units']) do
         local unit = {

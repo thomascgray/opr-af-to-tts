@@ -13,6 +13,7 @@ export interface iTotalShareableOutput {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
     unitId: string;
+    selectionId: string;
   }[];
 }
 
@@ -50,6 +51,8 @@ export interface iUnitProfile {
   customNameSingular?: string;
   originalUnit: ArmyForgeTypes.ISelectedUnit;
   originalModelCountInUnit: number;
+  originalSelectionId: string;
+  originalJoinToUnit?: string;
   models: iUnitProfileModel[];
 }
 
