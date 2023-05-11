@@ -53,7 +53,7 @@ function App() {
         <a
           target="_blank"
           className="text-blue-700 underline visited:text-purple-700"
-          href=""
+          href="https://github.com/thomascgray/opr-af-to-tts/releases"
         >
           releases page on Github
         </a>{" "}
