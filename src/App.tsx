@@ -35,7 +35,7 @@ function App() {
         <h1 className="text-4xl font-bold">OPR Army Forge to TTS</h1>
       </div>
 
-      <span className="mt-1 block text-sm text-stone-500">
+      <span className="mt-1 block text-xs text-stone-500">
         This tool is under active development! If you find any bugs, please
         report them on the{" "}
         <a
@@ -48,7 +48,17 @@ function App() {
         . Thanks!
       </span>
 
-      <VersionHistory />
+      <span className="mt-1 block text-xs text-stone-500">
+        Please take a look at the{" "}
+        <a
+          target="_blank"
+          className="text-blue-700 underline visited:text-purple-700"
+          href=""
+        >
+          releases page on Github
+        </a>{" "}
+        to see the latest release notes
+      </span>
 
       <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
