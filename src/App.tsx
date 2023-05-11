@@ -133,187 +133,185 @@ function App() {
           <hr className="my-5" />
 
           <div className="flex flex-col space-y-10">
-            {_.sortBy(stateView.unitProfiles, ["originalUnit.sortId"]).map(
-              (unit, unitIndex) => {
-                // get joined to, if it is
+            {stateView.unitProfiles.map((unit, unitIndex) => {
+              // get joined to, if it is
 
-                const joinedTo = unit.originalJoinToUnit
-                  ? stateView.unitProfiles.find(
-                      (up) => up.originalSelectionId === unit.originalJoinToUnit
-                    )
-                  : undefined;
+              const joinedTo = unit.originalJoinToUnit
+                ? stateView.unitProfiles.find(
+                    (up) => up.originalSelectionId === unit.originalJoinToUnit
+                  )
+                : undefined;
 
-                return (
-                  <fieldset
-                    className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
-                    key={unit.id}
-                  >
-                    <legend className="-ml-8 px-3 py-1  bg-white shadow-md border border-stone-200">
-                      <span className="text-lg">
-                        #{unitIndex + 1}{" "}
-                        {getUnitNameForLegend(unit as iUnitProfile)}
-                      </span>
-                      <span className="text-sm text-">
+              return (
+                <fieldset
+                  className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
+                  key={unit.id}
+                >
+                  <legend className="-ml-8 px-3 py-1  bg-white shadow-md border border-stone-200">
+                    <span className="text-lg">
+                      #{unitIndex + 1}{" "}
+                      {getUnitNameForLegend(unit as iUnitProfile)}
+                    </span>
+                    <span className="text-sm text-">
+                      {" "}
+                      {unit.originalModelCountInUnit} model
+                      {unit.originalModelCountInUnit > 1 ? "s" : ""}
+                    </span>
+                    {joinedTo && (
+                      <span className="text-sm italic text-stone-500">
                         {" "}
-                        {unit.originalModelCountInUnit} model
-                        {unit.originalModelCountInUnit > 1 ? "s" : ""}
+                        (
+                        {isUnitHero(unit as iUnitProfile)
+                          ? "joined to"
+                          : "combined with"}{" "}
+                        #
+                        {getUnitIndexForSelectionId(
+                          joinedTo.originalSelectionId,
+                          stateView as iAppState
+                        )}{" "}
+                        {getUnitNameForLegend(joinedTo as iUnitProfile)})
                       </span>
-                      {joinedTo && (
-                        <span className="text-sm italic text-stone-500">
-                          {" "}
-                          (
-                          {isUnitHero(unit as iUnitProfile)
-                            ? "joined to"
-                            : "combined with"}{" "}
-                          #
-                          {getUnitIndexForSelectionId(
-                            joinedTo.originalSelectionId,
-                            stateView as iAppState
-                          )}{" "}
-                          {getUnitNameForLegend(joinedTo as iUnitProfile)})
-                        </span>
-                      )}
-                    </legend>
+                    )}
+                  </legend>
 
-                    <div className="flex flex-col space-y-10">
-                      {unit.models.map((model, modelIndex) => {
-                        const { ttsNameOutput, ttsDescriptionOutput } =
-                          generateUnitOutput(
-                            unit as iUnitProfile,
-                            model as iUnitProfileModel,
-                            stateView as iAppState
-                          );
-                        return (
-                          <div key={model.id} className="relative">
-                            <p className="text-sm">
-                              Model Definition {modelIndex + 1}
-                            </p>
-                            {!model.isGenerated && (
-                              <button
-                                onClick={() => {
-                                  deleteModel(unit.id, model.id);
-                                }}
-                                title="Delete this distinct model definition"
-                                className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
+                  <div className="flex flex-col space-y-10">
+                    {unit.models.map((model, modelIndex) => {
+                      const { ttsNameOutput, ttsDescriptionOutput } =
+                        generateUnitOutput(
+                          unit as iUnitProfile,
+                          model as iUnitProfileModel,
+                          stateView as iAppState
+                        );
+                      return (
+                        <div key={model.id} className="relative">
+                          <p className="text-sm">
+                            Model Definition {modelIndex + 1}
+                          </p>
+                          {!model.isGenerated && (
+                            <button
+                              onClick={() => {
+                                deleteModel(unit.id, model.id);
+                              }}
+                              title="Delete this distinct model definition"
+                              className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={4}
+                                stroke="currentColor"
+                                className="w-4 h-4"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={4}
-                                  stroke="currentColor"
-                                  className="w-4 h-4"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                  />
-                                </svg>
-                              </button>
-                            )}
-                            <div className="flex flex-row space-x-2">
-                              <div className="editor-panel space-y-3 w-2/4">
-                                {/* loadout items */}
-                                <div className="space-y-1">
-                                  {model.loadout.map((loadoutItem) => {
-                                    return (
-                                      <div
-                                        key={loadoutItem.id}
-                                        className={classnames(
-                                          "flex flex-row items-center justify-between  py-1 px-2",
-                                          {
-                                            "bg-stone-100 text-stone-500":
-                                              loadoutItem.quantity <= 0,
-                                            "bg-stone-300 text-black":
-                                              loadoutItem.quantity >= 1,
-                                          }
-                                        )}
-                                      >
-                                        <span className="flex flex-row items-center space-x-1 ">
-                                          <span className="font-bold">
-                                            {loadoutItem.name}
-                                          </span>
-                                          <span>{loadoutItem.definition}</span>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                          <div className="flex flex-row space-x-2">
+                            <div className="editor-panel space-y-3 w-2/4">
+                              {/* loadout items */}
+                              <div className="space-y-1">
+                                {model.loadout.map((loadoutItem) => {
+                                  return (
+                                    <div
+                                      key={loadoutItem.id}
+                                      className={classnames(
+                                        "flex flex-row items-center justify-between  py-1 px-2",
+                                        {
+                                          "bg-stone-100 text-stone-500":
+                                            loadoutItem.quantity <= 0,
+                                          "bg-stone-300 text-black":
+                                            loadoutItem.quantity >= 1,
+                                        }
+                                      )}
+                                    >
+                                      <span className="flex flex-row items-center space-x-1 ">
+                                        <span className="font-bold">
+                                          {loadoutItem.name}
                                         </span>
+                                        <span>{loadoutItem.definition}</span>
+                                      </span>
 
-                                        <span className="flex flex-row items-center space-x-2">
-                                          <input
-                                            className="w-12 p-1 text-lg font-bold text-center"
-                                            min={0}
-                                            onChange={(e) => {
-                                              const value = parseInt(
-                                                e.currentTarget.value
-                                              );
-                                              updateWeaponQuantity(
-                                                unit.id,
-                                                model.id,
-                                                loadoutItem.id,
-                                                value
-                                              );
-                                            }}
-                                            value={loadoutItem.quantity}
-                                            type="number"
-                                          />
-                                          <input
-                                            className=""
-                                            title="Check to include this item in the model name"
-                                            checked={loadoutItem.includeInName}
-                                            disabled={loadoutItem.quantity <= 0}
-                                            onChange={(e) => {
-                                              updateWeaponIncludeInName(
-                                                unit.id,
-                                                model.id,
-                                                loadoutItem.id,
-                                                !loadoutItem.includeInName
-                                              );
-                                            }}
-                                            type="checkbox"
-                                          />
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-
-                                <button
-                                  onClick={() =>
-                                    duplicateModel(unit.id, model.id)
-                                  }
-                                  className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
-                                >
-                                  Duplicate this model definition
-                                </button>
+                                      <span className="flex flex-row items-center space-x-2">
+                                        <input
+                                          className="w-12 p-1 text-lg font-bold text-center"
+                                          min={0}
+                                          onChange={(e) => {
+                                            const value = parseInt(
+                                              e.currentTarget.value
+                                            );
+                                            updateWeaponQuantity(
+                                              unit.id,
+                                              model.id,
+                                              loadoutItem.id,
+                                              value
+                                            );
+                                          }}
+                                          value={loadoutItem.quantity}
+                                          type="number"
+                                        />
+                                        <input
+                                          className=""
+                                          title="Check to include this item in the model name"
+                                          checked={loadoutItem.includeInName}
+                                          disabled={loadoutItem.quantity <= 0}
+                                          onChange={(e) => {
+                                            updateWeaponIncludeInName(
+                                              unit.id,
+                                              model.id,
+                                              loadoutItem.id,
+                                              !loadoutItem.includeInName
+                                            );
+                                          }}
+                                          type="checkbox"
+                                        />
+                                      </span>
+                                    </div>
+                                  );
+                                })}
                               </div>
 
-                              <div className="output-panel w-2/4">
-                                <div
-                                  key={model.id + "tts"}
-                                  className="bg-stone-300 px-4 pb-4 pt-3"
-                                >
-                                  <span className="block text-xs italic text-stone-600 mb-2">
-                                    TTS output preview (name and description)
-                                  </span>
-                                  <textarea
-                                    onChange={() => {}}
-                                    rows={5}
-                                    onFocus={(e) => e.target.select()}
-                                    value={`${ttsNameOutput}
+                              <button
+                                onClick={() =>
+                                  duplicateModel(unit.id, model.id)
+                                }
+                                className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                              >
+                                Duplicate this model definition
+                              </button>
+                            </div>
+
+                            <div className="output-panel w-2/4">
+                              <div
+                                key={model.id + "tts"}
+                                className="bg-stone-300 px-4 pb-4 pt-3"
+                              >
+                                <span className="block text-xs italic text-stone-600 mb-2">
+                                  TTS output preview (name and description)
+                                </span>
+                                <textarea
+                                  onChange={() => {}}
+                                  rows={5}
+                                  onFocus={(e) => e.target.select()}
+                                  value={`${ttsNameOutput}
 ----------
 ${ttsDescriptionOutput}`}
-                                    className="block font-mono whitespace-pre text-xs w-full overflow-x-hidden"
-                                  />
-                                </div>
+                                  className="block font-mono whitespace-pre text-xs w-full overflow-x-hidden"
+                                />
                               </div>
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </fieldset>
-                );
-              }
-            )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              );
+            })}
 
             <hr className="my-5" />
 

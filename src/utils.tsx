@@ -153,72 +153,76 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     return;
   }
 
-  const unitProfiles: iUnitProfile[] = data.units.map((unit) => {
-    const unitProfile: iUnitProfile = {
-      id: nanoid(),
-      originalName: unit.name,
-      originalModelCountInUnit: unit.size,
-      customName: unit.customName,
-      originalSelectionId: unit.selectionId,
-      originalJoinToUnit: unit.joinToUnit,
-      customNameSingular: unit.customName
-        ? pluralize.singular(unit.customName)
-        : undefined,
-      originalUnit: unit,
-      models: [
-        {
-          id: nanoid(),
-          isGenerated: true,
-          xp: unit.xp || 0,
-          traits: unit.traits || [],
-          name: pluralize.singular(
-            removeQuantityStringFromStartOfString(unit.name).trim()
-          ),
-          originalName: unit.name,
-          qua: parseInt(unit.quality),
-          def: parseInt(unit.defense),
-          originalSpecialRules: unit.specialRules || [],
-          loadout: _.uniqBy(unit.loadout, "label").map((loadoutItem) => {
-            return {
-              id: nanoid(),
-              includeInName: false,
-              name: pluralize.singular(loadoutItem.name),
-              definition: generateLoadoutItemDefinition(loadoutItem),
-              quantity: Math.floor(Math.max(loadoutItem.count / unit.size, 1)),
-              originalLoadout: loadoutItem,
-            };
-          }),
-        },
-      ],
-    };
-
-    // some of the upgrades that a unit can take DON'T appear in the loadout
-    // by default. however, for these upgrades we DO want them to in "our" loadout
-    // so that they can be selected on and off. therefore, we do this sort-of
-    // hack where we manually insert them into the units loadout
-    unit.selectedUpgrades
-      .filter((su) => {
-        return (
-          su.option.gains.length === 1 &&
-          su.option.gains[0].type === "ArmyBookRule"
-        );
-      })
-      .forEach((su) => {
-        unitProfile.models[0].loadout.push({
-          id: nanoid(),
-          includeInName: false,
-          name: pluralize.singular(su.option.label),
-          definition: "",
-          quantity: 1,
-          originalLoadout: {
-            // @ts-ignore again, loadouts CAN have `content`
-            content: su.option.gains,
+  const unitProfiles: iUnitProfile[] = _.sortBy(data.units, ["sortId"]).map(
+    (unit) => {
+      const unitProfile: iUnitProfile = {
+        id: nanoid(),
+        originalName: unit.name,
+        originalModelCountInUnit: unit.size,
+        customName: unit.customName,
+        originalSelectionId: unit.selectionId,
+        originalJoinToUnit: unit.joinToUnit,
+        customNameSingular: unit.customName
+          ? pluralize.singular(unit.customName)
+          : undefined,
+        originalUnit: unit,
+        models: [
+          {
+            id: nanoid(),
+            isGenerated: true,
+            xp: unit.xp || 0,
+            traits: unit.traits || [],
+            name: pluralize.singular(
+              removeQuantityStringFromStartOfString(unit.name).trim()
+            ),
+            originalName: unit.name,
+            qua: parseInt(unit.quality),
+            def: parseInt(unit.defense),
+            originalSpecialRules: unit.specialRules || [],
+            loadout: _.uniqBy(unit.loadout, "label").map((loadoutItem) => {
+              return {
+                id: nanoid(),
+                includeInName: false,
+                name: pluralize.singular(loadoutItem.name),
+                definition: generateLoadoutItemDefinition(loadoutItem),
+                quantity: Math.floor(
+                  Math.max(loadoutItem.count / unit.size, 1)
+                ),
+                originalLoadout: loadoutItem,
+              };
+            }),
           },
-        });
-      });
+        ],
+      };
 
-    return unitProfile;
-  });
+      // some of the upgrades that a unit can take DON'T appear in the loadout
+      // by default. however, for these upgrades we DO want them to in "our" loadout
+      // so that they can be selected on and off. therefore, we do this sort-of
+      // hack where we manually insert them into the units loadout
+      unit.selectedUpgrades
+        .filter((su) => {
+          return (
+            su.option.gains.length === 1 &&
+            su.option.gains[0].type === "ArmyBookRule"
+          );
+        })
+        .forEach((su) => {
+          unitProfile.models[0].loadout.push({
+            id: nanoid(),
+            includeInName: false,
+            name: pluralize.singular(su.option.label),
+            definition: "",
+            quantity: 1,
+            originalLoadout: {
+              // @ts-ignore again, loadouts CAN have `content`
+              content: su.option.gains,
+            },
+          });
+        });
+
+      return unitProfile;
+    }
+  );
 
   state.armySpecialRulesDict = [
     ...stateView.coreSpecialRulesDict,
@@ -243,30 +247,50 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
     units: [],
   };
 
-  _.sortBy(stateView.unitProfiles, ["originalUnit.sortId"]).forEach(
-    (unitProfile, unitIndex) => {
-      let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
-      const unitId = nanoid();
+  stateView.unitProfiles.forEach((unitProfile, unitIndex) => {
+    let thisUnitsModelDefinitions: iUnitProfileModelTTSOutput[] = [];
+    const unitId = nanoid();
 
-      unitProfile.models.forEach((model) => {
-        const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
-          generateUnitOutput(unitProfile, model, stateView);
+    unitProfile.models.forEach((model) => {
+      const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
+        generateUnitOutput(unitProfile, model, stateView);
 
-        thisUnitsModelDefinitions.push({
-          name,
-          loadoutCSV,
-          ttsNameOutput,
-          ttsDescriptionOutput,
-        });
+      thisUnitsModelDefinitions.push({
+        name,
+        loadoutCSV,
+        ttsNameOutput,
+        ttsDescriptionOutput,
       });
+    });
 
-      totalOutput.units.push({
-        name: getUnitNameForSavedShareableOutput(unitProfile),
-        modelDefinitions: thisUnitsModelDefinitions,
-        unitId,
-      });
+    totalOutput.units.push({
+      name: getUnitNameForSavedShareableOutput(unitProfile, stateView),
+      modelDefinitions: thisUnitsModelDefinitions,
+      selectionId: unitProfile.originalSelectionId,
+      unitId,
+    });
+  });
+
+  // now we loop over totalOutput.units and for any units that are combined or joined to another unit,
+  // make that unit use the unit id of the one its joined to
+  totalOutput.units.forEach((unit) => {
+    const unitProfile = stateView.unitProfiles.find(
+      (up) => up.originalSelectionId === unit.selectionId
+    );
+    if (!unitProfile) {
+      return;
     }
-  );
+    if (!unitProfile.originalJoinToUnit) {
+      return;
+    }
+    const joinedToUnit = totalOutput.units.find(
+      (u) => u.selectionId === unitProfile.originalJoinToUnit
+    );
+    if (!joinedToUnit) {
+      return;
+    }
+    unit.unitId = joinedToUnit.unitId;
+  });
 
   let data;
   state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
@@ -602,10 +626,7 @@ export const generateUnitOutput = (
   }
 
   return {
-    name: `${getUnitIndexForSelectionId(
-      unit.originalSelectionId,
-      stateView
-    )}${modelNamePlainWithLoudoutString}`,
+    name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
     loadoutCSV: activeWeaponNamesCommaSeparated,
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
@@ -627,11 +648,42 @@ export const getUnitNameForLegend = (unit: iUnitProfile) => {
   return <span className="font-bold">{unit.originalName}</span>;
 };
 
-export const getUnitNameForSavedShareableOutput = (unit: iUnitProfile) => {
+export const getUnitNameForSavedShareableOutput = (
+  unit: iUnitProfile,
+  stateView: iAppState
+) => {
+  let name = "";
   if (unit.customName) {
-    return `${unit.customName} (${unit.originalName})`;
+    name = `${unit.customName} (${unit.originalName})`;
+  } else {
+    name = `${unit.originalName}`;
   }
-  return unit.originalName;
+  const armyUnitIndex = getUnitIndexForSelectionId(
+    unit.originalSelectionId,
+    stateView
+  );
+  name = `#${armyUnitIndex} ${name}`;
+
+  const joinedTo = unit.originalJoinToUnit
+    ? stateView.unitProfiles.find(
+        (up) => up.originalSelectionId === unit.originalJoinToUnit
+      )
+    : undefined;
+
+  if (joinedTo) {
+    let joinText = isUnitHero(unit as iUnitProfile)
+      ? "joined to"
+      : "combined with";
+    {
+      isUnitHero(unit as iUnitProfile) ? "joined to" : "combined with";
+    }
+
+    let joinedToName = getUnitNameForSavedShareableOutput(joinedTo, stateView);
+
+    name = `${name} (${joinText} ${joinedToName})`;
+  }
+
+  return name;
 };
 
 export const getModelNameForOutput = (

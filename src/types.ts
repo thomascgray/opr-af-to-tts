@@ -13,6 +13,7 @@ export interface iTotalShareableOutput {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
     unitId: string;
+    selectionId: string;
   }[];
 }
 
