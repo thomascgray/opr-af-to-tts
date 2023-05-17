@@ -16,7 +16,6 @@ import {
 import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
-import { VersionHistory } from "./components/VersionHistory";
 import {
   generateUnitOutput,
   getUnitNameForLegend,
@@ -29,6 +28,13 @@ import {
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
+  const areAllLoadoutsChecked = stateView.unitProfiles.every((unit) => {
+    return unit.models.every((model) => {
+      return model.loadout.every((loadoutItem) => {
+        return loadoutItem.includeInName;
+      });
+    });
+  });
   return (
     <div className="container mx-auto mt-4 mb-28">
       <div className="flex flex-row items-end space-x-2">
@@ -142,6 +148,56 @@ function App() {
         <>
           <hr className="my-5" />
 
+          <fieldset
+            className="mb-8 p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
+            key={"inline-options"}
+          >
+            <legend className="-ml-8 px-3 py-1  bg-white shadow-md border border-stone-200">
+              Inline Options
+            </legend>
+
+            <span className="flex items-center space-x-2">
+              <input
+                className="h-5 w-5 cursor-pointer outline-none border-none"
+                title="Check to toggle ALL loadout items to be included in the model name"
+                checked={areAllLoadoutsChecked}
+                onChange={(e) => {
+                  if (areAllLoadoutsChecked) {
+                    state.unitProfiles.forEach((unit) => {
+                      unit.models.forEach((model) => {
+                        model.loadout.forEach((loadoutItem) => {
+                          updateWeaponIncludeInName(
+                            unit.id,
+                            model.id,
+                            loadoutItem.id,
+                            false
+                          );
+                        });
+                      });
+                    });
+                  } else {
+                    state.unitProfiles.forEach((unit) => {
+                      unit.models.forEach((model) => {
+                        model.loadout.forEach((loadoutItem) => {
+                          updateWeaponIncludeInName(
+                            unit.id,
+                            model.id,
+                            loadoutItem.id,
+                            true
+                          );
+                        });
+                      });
+                    });
+                  }
+                }}
+                type="checkbox"
+              />
+              <span>
+                Check to toggle ALL loadout items to be included in the model
+                name
+              </span>
+            </span>
+          </fieldset>
           <div className="flex flex-col space-y-10">
             {stateView.unitProfiles.map((unit, unitIndex) => {
               // get joined to, if it is
@@ -265,7 +321,7 @@ function App() {
                                           type="number"
                                         />
                                         <input
-                                          className=""
+                                          className="h-5 w-5 cursor-pointer outline-none border-none"
                                           title="Check to include this item in the model name"
                                           checked={loadoutItem.includeInName}
                                           disabled={loadoutItem.quantity <= 0}
