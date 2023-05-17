@@ -120,7 +120,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   try {
     // get the army list
     data = await fetch(`/.netlify/functions/get-army?armyId=${id}`).then(
-      (res) => res.json()
+      async (res) => await res.json()
     );
     if (!data) {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
@@ -130,7 +130,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     const gameSystemUrlSlug = getUrlSlugForGameSystem(data.gameSystem);
     coreRulesResponseData = await fetch(
       `https://army-forge-studio.onepagerules.com/api/public/game-systems/${gameSystemUrlSlug}/common-rules`
-    ).then((res) => res.json());
+    ).then(async (res) => await res.json());
 
     state.gameSystem = data.gameSystem;
     state.coreSpecialRulesDict = coreRulesResponseData.map((c: any) => {
@@ -152,6 +152,16 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   if (!data) {
     return;
   }
+  state.armySpecialRulesDict = [
+    ...state.coreSpecialRulesDict,
+    // @ts-ignore interface doesn't include new specialRules array
+    ...data.specialRules.map((sr) => {
+      return {
+        name: sr.name,
+        description: sr.description,
+      };
+    }),
+  ];
 
   const unitProfiles: iUnitProfile[] = _.sortBy(data.units, ["sortId"]).map(
     (unit) => {
@@ -223,17 +233,6 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
       return unitProfile;
     }
   );
-
-  state.armySpecialRulesDict = [
-    ...stateView.coreSpecialRulesDict,
-    // @ts-ignore interface doesn't include new specialRules array
-    ...data.specialRules.map((sr) => {
-      return {
-        name: sr.name,
-        description: sr.description,
-      };
-    }),
-  ];
 
   state.unitProfiles = unitProfiles;
 };
