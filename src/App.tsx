@@ -189,17 +189,12 @@ function App() {
                       });
                     });
                   }
-                  // updateWeaponIncludeInName(
-                  //   unit.id,
-                  //   model.id,
-                  //   loadoutItem.id,
-                  //   !loadoutItem.includeInName
-                  // );
                 }}
                 type="checkbox"
               />
               <span>
-                Check to toggle ALL loadouts to be included in the model name
+                Check to toggle ALL loadout items to be included in the model
+                name
               </span>
             </span>
           </fieldset>
