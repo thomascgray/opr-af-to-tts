@@ -2,6 +2,8 @@ require("vscode/console")
 -- OPR AF to TTS by Tombola
 local army = {}
 local armyId = nil; -- the army ID relative to OPR AF to TTS
+local gameSystemToAssign = nil; -- the game system we're assigning, so models know what they are (for their right click menus)
+
 local notecardGuid = 'e73b3a'
 local oprAfToTtsLink = ""
 local activeArmyListCardIndex = nil;
@@ -11,17 +13,34 @@ local nameToAssign = nil;
 local descriptionToAssign = nil;
 local unitIdToAssign = nil;
 
+
 local perModelCode = [[
+    function largestWithMax(a, b, c)
+        return (a > b) and (b > c and c or b) or (a > c and c or a)
+    end
+
+    function smallestWithMin(a, b, c)
+        return (a < b) and (b < c and b or c) or (a < c and a or c)
+    end
+
+    function numOrMin(a, b)
+        if (a < b) then
+            return b
+        else
+            return a
+        end
+    end
+
     function onLoad()
         local bounds = self.getBoundsNormalized();
         modelSizeX = bounds['size']['x'];
         local decodedMemo = JSON.decode(self.memo)
     
         measuringCircle = {
-            color             = {231 / 255, 76 / 255, 60 / 255, 0.85}, --RGB color of the circle
+            color             = {255, 255, 255, 0.9}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
             steps             = 64,          --number of segments that make up the circle
-            thickness         = 0.1,         --thickness of the circle line
+            thickness         = 0.05,         --thickness of the circle line
             vertical_position = 0.5,         --vertical height of the circle relative to the object
         }
     
@@ -36,12 +55,38 @@ local perModelCode = [[
             color             = {241 / 255, 196 / 255, 15 / 255, 1}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
             steps             = 5,          --number of segments that make up the circle
-            thickness         = 0.3,         --thickness of the circle line
-            vertical_position = 0.6,         --vertical height of the circle relative to the object
+            thickness         = 0.2,         --thickness of the circle line
         }
-    
+
+        isStunnedCircle = {
+            color             = {231 / 255, 76 / 255, 60 / 255, 1}, --RGB color of the circle
+            radius            = 0,           --radius of the circle around the object
+            steps             = 6,          --number of segments that make up the circle
+            thickness         = 0.2,         --thickness of the circle line
+        }
+
         rebuildContext();
         rebuildStatusEffectThings();   
+    end
+
+    
+
+    function toggleActivated()
+        local decodedMemo = JSON.decode(self.memo)
+        local unitMates = getAllUnitMates()
+
+        for _, unitMate in ipairs(unitMates) do
+            unitMate.memo = JSON.encode({
+                isActivated = not decodedMemo['isActivated'],
+                isPinned = decodedMemo['isPinned'],
+                isStunned = decodedMemo['isStunned'],
+                gameSystem = decodedMemo['gameSystem'],
+                unitId = decodedMemo['unitId'],
+                armyId = decodedMemo['armyId'],
+            })
+            unitMate.call('rebuildContext');
+            unitMate.call('rebuildStatusEffectThings');
+        end
     end
 
     function toggleStunned()
@@ -55,12 +100,13 @@ local perModelCode = [[
                 isStunned = not decodedMemo['isStunned'],
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
+                gameSystem = decodedMemo['gameSystem'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
     end
-    
+
     function togglePinned()
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
@@ -72,23 +118,7 @@ local perModelCode = [[
                 isStunned = decodedMemo['isStunned'],
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
-            })
-            unitMate.call('rebuildContext');
-            unitMate.call('rebuildStatusEffectThings');
-        end
-    end
-
-    function toggleActivated()
-        local decodedMemo = JSON.decode(self.memo)
-        local unitMates = getAllUnitMates()
-
-        for _, unitMate in ipairs(unitMates) do
-            unitMate.memo = JSON.encode({
-                isActivated = not decodedMemo['isActivated'],
-                isPinned = decodedMemo['isPinned'],
-                isStunned = decodedMemo['isStunned'],
-                unitId = decodedMemo['unitId'],
-                armyId = decodedMemo['armyId'],
+                gameSystem = decodedMemo['gameSystem'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
@@ -117,17 +147,29 @@ local perModelCode = [[
             self.addContextMenuItem("☐ Activated", toggleActivated, false)
         end
 
-        -- if (decodedMemo['isStunned']) then
-        --     self.addContextMenuItem("☑ Stunned", toggleStunned, false)
-        -- else
-        --     self.addContextMenuItem("☐ Stunned", toggleStunned, false)
-        -- end
+        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            if (decodedMemo['isStunned']) then
+                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
+            else
+                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
+            end
+        end
 
-        -- if (decodedMemo['isPinned']) then
-        --     self.addContextMenuItem("☑ Pinned", togglePinned, false)
-        -- else
-        --     self.addContextMenuItem("☐ Pinned", togglePinned, false)
-        -- end
+        if (decodedMemo['gameSystem'] == 'gf') then
+            if (decodedMemo['isPinned']) then
+                self.addContextMenuItem("☑ Pinned", togglePinned, false)
+            else
+                self.addContextMenuItem("☐ Pinned", togglePinned, false)
+            end
+        end
+
+        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            if (decodedMemo['isPinned']) then
+                self.addContextMenuItem("☑ Wavering", togglePinned, false)
+            else
+                self.addContextMenuItem("☐ Wavering", togglePinned, false)
+            end
+        end
     
         self.addContextMenuItem("Deactivate Army", deactivateArmy)
         self.addContextMenuItem("Measuring Aura", cycleMeasuringRadius, true)
@@ -143,7 +185,8 @@ local perModelCode = [[
                 isPinned = armyMateMemo['isPinned'],
                 isStunned = armyMateMemo['isStunned'],
                 unitId = armyMateMemo['unitId'],
-                armyId = armyMateMemo['armyId']
+                gameSystem = armyMateMemo['gameSystem'],
+                armyId = armyMateMemo['armyId'],
             })
             armyMate.call('rebuildContext');
             armyMate.call('rebuildStatusEffectThings');
@@ -177,9 +220,18 @@ local perModelCode = [[
 
         if (decodedMemo['isPinned']) then
             table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isPinnedCircle.radius, isPinnedCircle.steps, heightForCircles, true),
+                points    = getCircleVectorPoints(isPinnedCircle.radius, isPinnedCircle.steps, heightForCircles + 0.2, true),
                 color     = isPinnedCircle.color,
                 thickness = isPinnedCircle.thickness,
+                rotation  = {0,0,0},
+            })
+        end
+
+        if (decodedMemo['isStunned']) then
+            table.insert(vectorPointsTable, {
+                points    = getCircleVectorPoints(isStunnedCircle.radius, isStunnedCircle.steps, heightForCircles + 0.2, true),
+                color     = isStunnedCircle.color,
+                thickness = isStunnedCircle.thickness,
                 rotation  = {0,0,0},
             })
         end
@@ -195,8 +247,8 @@ local perModelCode = [[
         local halfOfBaseWidth = bounds['size']['x'] / 2;
         local halfOfBaseLength = bounds['size']['z'] / 2;
 
-        local xRadius = radius + halfOfBaseWidth;
-        local zRadius = radius + halfOfBaseLength;
+        local xRadius = numOrMin(radius + halfOfBaseWidth, 0.4);
+        local zRadius = numOrMin(radius + halfOfBaseLength, 0.4);
 
         -- if we account for scale, then 3'' will always be 3'' even if the model is scaled up
         if (accountForScale) then
@@ -379,7 +431,6 @@ function beginAssignment(player, _, id)
     nameToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsNameOutput']
     descriptionToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsDescriptionOutput']
     unitIdToAssign = army[unitIndex]['unitId']
-    unitIdToAssign = army[unitIndex]['unitId']
 
     broadcastToAll("Assigning '" .. nameOfModelAssigning .. "'")
 end
@@ -399,11 +450,13 @@ function assignNameAndDescriptionToSelectedObjects()
         target.memo = JSON.encode({
             isActivated = false,
             isPinned = false,
+            isWavering = false,
             isStunned = false,
+            gameSystem = gameSystemToAssign,
             unitId = unitIdToAssign,
             armyId = armyId,
         })
-
+        target.measure_movement = true;
         target.reload();
     end
 
@@ -438,6 +491,7 @@ function onObjectPickUp(player_color, picked_up_object)
         return
     end
 
+    picked_up_object.measure_movement = false;
     picked_up_object.setName(nameToAssign)
     picked_up_object.setDescription(descriptionToAssign)
     picked_up_object.setLuaScript(perModelCode);
@@ -446,15 +500,14 @@ function onObjectPickUp(player_color, picked_up_object)
     picked_up_object.memo = JSON.encode({
         isActivated = false,
         isPinned = false,
+        isWavering = false,
         isStunned = false,
         unitId = unitIdToAssign,
+        gameSystem = gameSystemToAssign,
         armyId = armyId,
     })
-    picked_up_object.drop();
-    -- picked_up_object.reload();
-    Wait.time(function ()
-        picked_up_object.reload();
-    end, 1)
+    picked_up_object.measure_movement = true;
+    picked_up_object.reload();
 
     broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to 1 object!")
 
@@ -481,6 +534,8 @@ function handleResponse(response)
     local data = JSON.decode(response.text)
 
     armyId = data['listId'];
+    gameSystemToAssign = data['listJson']['gameSystem'];
+
     local units = {}
     for _, unitDefinition in ipairs(data['listJson']['units']) do
         local unit = {
