@@ -53,6 +53,7 @@ export interface iUnitProfile {
   originalModelCountInUnit: number;
   originalSelectionId: string;
   originalJoinToUnit?: string;
+  originalLoadoutCsvHelperString: string;
   models: iUnitProfileModel[];
 }
 

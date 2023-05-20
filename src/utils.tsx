@@ -172,6 +172,8 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
         customName: unit.customName,
         originalSelectionId: unit.selectionId,
         originalJoinToUnit: unit.joinToUnit,
+        originalLoadoutCsvHelperString:
+          generateOriginalLoadoutCsvHelperString(unit),
         customNameSingular: unit.customName
           ? pluralize.singular(unit.customName)
           : undefined,
@@ -727,4 +729,24 @@ export const getUnitIndexForSelectionId = (
 
 export const isUnitHero = (unit: iUnitProfile) => {
   return unit.models[0].originalSpecialRules.some((sr) => sr.key === "hero");
+};
+
+export const generateOriginalLoadoutCsvHelperString = (
+  unit: ArmyForgeTypes.ISelectedUnit
+) => {
+  const baseChunks = unit.loadout.map((l) => {
+    return `${l.count}x ${l.name}`;
+  });
+  unit.selectedUpgrades
+    .filter((su) => {
+      return (
+        su.option.gains.length === 1 &&
+        su.option.gains[0].type === "ArmyBookRule"
+      );
+    })
+    .forEach((su) => {
+      baseChunks.push(`1x ${pluralize.singular(su.option.label)}`);
+    });
+
+  return baseChunks.join(", ");
 };

@@ -31,7 +31,10 @@ function App() {
   const areAllLoadoutsChecked = stateView.unitProfiles.every((unit) => {
     return unit.models.every((model) => {
       return model.loadout.every((loadoutItem) => {
-        return loadoutItem.includeInName;
+        return (
+          (loadoutItem.quantity >= 1 && loadoutItem.includeInName) ||
+          loadoutItem.quantity === 0
+        );
       });
     });
   });
@@ -179,12 +182,14 @@ function App() {
                     state.unitProfiles.forEach((unit) => {
                       unit.models.forEach((model) => {
                         model.loadout.forEach((loadoutItem) => {
-                          updateWeaponIncludeInName(
-                            unit.id,
-                            model.id,
-                            loadoutItem.id,
-                            true
-                          );
+                          if (loadoutItem.quantity >= 1) {
+                            updateWeaponIncludeInName(
+                              unit.id,
+                              model.id,
+                              loadoutItem.id,
+                              true
+                            );
+                          }
                         });
                       });
                     });
@@ -200,8 +205,6 @@ function App() {
           </fieldset>
           <div className="flex flex-col space-y-10">
             {stateView.unitProfiles.map((unit, unitIndex) => {
-              // get joined to, if it is
-
               const joinedTo = unit.originalJoinToUnit
                 ? stateView.unitProfiles.find(
                     (up) => up.originalSelectionId === unit.originalJoinToUnit
@@ -218,6 +221,7 @@ function App() {
                       #{unitIndex + 1}{" "}
                       {getUnitNameForLegend(unit as iUnitProfile)}
                     </span>
+
                     <span className="text-sm text-">
                       {" "}
                       {unit.originalModelCountInUnit} model
@@ -239,6 +243,10 @@ function App() {
                       </span>
                     )}
                   </legend>
+
+                  <p className="mb-2 text-stone-500 italic">
+                    Original Unit Loadout: {unit.originalLoadoutCsvHelperString}
+                  </p>
 
                   <div className="flex flex-col space-y-10">
                     {unit.models.map((model, modelIndex) => {
