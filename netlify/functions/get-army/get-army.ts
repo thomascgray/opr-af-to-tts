@@ -5,16 +5,25 @@ export const handler: Handler = async (event, context) => {
   const { armyId = null } = event.queryStringParameters as any;
 
   if (armyId) {
-    const res = await got
-      .get(`https://army-forge.onepagerules.com/api/tts?id=${armyId}`)
-      .json();
+    try {
+      const res = await got
+        .get(`https://army-forge.onepagerules.com/api/tts?id=${armyId}`)
+        .json();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        ...(res as any),
-      }),
-    };
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          ...(res as any),
+        }),
+      };
+    } catch (e) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: `Army Forge failed to export list. Sorry!`,
+        }),
+      };
+    }
   }
 
   return {

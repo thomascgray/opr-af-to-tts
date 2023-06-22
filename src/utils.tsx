@@ -13,6 +13,7 @@ import {
   iUnitProfileModelTTSOutput,
 } from "./types";
 import { state } from "./state";
+import toast, { Toaster } from "react-hot-toast";
 
 export const getUrlSlugForGameSystem = (
   gameSystemInitials: eGameSystemInitials
@@ -119,9 +120,11 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
 
   try {
     // get the army list
-    data = await fetch(`/.netlify/functions/get-army?armyId=${id}`).then(
-      async (res) => await res.json()
-    );
+    const response = await fetch(`/.netlify/functions/get-army?armyId=${id}`);
+    data = await response.json();
+    if (response.status !== 200) {
+      toast.error("Army Forge failed to export list. Sorry!");
+    }
     if (!data) {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
       return;

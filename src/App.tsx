@@ -24,7 +24,7 @@ import {
   getUnitIndexForSelectionId,
   isUnitHero,
 } from "./utils";
-
+import toast, { Toaster } from "react-hot-toast";
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
@@ -441,6 +441,7 @@ ${ttsDescriptionOutput}`}
           </div>
         </>
       )}
+      <Toaster position="bottom-left" />
     </div>
   );
 }
