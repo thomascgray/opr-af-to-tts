@@ -24,7 +24,7 @@ import {
   getUnitIndexForSelectionId,
   isUnitHero,
 } from "./utils";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
@@ -41,15 +41,17 @@ function App() {
   return (
     <div className="container mx-auto mt-4 mb-28">
       <div className="flex flex-row items-end space-x-2">
-        <h1 className="text-4xl font-bold">OPR Army Forge to TTS</h1>
+        <h1 className="text-4xl font-bold dark:text-white">
+          OPR Army Forge to TTS
+        </h1>
       </div>
 
-      <span className="mt-1 block text-xs text-stone-500">
+      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
         This tool is under active development! If you find any bugs, please
         report them on the{" "}
         <a
           target="_blank"
-          className="text-blue-700 underline visited:text-purple-700"
+          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
           href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
         >
           github issues page
@@ -57,11 +59,11 @@ function App() {
         . Thanks!
       </span>
 
-      <span className="mt-1 block text-xs text-stone-500">
+      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
         Please take a look at the{" "}
         <a
           target="_blank"
-          className="text-blue-700 underline visited:text-purple-700"
+          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
           href="https://github.com/thomascgray/opr-af-to-tts/releases"
         >
           releases page on Github
@@ -72,13 +74,13 @@ function App() {
       <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
           <label>
-            <span className="block font-bold text-xl">
+            <span className="block font-bold text-xl dark:text-white">
               Army Forge Share Link
             </span>
-            <span className="block text-xs text-stone-500">
+            <span className="block text-xs text-stone-500 dark:text-white">
               <a
                 target="_blank"
-                className="text-blue-700 underline visited:text-purple-700"
+                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
                 href="https://army-forge.onepagerules.com/"
               >
                 Army Forge
@@ -89,7 +91,7 @@ function App() {
               → paste <em>that</em> URL into{" "}
               <a
                 target="_blank"
-                className="text-blue-700 underline visited:text-purple-700"
+                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
                 href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
               >
                 this mod
@@ -102,7 +104,7 @@ function App() {
                 state.armyListShareLink = e.currentTarget.value;
               }}
               type="text"
-              className="border my-2 border-solid border-stone-500 w-full py-1 px-2"
+              className="border my-2 border-solid border-stone-500 dark:border-zinc-800 w-full py-1 px-2"
             />
           </label>
         </div>
@@ -111,7 +113,7 @@ function App() {
       <button
         onClick={() => onGenerateDefinitions(stateView as iAppState)}
         className={classnames(
-          " bg-stone-500 border-stone-600 text-white border px-4 py-2 hover:scale-105 active:scale-95",
+          " bg-stone-500 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 text-white border px-4 py-2 hover:scale-105 active:scale-95",
           {
             "opacity-80":
               stateView.networkState.fetchArmyFromArmyForge ===
@@ -152,10 +154,10 @@ function App() {
           <hr className="my-5" />
 
           <fieldset
-            className="mb-8 p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
+            className="mb-8 p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 dark:from-slate-400 dark:to-zinc-400 shadow-xl border border-zinc-200 dark:border-zinc-300"
             key={"inline-options"}
           >
-            <legend className="-ml-8 px-3 py-1  bg-white shadow-md border border-stone-200">
+            <legend className="-ml-8 px-3 py-1 bg-white dark:bg-slate-700 shadow-md border border-stone-200 dark:text-white">
               Inline Options
             </legend>
 
@@ -197,7 +199,7 @@ function App() {
                 }}
                 type="checkbox"
               />
-              <span>
+              <span className="dark:text-white">
                 Check to toggle ALL loadout items to be included in the model
                 name
               </span>
@@ -213,10 +215,10 @@ function App() {
 
               return (
                 <fieldset
-                  className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl border border-zinc-200"
+                  className="p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 shadow-xl dark:from-slate-400 dark:to-zinc-400 border border-zinc-200 dark:border-zinc-300"
                   key={unit.id}
                 >
-                  <legend className="-ml-8 px-3 py-1  bg-white shadow-md border border-stone-200">
+                  <legend className="-ml-8 px-3 py-1 bg-white dark:bg-slate-700 dark:text-white shadow-md border border-stone-200">
                     <span className="text-lg">
                       #{unitIndex + 1}{" "}
                       {getUnitNameForLegend(unit as iUnitProfile)}
@@ -228,7 +230,7 @@ function App() {
                       {unit.originalModelCountInUnit > 1 ? "s" : ""}
                     </span>
                     {joinedTo && (
-                      <span className="text-sm italic text-stone-500">
+                      <span className="text-sm italic text-stone-500 dark:text-white">
                         {" "}
                         (
                         {isUnitHero(unit as iUnitProfile)
@@ -244,7 +246,7 @@ function App() {
                     )}
                   </legend>
 
-                  <p className="mb-2 text-stone-500 italic">
+                  <p className="mb-2 text-stone-500 dark:text-white italic">
                     Original Unit Loadout: {unit.originalLoadoutCsvHelperString}
                   </p>
 
@@ -296,38 +298,44 @@ function App() {
                                       className={classnames(
                                         "flex flex-row items-center justify-between  py-1 px-2",
                                         {
-                                          "bg-stone-100 text-stone-500":
+                                          "bg-stone-100 dark:bg-slate-100 text-stone-500 dark:text-white":
                                             loadoutItem.quantity <= 0,
-                                          "bg-stone-300 text-black":
+                                          "bg-stone-300 dark:bg-slate-300 text-black":
                                             loadoutItem.quantity >= 1,
                                         }
                                       )}
                                     >
-                                      <span className="flex flex-row items-center space-x-1 ">
-                                        <span className="font-bold">
+                                      <span className="flex flex-col text-left">
+                                        <span className="font-bold text-base">
                                           {loadoutItem.name}
                                         </span>
                                         <span>{loadoutItem.definition}</span>
                                       </span>
 
                                       <span className="flex flex-row items-center space-x-2">
-                                        <input
-                                          className="w-12 p-1 text-lg font-bold text-center"
-                                          min={0}
-                                          onChange={(e) => {
-                                            const value = parseInt(
-                                              e.currentTarget.value
-                                            );
-                                            updateWeaponQuantity(
-                                              unit.id,
-                                              model.id,
-                                              loadoutItem.id,
-                                              value
-                                            );
-                                          }}
-                                          value={loadoutItem.quantity}
-                                          type="number"
-                                        />
+                                        <span className="flex flex-col space-y-1">
+                                          <span className="text-xs italic text-stone-600">
+                                            Qty per. model
+                                          </span>
+                                          <input
+                                            title="Quantity of this item per model"
+                                            className="w-[5.2rem] pl-6 text-center py-1 px-2 text-xl font-bold"
+                                            min={0}
+                                            onChange={(e) => {
+                                              const value = parseInt(
+                                                e.currentTarget.value
+                                              );
+                                              updateWeaponQuantity(
+                                                unit.id,
+                                                model.id,
+                                                loadoutItem.id,
+                                                value
+                                              );
+                                            }}
+                                            value={loadoutItem.quantity}
+                                            type="number"
+                                          />
+                                        </span>
                                         <input
                                           className="h-5 w-5 cursor-pointer outline-none border-none"
                                           title="Check to include this item in the model name"
@@ -353,7 +361,7 @@ function App() {
                                 onClick={() =>
                                   duplicateModel(unit.id, model.id)
                                 }
-                                className="text-sm border border-stone-600 px-3 py-1 bg-stone-500 text-white hover:scale-105  active:scale-95"
+                                className="text-sm border border-stone-600 dark:border-zinc-800 px-3 py-1 bg-stone-500 dark:bg-slate-500 text-white hover:scale-105  active:scale-95"
                               >
                                 Duplicate this model definition
                               </button>
@@ -362,7 +370,7 @@ function App() {
                             <div className="output-panel w-2/4">
                               <div
                                 key={model.id + "tts"}
-                                className="bg-stone-300 px-4 pb-4 pt-3"
+                                className="bg-stone-300 dark:bg-slate-300  px-4 pb-4 pt-3"
                               >
                                 <span className="block text-xs italic text-stone-600 mb-2">
                                   TTS output preview (name and description)
@@ -394,7 +402,7 @@ ${ttsDescriptionOutput}`}
               disabled={stateView.unitProfiles.length <= 0}
               onClick={() => onGenerateShareableId(stateView as iAppState)}
               className={classnames(
-                " bg-stone-500 disabled:opacity-60 border-stone-600 text-white border px-4 py-2 enabled:hover:scale-105 enabled:active:scale-95",
+                " bg-stone-500 dark:bg-slate-500 disabled:opacity-60 border-stone-600 dark:border-zinc-800 text-white border px-4 py-2 enabled:hover:scale-105 enabled:active:scale-95",
                 {
                   "opacity-80":
                     stateView.networkState.saveArmyListAsBBToDB ===

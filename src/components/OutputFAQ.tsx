@@ -1,8 +1,8 @@
 export const OutputFAQ = () => {
   return (
-    <details>
+    <details className="dark:text-slate-200">
       <summary className="cursor-pointer">TTS Output Notes</summary>
-      <div className="p-2 bg-stone-100 space-y-2">
+      <div className="p-2 bg-stone-100 dark:bg-slate-600 space-y-2">
         <ul className="list-disc ml-4">
           <li>
             Special upgrades that apply specifically to entire units (such as
