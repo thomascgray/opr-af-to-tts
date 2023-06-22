@@ -260,7 +260,7 @@ function App() {
                         );
                       return (
                         <div key={model.id} className="relative">
-                          <p className="text-sm">
+                          <p className="text-sm dark:text-white">
                             Model Definition {modelIndex + 1}
                           </p>
                           {!model.isGenerated && (
