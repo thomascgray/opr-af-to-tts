@@ -38,7 +38,7 @@ export const Tutorial = () => {
             bottom, and then paste that URL into{" "}
             <a
               target="_blank"
-              className="text-blue-700 underline visited:text-purple-700"
+              className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
               href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
             >
               {" "}

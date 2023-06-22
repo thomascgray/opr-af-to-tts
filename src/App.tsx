@@ -434,7 +434,7 @@ ${ttsDescriptionOutput}`}
             </button>
             {stateView.shareableLinkForTTS && (
               <div className="block space-y-2">
-                <p className="text-xs">
+                <p className="text-xs dark:text-white">
                   Copy and paste the link below into the TTS mod
                 </p>
                 <textarea
