@@ -486,22 +486,9 @@ export const generateUnitOutput = (
     })
     .join(", ");
 
-  // this should somehow include things like gundrones, where its an ITEM that gives you weapons
-  const activeWeaponsList = _.flattenDeep([
-    ...equippedLoadoutItems.filter(
-      (l) => l.originalLoadout.type === "ArmyBookWeapon"
-    ),
-    ...equippedLoadoutItems
-      // @ts-ignore loadouts can definitely have content
-      .map((l) => l.originalLoadout.content || [])
-      .flat()
-      .filter((c) => c.type === "ArmyBookWeapon")
-      .map((ci) => ({
-        name: ci.name,
-        definition: ci.label.replace(ci.name, "").trim(),
-        quantity: ci.quantity,
-      })),
-  ])
+  const activeWeaponsList = getAllActiveWeaponsIncludingUpgradeWeapons(
+    equippedLoadoutItems
+  )
     .map((w) => {
       if (w.quantity > 1) {
         return `[${TTS_WEAPON_COLOUR}]${w.quantity}x ${w.name}[-]
@@ -518,21 +505,14 @@ export const generateUnitOutput = (
     "name"
   );
 
-  const allApplicableSpecialRulesWithAddedUpRatings: any[] = [];
-  allApplicableSpecialRules.forEach((sr) => {
-    if (sr === null) {
-      return;
-    }
-    sr.rating = parseInt(sr.rating);
-    const existing = allApplicableSpecialRulesWithAddedUpRatings.find(
-      (x) => x.name === sr.name
-    );
-    if (existing) {
-      existing.rating += parseInt(sr.rating);
-    } else {
-      allApplicableSpecialRulesWithAddedUpRatings.push(sr);
-    }
-  });
+  const allApplicableSpecialRulesWithAddedUpRatings: {
+    id: string;
+    name: string;
+    definition: string;
+    rating: number | null;
+  }[] = getAllApplicableSpecialRulesWithAddedUpRatings(
+    allApplicableSpecialRules
+  );
 
   // this currently contains more than 1 tough, so we need to make it so tough only
   // appears once, and add up the tough ratings
@@ -576,7 +556,8 @@ export const generateUnitOutput = (
         return;
       }
       if (sr.name === "Tough") {
-        totalToughRating += parseInt(sr.rating);
+        // @ts-ignore
+        totalToughRating += parseInt(sr.rating!);
       }
     });
 
@@ -596,21 +577,6 @@ export const generateUnitOutput = (
       : "",
   ].filter((x) => x !== "");
 
-  //   let campaignStuffText = "";
-  //   if (state.ttsOutputConfig.includeCampaignXp) {
-  //     campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.xp}XP[-]`;
-  //   }
-  //   if (state.ttsOutputConfig.includeCampaignTraits) {
-  //     if (state.ttsOutputConfig.includeCampaignTraitsFullText) {
-
-  //     } else {
-  //       campaignStuffText += `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-  // [sup]${w.definition}[/sup]`;
-  //       // campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.traits.join()}XP[-]`;
-  //     }
-
-  //   }
-
   let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,
     `${allApplicableSpecialRulesBBCode}`,
@@ -625,6 +591,26 @@ export const generateUnitOutput = (
       n.replace(/\[sup\]/g, "").replace(/\[\/sup\]/g, "")
     );
   }
+
+  // console.log(
+  //   "x",
+  //   JSON.stringify(
+  //     getAllActiveWeaponsIncludingUpgradeWeapons(equippedLoadoutItems),
+  //     null,
+  //     2
+  //   )
+  // );
+  // console.log(
+  //   "allApplicableSpecialRulesWithAddedUpRatings",
+  //   JSON.stringify(allApplicableSpecialRulesWithAddedUpRatings, null, 2)
+  // );
+
+  const auras = getAllMeasuringAurasForModel(
+    getAllActiveWeaponsIncludingUpgradeWeapons(equippedLoadoutItems),
+    allApplicableSpecialRulesWithAddedUpRatings
+  );
+
+  console.log("auras", JSON.stringify(auras, null, 2));
 
   return {
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
@@ -750,3 +736,89 @@ export const generateOriginalLoadoutCsvHelperString = (
 
   return baseChunks.join(", ");
 };
+
+export const getAllApplicableSpecialRulesWithAddedUpRatings = (
+  allApplicableSpecialRules: any[]
+) => {
+  const x: any[] = [];
+
+  allApplicableSpecialRules.forEach((sr) => {
+    if (sr === null) {
+      return;
+    }
+    sr.rating = parseInt(sr.rating);
+    const existing = x.find((x) => x.name === sr.name);
+    if (existing) {
+      existing.rating += parseInt(sr.rating);
+    } else {
+      x.push(sr);
+    }
+  });
+
+  return x;
+};
+
+export const getAllActiveWeaponsIncludingUpgradeWeapons = (
+  equippedLoadoutItems: any[]
+) => {
+  return _.flattenDeep([
+    ...equippedLoadoutItems.filter(
+      (l) => l.originalLoadout.type === "ArmyBookWeapon"
+    ),
+    ...equippedLoadoutItems
+      // @ts-ignore loadouts can definitely have content
+      .map((l) => l.originalLoadout.content || [])
+      .flat()
+      .filter((c) => c.type === "ArmyBookWeapon")
+      .map((ci) => ({
+        name: ci.name,
+        definition: ci.label.replace(ci.name, "").trim(),
+        quantity: ci.quantity,
+      })),
+  ]);
+};
+
+export const getAllMeasuringAurasForModel = (
+  weapons: any[],
+  upgrades: any[]
+) => {
+  const auras: {
+    id: string;
+    name: string;
+    range: number;
+  }[] = [];
+
+  weapons.forEach((w) => {
+    if (w.originalLoadout.range) {
+      auras.push({
+        id: nanoid(),
+        name: w.name,
+        range: w.originalLoadout.range,
+      });
+    }
+  });
+
+  upgrades.forEach((u) => {
+    const range = extractInchesMeasurements(u.definition);
+    if (range) {
+      auras.push({
+        id: nanoid(),
+        name: u.name,
+        range: range[0],
+      });
+    }
+  });
+
+  return auras;
+};
+
+function extractInchesMeasurements(str: string) {
+  const regex = /(\d+(?:\.\d+)?)\s*(?:inches|''|”)/gi;
+  const matches = str.match(regex);
+
+  if (matches === null) {
+    return null;
+  }
+
+  return matches.map((match) => parseFloat(match));
+}
