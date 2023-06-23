@@ -25,6 +25,8 @@ import {
   isUnitHero,
 } from "./utils";
 import { Toaster } from "react-hot-toast";
+import { DarkModeToggle } from "./components/DarkModeToggle";
+
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
@@ -39,7 +41,8 @@ function App() {
     });
   });
   return (
-    <div className="container mx-auto mt-4 mb-28">
+    <div className="container mx-auto mt-4 mb-28 relative">
+      <DarkModeToggle />
       <div className="flex flex-row items-end space-x-2">
         <h1 className="text-4xl font-bold dark:text-white">
           OPR Army Forge to TTS
