@@ -13,7 +13,6 @@ local nameToAssign = nil;
 local descriptionToAssign = nil;
 local unitIdToAssign = nil;
 
-
 local perModelCode = [[
     function largestWithMax(a, b, c)
         return (a > b) and (b > c and c or b) or (a > c and c or a)
@@ -69,11 +68,9 @@ local perModelCode = [[
         rebuildStatusEffectThings();   
     end
 
-    
-
-    function toggleActivated()
+    function toggleActivated(player_color)
         local decodedMemo = JSON.decode(self.memo)
-        local unitMates = getAllUnitMates()
+        local unitMates = getAllUnitMates();
 
         for _, unitMate in ipairs(unitMates) do
             unitMate.memo = JSON.encode({
@@ -83,13 +80,16 @@ local perModelCode = [[
                 gameSystem = decodedMemo['gameSystem'],
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
+                unitName = decodedMemo['unitName'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
+
+        printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' activation", player_color)
     end
 
-    function toggleStunned()
+    function toggleStunned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
         
@@ -101,13 +101,16 @@ local perModelCode = [[
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
                 gameSystem = decodedMemo['gameSystem'],
+                unitName = decodedMemo['unitName'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
+
+        printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' stunned", player_color)
     end
 
-    function togglePinned()
+    function togglePinned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
         
@@ -119,9 +122,18 @@ local perModelCode = [[
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
                 gameSystem = decodedMemo['gameSystem'],
+                unitName = decodedMemo['unitName'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
+        end
+
+        if (decodedMemo['gameSystem'] == 'gf') then
+            printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' pinned", player_color)
+        end
+
+        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' wavering", player_color)
         end
     end
 
@@ -142,37 +154,48 @@ local perModelCode = [[
         self.clearContextMenu()
         
         if (decodedMemo['isActivated']) then
-            self.addContextMenuItem("☑ Activated", toggleActivated, false)
+            self.addContextMenuItem("Unit: ☑ Activated", toggleActivated, false)
         else
-            self.addContextMenuItem("☐ Activated", toggleActivated, false)
+            self.addContextMenuItem("Unit: ☐ Activated", toggleActivated, false)
         end
 
         if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
             if (decodedMemo['isStunned']) then
-                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
+                self.addContextMenuItem("Unit: ☑ Stunned", toggleStunned, false)
             else
-                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
+                self.addContextMenuItem("Unit: ☐ Stunned", toggleStunned, false)
             end
         end
 
         if (decodedMemo['gameSystem'] == 'gf') then
             if (decodedMemo['isPinned']) then
-                self.addContextMenuItem("☑ Pinned", togglePinned, false)
+                self.addContextMenuItem("Unit: ☑ Pinned", togglePinned, false)
             else
-                self.addContextMenuItem("☐ Pinned", togglePinned, false)
+                self.addContextMenuItem("Unit: ☐ Pinned", togglePinned, false)
             end
         end
 
         if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
             if (decodedMemo['isPinned']) then
-                self.addContextMenuItem("☑ Wavering", togglePinned, false)
+                self.addContextMenuItem("Unit: ☑ Wavering", togglePinned, false)
             else
-                self.addContextMenuItem("☐ Wavering", togglePinned, false)
+                self.addContextMenuItem("Unit: ☐ Wavering", togglePinned, false)
             end
         end
     
-        self.addContextMenuItem("Deactivate Army", deactivateArmy)
-        self.addContextMenuItem("Measuring Aura", cycleMeasuringRadius, true)
+        self.addContextMenuItem("Unit: Select All", selectAllUnit)
+        self.addContextMenuItem("Army: Deactivate", deactivateArmy)
+        self.addContextMenuItem("Model: Measuring", cycleMeasuringRadius, true)
+    end
+
+    function selectAllUnit(player_color)
+        -- log(player_color);
+        local unitMates = getAllUnitMates();
+        -- local unitMates = getAllUnitMates();
+        
+        for _, unitMate in ipairs(unitMates) do
+            unitMate.addToPlayerSelection(player_color);
+        end
     end
 
     function deactivateArmy()
@@ -455,12 +478,13 @@ function assignNameAndDescriptionToSelectedObjects()
             gameSystem = gameSystemToAssign,
             unitId = unitIdToAssign,
             armyId = armyId,
+            unitName = nameOfModelAssigning,
         })
         target.measure_movement = true;
         target.reload();
     end
 
-    broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to " .. tablelength(selectedObjects) .. " objects!")
+    broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to " .. tablelength(selectedObjects) .. " objects!", {0, 1, 0})
 end
 
 function onScriptingButtonDown(index, player_color)
@@ -505,11 +529,12 @@ function onObjectPickUp(player_color, picked_up_object)
         unitId = unitIdToAssign,
         gameSystem = gameSystemToAssign,
         armyId = armyId,
+        unitName = nameOfModelAssigning,
     })
     picked_up_object.measure_movement = true;
     picked_up_object.reload();
 
-    broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to 1 object!")
+    broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to 1 object!", {0, 1, 0});
 
     cancelCurrentAssigning();
 end
