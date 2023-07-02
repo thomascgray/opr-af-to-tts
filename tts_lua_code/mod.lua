@@ -325,9 +325,9 @@ local perModelCode = [[
 
     
         if measuringCircle.radius == 0 then
-            printToAll("'" .. decodedMemo['unitName'] .. " measuring aura turned off")
+            printToAll("'" .. decodedMemo['unitName'] .. "' model measuring aura turned off")
         else
-            printToAll("'" .. decodedMemo['unitName'] .. " measuring aura set to " .. measuringCircle.radius .. "''")
+            printToAll("'" .. decodedMemo['unitName'] .. "' model measuring aura set to " .. measuringCircle.radius .. "''")
         end
     
         rebuildStatusEffectThings();
