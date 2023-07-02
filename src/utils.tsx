@@ -477,6 +477,7 @@ export const generateUnitOutput = (
       name: `${x.name}`,
       definition,
       rating: x.rating,
+      isInnate: true,
     };
   });
 
@@ -531,7 +532,9 @@ export const generateUnitOutput = (
       (x) => x.name === sr.name
     );
     if (existing) {
-      existing.rating += parseInt(sr.rating);
+      if (existing.rating && sr.rating) {
+        existing.rating += parseInt(sr.rating);
+      }
     } else {
       allApplicableSpecialRulesWithAddedUpRatings.push(sr);
     }
@@ -549,7 +552,7 @@ export const generateUnitOutput = (
           return "";
         }
         let name = w.name;
-        if (w.rating && w.name === "Tough") {
+        if (w.rating && w.isInnate) {
           name += ` (${w.rating})`;
         }
         if (isCoreSpecialRule) {
