@@ -14,6 +14,14 @@ local descriptionToAssign = nil;
 local unitIdToAssign = nil;
 
 local perModelCode = [[
+    function tablelength(T)
+        local c = 0
+        for _ in pairs(T) do
+            c = c + 1
+        end
+        return c
+    end
+
     function largestWithMax(a, b, c)
         return (a > b) and (b > c and c or b) or (a > c and c or a)
     end
@@ -71,7 +79,7 @@ local perModelCode = [[
     function toggleActivated(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates();
-
+        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled activation")
         for _, unitMate in ipairs(unitMates) do
             unitMate.memo = JSON.encode({
                 isActivated = not decodedMemo['isActivated'],
@@ -85,13 +93,12 @@ local perModelCode = [[
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
-
-        printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' activation", player_color)
     end
 
     function toggleStunned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
+        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled stunned")
         
         for _, unitMate in ipairs(unitMates) do
             unitMate.memo = JSON.encode({
@@ -106,14 +113,20 @@ local perModelCode = [[
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
-
-        printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' stunned", player_color)
     end
 
     function togglePinned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
         
+        if (decodedMemo['gameSystem'] == 'gf') then
+            printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled pinned")
+        end
+
+        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled wavering")
+        end
+
         for _, unitMate in ipairs(unitMates) do
             unitMate.memo = JSON.encode({
                 isActivated = decodedMemo['isActivated'],
@@ -127,14 +140,6 @@ local perModelCode = [[
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
-
-        if (decodedMemo['gameSystem'] == 'gf') then
-            printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' pinned", player_color)
-        end
-
-        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
-            printToAll("Player '" .. player_color .. "' toggled '" .. decodedMemo['unitName'] .. "' wavering", player_color)
-        end
     end
 
     function getAllUnitMates()
@@ -142,6 +147,7 @@ local perModelCode = [[
         local unitObjects = getObjectsWithTag('OPRAFTTS_unit_id_' .. decodedMemo['unitId'])
         return unitObjects
     end
+
     function getAllArmyMates()
         local decodedMemo = JSON.decode(self.memo)
         local armyObjects = getObjectsWithTag('OPRAFTTS_army_id_' .. decodedMemo['armyId'])
@@ -184,18 +190,23 @@ local perModelCode = [[
         end
     
         self.addContextMenuItem("Unit: Select All", selectAllUnit)
+        self.addContextMenuItem("Unit: Count", countUnit)
         self.addContextMenuItem("Army: Deactivate", deactivateArmy)
         self.addContextMenuItem("Model: Measuring", cycleMeasuringRadius, true)
     end
 
     function selectAllUnit(player_color)
-        -- log(player_color);
         local unitMates = getAllUnitMates();
-        -- local unitMates = getAllUnitMates();
         
         for _, unitMate in ipairs(unitMates) do
             unitMate.addToPlayerSelection(player_color);
         end
+    end
+
+    function countUnit(player_color)
+        local unitMates = getAllUnitMates();
+        local decodedMemo = JSON.decode(self.memo)
+        printToAll("Unit '" .. decodedMemo['unitName'] .. "' has " .. tablelength(unitMates) .." models remaining")
     end
 
     function deactivateArmy()
@@ -292,7 +303,8 @@ local perModelCode = [[
     end
     
     function cycleMeasuringRadius()
-        -- resize the circle
+        local decodedMemo = JSON.decode(self.memo)
+
         if measuringCircle.radius == 0 then
             measuringCircle.radius = 3;
         elseif measuringCircle.radius == 3 then
@@ -310,11 +322,12 @@ local perModelCode = [[
         elseif measuringCircle.radius == 30 then
             measuringCircle.radius = 0;
         end
+
     
         if measuringCircle.radius == 0 then
-            broadcastToAll("Measuring aura turned off", {1,1,1})
+            printToAll("'" .. decodedMemo['unitName'] .. " measuring aura turned off")
         else
-            broadcastToAll("Measuring aura set to " .. measuringCircle.radius .. "''", {1,1,1})
+            printToAll("'" .. decodedMemo['unitName'] .. " measuring aura set to " .. measuringCircle.radius .. "''")
         end
     
         rebuildStatusEffectThings();
