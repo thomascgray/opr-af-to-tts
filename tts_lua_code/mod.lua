@@ -221,6 +221,7 @@ local perModelCode = [[
                 unitId = armyMateMemo['unitId'],
                 gameSystem = armyMateMemo['gameSystem'],
                 armyId = armyMateMemo['armyId'],
+                unitName = armyMateMemo['unitName'],
             })
             armyMate.call('rebuildContext');
             armyMate.call('rebuildStatusEffectThings');
