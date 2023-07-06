@@ -391,7 +391,15 @@ export const generateUnitOutput = (
         // @ts-ignore loadouts can definitely have content
         .map((l) => l.originalLoadout.content || [])
         .flat()
-        .filter((c) => c.type === "ArmyBookRule"),
+        .filter(
+          (c) => c.type === "ArmyBookRule" || c.type === "ArmyBookDefense"
+        )
+        .map((c) => {
+          return {
+            ...c,
+            shouldHaveRatingInMainOutput: true,
+          };
+        }),
       // AND get all the special rules from all the contents individually
       ...equippedLoadoutItems
         // @ts-ignore loadouts can definitely have content
@@ -435,6 +443,7 @@ export const generateUnitOutput = (
       name: `${x.name}`,
       definition,
       rating: x.rating,
+      shouldHaveRatingInMainOutput: x.shouldHaveRatingInMainOutput,
     };
   });
 
@@ -477,7 +486,7 @@ export const generateUnitOutput = (
       name: `${x.name}`,
       definition,
       rating: x.rating,
-      isInnate: true,
+      shouldHaveRatingInMainOutput: true,
     };
   });
 
@@ -552,7 +561,7 @@ export const generateUnitOutput = (
           return "";
         }
         let name = w.name;
-        if (w.rating && w.isInnate) {
+        if (w.rating && w.rating !== "" && w.shouldHaveRatingInMainOutput) {
           name += ` (${w.rating})`;
         }
         if (isCoreSpecialRule) {
