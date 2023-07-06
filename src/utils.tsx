@@ -322,7 +322,6 @@ export const generateUnitOutput = (
   unit: iUnitProfile,
   model: iUnitProfileModel,
   stateView: Readonly<iAppState>
-  // ttsOutputConfig: iAppState["ttsOutputConfig"]
 ): iUnitProfileModelTTSOutput => {
   const TTS_WEAPON_COLOUR =
     stateView.ttsOutputConfig.modelWeaponOutputColour.replace("#", "");
@@ -611,21 +610,6 @@ export const generateUnitOutput = (
       : "",
   ].filter((x) => x !== "");
 
-  //   let campaignStuffText = "";
-  //   if (state.ttsOutputConfig.includeCampaignXp) {
-  //     campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.xp}XP[-]`;
-  //   }
-  //   if (state.ttsOutputConfig.includeCampaignTraits) {
-  //     if (state.ttsOutputConfig.includeCampaignTraitsFullText) {
-
-  //     } else {
-  //       campaignStuffText += `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-  // [sup]${w.definition}[/sup]`;
-  //       // campaignStuffText = `[${TTS_CAMPAIGN_COLOUR}]${model.traits.join()}XP[-]`;
-  //     }
-
-  //   }
-
   let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,
     `${allApplicableSpecialRulesBBCode}`,
@@ -647,7 +631,8 @@ export const generateUnitOutput = (
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
       .filter((x) => x !== "")
-      .join("\r\n"),
+      .join("\r\n")
+      .replace(/[”]/g, "''"),
   };
 };
 
