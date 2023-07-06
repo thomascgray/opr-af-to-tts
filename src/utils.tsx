@@ -566,14 +566,14 @@ export const generateUnitOutput = (
         if (isCoreSpecialRule) {
           if (stateView.ttsOutputConfig.includeFullCoreSpecialRulesText) {
             return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-[sup]${w.definition}[/sup]`;
+[sup]${insertLineBreaksIntoString(w.definition)}[/sup]`;
           } else {
             return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
           }
         } else {
           if (stateView.ttsOutputConfig.includeFullArmySpecialRulesText) {
             return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]
-[sup]${w.definition}[/sup]`;
+[sup]${insertLineBreaksIntoString(w.definition)}[/sup]`;
           } else {
             return `[${TTS_SPECIAL_RULES_COLOUR}]${name}[-]`;
           }
@@ -625,6 +625,7 @@ export const generateUnitOutput = (
     );
   }
 
+  // This model may ignores the penalties from shooting after
   return {
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
     loadoutCSV: activeWeaponNamesCommaSeparated,
@@ -632,6 +633,8 @@ export const generateUnitOutput = (
     ttsDescriptionOutput: descriptionFieldLines
       .filter((x) => x !== "")
       .join("\r\n")
+      // remove smart quotes
+      .replace(/[’]/g, "'")
       .replace(/[”]/g, "''"),
   };
 };
@@ -749,4 +752,25 @@ export const generateOriginalLoadoutCsvHelperString = (
     });
 
   return baseChunks.join(", ");
+};
+
+// courtesy of chatgpt lmao
+// computationally expensive, but fuck it
+// necessary for a handful of edge cases where tabletop simulator doesn't
+// care for text inside description being around 56/57 characters long.
+export const insertLineBreaksIntoString = (str: string) => {
+  var result = "";
+  for (var i = 0; i < str.length; i++) {
+    result += str.charAt(i);
+    if ((i + 1) % 54 === 0) {
+      var j = i;
+      while (j >= 0 && result.charAt(j) !== " ") {
+        j--;
+      }
+      if (j >= 0) {
+        result = result.substring(0, j) + "\r\n" + result.substring(j + 1);
+      }
+    }
+  }
+  return result;
 };
