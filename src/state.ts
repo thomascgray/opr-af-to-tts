@@ -3,6 +3,29 @@ import { eNetworkRequestState, iAppState } from "./types";
 import { nanoid } from "nanoid";
 import * as _ from "lodash";
 
+export const initialTtsOutputConfig = {
+  includeFullArmySpecialRulesText: true,
+  includeFullCoreSpecialRulesText: true,
+  includeCoreSpecialRules: true,
+  includeArmySpecialRules: true,
+  includeWeaponsListInName: false,
+  includeSpecialRulesListInName: false,
+  useShorterVersionOfCoreSpecialRules: false,
+  includeToughSpecialRuleRatingInName: true,
+  swapCustomNameBracketingForUnitsWithMultipleModels: true,
+  completelyReplaceNameWithCustomName: false,
+  disableSmallText: false,
+  includeCampaignXp: false,
+  includeCampaignTraits: false,
+  includeCampaignTraitsFullText: false,
+  modelWeaponOutputColour: "#fde047",
+  modelSpecialRulesOutputColour: "#f472b6",
+  modelQuaOutputColour: "#ef4444",
+  modelDefOutputColour: "#0ea5e9",
+  modelToughOutputColour: "#2ecc71",
+  modelCampaignStuffOutputColour: "#a55eea",
+};
+
 export const state = proxy<iAppState>({
   armyListShareLink: "",
   shareableLinkForTTS: undefined,
@@ -12,27 +35,7 @@ export const state = proxy<iAppState>({
   armySpecialRulesDictNames: [],
   unitProfiles: [],
   ttsOutputConfig: {
-    includeFullArmySpecialRulesText: true,
-    includeFullCoreSpecialRulesText: true,
-    includeCoreSpecialRules: true,
-    includeArmySpecialRules: true,
-    includeWeaponsListInName: false,
-    includeSpecialRulesListInName: false,
-    useShorterVersionOfCoreSpecialRules: false,
-    includeToughSpecialRuleRatingInName: true,
-    swapCustomNameBracketingForUnitsWithMultipleModels: true,
-    completelyReplaceNameWithCustomName: false,
-    disableSmallText: false,
-    includeCampaignXp: false,
-    includeCampaignTraits: false,
-    includeCampaignTraitsFullText: false,
-
-    modelWeaponOutputColour: "#fde047",
-    modelSpecialRulesOutputColour: "#f472b6",
-    modelQuaOutputColour: "#ef4444",
-    modelDefOutputColour: "#0ea5e9",
-    modelToughOutputColour: "#2ecc71",
-    modelCampaignStuffOutputColour: "#a55eea",
+    ...initialTtsOutputConfig,
   },
   networkState: {
     fetchArmyFromArmyForge: eNetworkRequestState.IDLE,

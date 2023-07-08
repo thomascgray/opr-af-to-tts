@@ -113,7 +113,7 @@ function App() {
       <button
         onClick={() => onGenerateDefinitions(stateView as iAppState)}
         className={classnames(
-          " bg-stone-500 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 text-white border px-4 py-2 hover:scale-105 active:scale-95",
+          "bg-stone-500 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 text-white dark:border px-4 py-2 hover:scale-105 active:scale-95",
           {
             "opacity-80":
               stateView.networkState.fetchArmyFromArmyForge ===
