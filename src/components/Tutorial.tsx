@@ -10,7 +10,7 @@ export const Tutorial = () => {
             Link".
           </li>
           <li>Paste that link into the box above on this page.</li>
-          <li>Click "Generate Definitions" above.</li>
+          <li>Click "Import Army & Generate Definitions" above.</li>
           <li>
             This app will then build a model definition for each unit in your
             army.

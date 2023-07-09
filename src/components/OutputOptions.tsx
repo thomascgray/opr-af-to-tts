@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { state, initialTtsOutputConfig } from "../state";
 import { useSnapshot } from "valtio";
 import useLocalStorageState from "use-local-storage-state";
-
+import { Cross } from "./icons";
 export const OutputOptions = () => {
   const stateView = useSnapshot(state, { sync: true });
 
@@ -300,7 +300,7 @@ export const OutputOptions = () => {
             className="block h-5 w-5 rounded-full border border-stone-600"
           ></span>
           <input
-            className="border border-stone-500 px-2 py-1 w-20"
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
             value={stateView.ttsOutputConfig.modelQuaOutputColour}
             onChange={(e) => {
               state.ttsOutputConfig.modelQuaOutputColour =
@@ -323,7 +323,7 @@ export const OutputOptions = () => {
             className="block h-5 w-5 rounded-full border border-stone-600"
           ></span>
           <input
-            className="border border-stone-500 px-2 py-1 w-20"
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
             value={stateView.ttsOutputConfig.modelDefOutputColour}
             onChange={(e) => {
               state.ttsOutputConfig.modelDefOutputColour =
@@ -346,7 +346,7 @@ export const OutputOptions = () => {
             className="block h-5 w-5 rounded-full border border-stone-600"
           ></span>
           <input
-            className="border border-stone-500 px-2 py-1 w-20"
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
             value={stateView.ttsOutputConfig.modelWeaponOutputColour}
             onChange={(e) => {
               state.ttsOutputConfig.modelWeaponOutputColour =
@@ -369,7 +369,7 @@ export const OutputOptions = () => {
             className="block h-5 w-5 rounded-full border border-stone-600"
           ></span>
           <input
-            className="border border-stone-500 px-2 py-1 w-20"
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
             value={stateView.ttsOutputConfig.modelSpecialRulesOutputColour}
             onChange={(e) => {
               state.ttsOutputConfig.modelSpecialRulesOutputColour =
@@ -391,7 +391,7 @@ export const OutputOptions = () => {
             className="block h-5 w-5 rounded-full border border-stone-600"
           ></span>
           <input
-            className="border border-stone-500 px-2 py-1 w-20"
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
             value={stateView.ttsOutputConfig.modelToughOutputColour}
             onChange={(e) => {
               state.ttsOutputConfig.modelToughOutputColour =
@@ -517,22 +517,9 @@ export const OutputOptions = () => {
                           allConfigs.filter((c: any) => c.id !== config.id)
                         );
                       }}
-                      className="hover:scale-110 active:scale-95 absolute bg-red-500 -top-2 -right-2 text-white rounded-full p-1"
+                      className="shadow hover:scale-110 active:scale-95 absolute bg-red-500 -top-2 -right-2 text-white rounded-full p-1"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={4}
-                        stroke="currentColor"
-                        className="w-4 h-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
+                      <Cross className="w-4 h-4" />
                     </button>
                   </div>
                 );
@@ -540,7 +527,7 @@ export const OutputOptions = () => {
             </div>
           )}
           {allConfigs.length === 0 && (
-            <p className="text-stone-500 italic mt-2">
+            <p className="text-stone-500 italic mt-2 dark:text-slate-300">
               You have no saved TTS output configs
             </p>
           )}

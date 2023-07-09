@@ -115,6 +115,10 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   let data: ArmyForgeTypes.ListState | undefined = undefined;
   let coreRulesResponseData;
   if (!id) {
+    toast.error(
+      "Could not find an Army Forge army ID. Please double check your Army Forge share link and try again."
+    );
+    state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
     return;
   }
 
@@ -240,6 +244,8 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   );
 
   state.unitProfiles = unitProfiles;
+
+  state.shareableLinkForTTS = undefined;
 };
 
 export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
