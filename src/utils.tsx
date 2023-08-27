@@ -266,10 +266,10 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
         generateUnitOutput(unitProfile, model, stateView);
 
       thisUnitsModelDefinitions.push({
-        name,
-        loadoutCSV,
-        ttsNameOutput,
-        ttsDescriptionOutput,
+        name: name,
+        loadoutCSV: loadoutCSV,
+        ttsNameOutput: ttsNameOutput,
+        ttsDescriptionOutput: ttsDescriptionOutput,
       });
     });
 
@@ -634,13 +634,17 @@ export const generateUnitOutput = (
   // This model may ignores the penalties from shooting after
   return {
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
-    loadoutCSV: activeWeaponNamesCommaSeparated,
+    loadoutCSV: activeWeaponNamesCommaSeparated
+      .replace(/[’]/g, "'")
+      .replace(/[&]/g, `<![CDATA[&]]>`)
+      .replace(/[”]/g, "''"),
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
       .filter((x) => x !== "")
       .join("\r\n")
       // remove smart quotes
       .replace(/[’]/g, "'")
+      .replace(/[&]/g, `<![CDATA[&]]>`)
       .replace(/[”]/g, "''"),
   };
 };
