@@ -141,7 +141,7 @@ export const OutputOptions = () => {
             </p>
           </div>
         </label>
-        <label className="flex flex-row items-center space-x-4">
+        {/* <label className="flex flex-row items-center space-x-4">
           <input
             checked={
               stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName
@@ -161,7 +161,7 @@ export const OutputOptions = () => {
               after the model's name.
             </p>
           </div>
-        </label>
+        </label> */}
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={

@@ -19,6 +19,7 @@ export interface iTotalShareableOutput {
 
 export interface iUnitProfileModelTTSOutput {
   name: string;
+  toughRating: number;
   loadoutCSV: string;
   ttsNameOutput: string;
   ttsDescriptionOutput: string;

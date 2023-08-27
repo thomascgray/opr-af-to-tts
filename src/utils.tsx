@@ -262,11 +262,17 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
     const unitId = nanoid();
 
     unitProfile.models.forEach((model) => {
-      const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
-        generateUnitOutput(unitProfile, model, stateView);
+      const {
+        name,
+        loadoutCSV,
+        ttsNameOutput,
+        ttsDescriptionOutput,
+        toughRating,
+      } = generateUnitOutput(unitProfile, model, stateView);
 
       thisUnitsModelDefinitions.push({
         name,
+        toughRating,
         loadoutCSV,
         ttsNameOutput,
         ttsDescriptionOutput,
@@ -589,21 +595,21 @@ export const generateUnitOutput = (
       .join("\r\n");
 
   // if the model has a Tough special rule, add its rating into the modelstringname
-  let totalToughRating = 0;
-  if (stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
-    allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
-      if (sr === null) {
-        return;
-      }
-      if (sr.name === "Tough") {
-        totalToughRating += parseInt(sr.rating);
-      }
-    });
+  // let totalToughRating = 0;
+  // if (stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
+  //   allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
+  //     if (sr === null) {
+  //       return;
+  //     }
+  //     if (sr.name === "Tough") {
+  //       totalToughRating += parseInt(sr.rating);
+  //     }
+  //   });
 
-    if (totalToughRating >= 1) {
-      modelNameString += ` [${TTS_TOUGH_COLOUR}](${totalToughRating})[-]`;
-    }
-  }
+  //   if (totalToughRating >= 1) {
+  //     modelNameString += ` [${TTS_TOUGH_COLOUR}](${totalToughRating})[-]`;
+  //   }
+  // }
 
   let nameLines = [
     `${modelNameString}`,
@@ -631,9 +637,17 @@ export const generateUnitOutput = (
     );
   }
 
+  const toughRating =
+    allApplicableSpecialRulesWithAddedUpRatings.find(
+      (sr) => sr.name === "Tough"
+    )?.rating || 0;
+
+  // if the model has a Tough special rule, add its rating into the modelstringname
+
   // This model may ignores the penalties from shooting after
   return {
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
+    toughRating,
     loadoutCSV: activeWeaponNamesCommaSeparated,
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines

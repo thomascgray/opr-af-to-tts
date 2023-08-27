@@ -12,6 +12,7 @@ local nameOfModelAssigning = nil;
 local nameToAssign = nil;
 local descriptionToAssign = nil;
 local unitIdToAssign = nil;
+local toughRatingToAssign = nil;
 
 local perModelCode = [[
     function tablelength(T)
@@ -89,6 +90,8 @@ local perModelCode = [[
                 unitId = decodedMemo['unitId'],
                 armyId = decodedMemo['armyId'],
                 unitName = decodedMemo['unitName'],
+                ttsOutputName = decodedMemo['ttsOutputName'],
+                toughRating = decodedMemo['toughRating'],
             })
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
@@ -154,11 +157,18 @@ local perModelCode = [[
         return armyObjects
     end
     
+    function rebuildName()
+        local decodedMemo = JSON.decode(self.memo)
+
+    end
+
     function rebuildContext()
         local decodedMemo = JSON.decode(self.memo)
         
         self.clearContextMenu()
         
+        self.addContextMenuItem("Model: Measuring", cycleMeasuringRadius, true)
+
         if (decodedMemo['isActivated']) then
             self.addContextMenuItem("Unit: ☑ Activated", toggleActivated, false)
         else
@@ -192,7 +202,6 @@ local perModelCode = [[
         self.addContextMenuItem("Unit: Select All", selectAllUnit)
         self.addContextMenuItem("Unit: Count", countUnit)
         self.addContextMenuItem("Army: Deactivate", deactivateArmy)
-        self.addContextMenuItem("Model: Measuring", cycleMeasuringRadius, true)
     end
 
     function selectAllUnit(player_color)
@@ -405,6 +414,7 @@ function cancelCurrentAssigning()
     nameToAssign = nil;
     descriptionToAssign = nil;
     unitIdToAssign = nil;
+    toughRatingToAssign = nil;
 end
 
 -- insane that this isn't in the Lua standard library???
@@ -468,6 +478,7 @@ function beginAssignment(player, _, id)
     nameToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsNameOutput']
     descriptionToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['ttsDescriptionOutput']
     unitIdToAssign = army[unitIndex]['unitId']
+    toughRatingToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['toughRating']
 
     broadcastToAll("Assigning '" .. nameOfModelAssigning .. "'")
 end
@@ -493,6 +504,9 @@ function assignNameAndDescriptionToSelectedObjects()
             unitId = unitIdToAssign,
             armyId = armyId,
             unitName = nameOfModelAssigning,
+            toughRating = toughRatingToAssign,
+            currentHp = toughRatingToAssign,
+            ttsOutputName = nameToAssign,
         })
         target.measure_movement = true;
         target.reload();
@@ -544,6 +558,8 @@ function onObjectPickUp(player_color, picked_up_object)
         gameSystem = gameSystemToAssign,
         armyId = armyId,
         unitName = nameOfModelAssigning,
+        toughRating = toughRatingToAssign,
+        ttsOutputName = nameToAssign,
     })
     picked_up_object.measure_movement = true;
     picked_up_object.reload();
