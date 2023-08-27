@@ -636,7 +636,6 @@ export const generateUnitOutput = (
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
     loadoutCSV: activeWeaponNamesCommaSeparated
       .replace(/[’]/g, "'")
-      .replace(/[&]/g, `<![CDATA[&]]>`)
       .replace(/[”]/g, "''"),
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
@@ -644,7 +643,6 @@ export const generateUnitOutput = (
       .join("\r\n")
       // remove smart quotes
       .replace(/[’]/g, "'")
-      .replace(/[&]/g, `<![CDATA[&]]>`)
       .replace(/[”]/g, "''"),
   };
 };

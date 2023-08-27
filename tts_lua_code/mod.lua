@@ -354,7 +354,7 @@ local function BuildModelCard(modelDefinition, unitIndex, modelIndex, totalModel
                 <Text fontSize="%s" color="#2f3640" fontStyle="italic">Loadout: %s</Text>
             </VerticalLayout>
         </Button>
-    ]], unitIndex, modelIndex, calculateFontSize(totalModelsInThisUnit, 26, 4), modelDefinition['name'], calculateFontSize(totalModelsInThisUnit, 20, 2), modelDefinition['loadoutCSV'])
+    ]], unitIndex, modelIndex, calculateFontSize(totalModelsInThisUnit, 26, 4), modelDefinition['name']:gsub("%&", "<![CDATA[&]]>"), calculateFontSize(totalModelsInThisUnit, 20, 2), modelDefinition['loadoutCSV']:gsub("%&", "<![CDATA[&]]>"))
 end
 
 local function BuildUnitLayout(unitDefinition, unitIndex)
@@ -381,7 +381,7 @@ local function BuildUnitLayout(unitDefinition, unitIndex)
             </HorizontalLayout>
         </VerticalLayout>
         
-    ]], unitDefinition['name'], thisUnitsModelCardsXml)
+    ]], unitDefinition['name']:gsub("%&", "<![CDATA[&]]>"), thisUnitsModelCardsXml)
 end
 
 local function BuildLayout(cardsXml, totalUnitCount)
