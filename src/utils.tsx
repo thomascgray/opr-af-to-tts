@@ -13,8 +13,16 @@ import {
   iUnitProfileModelTTSOutput,
 } from "./types";
 import { state } from "./state";
-import toast, { Toaster } from "react-hot-toast";
+import commonRules from "./data/common-rules.json";
+import commonRulesSkirmish from "./data/common-rules-skirmish.json";
+import commonRulesRegiments from "./data/common-rules-regiments.json";
 
+interface iCommonRule {
+  id: number;
+  name: string;
+  description: string;
+  hasRating: boolean;
+}
 export const getUrlSlugForGameSystem = (
   gameSystemInitials: eGameSystemInitials
 ) => {
@@ -113,9 +121,9 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.PENDING;
   const id = extractIdFromUrl(stateView.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
-  let coreRulesResponseData;
+  let relevantCoreSpecialRules: iCommonRule[];
   if (!id) {
-    toast.error(
+    alert(
       "Could not find an Army Forge army ID. Please double check your Army Forge share link and try again."
     );
     state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
@@ -127,7 +135,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     const response = await fetch(`/.netlify/functions/get-army?armyId=${id}`);
     data = await response.json();
     if (response.status !== 200) {
-      toast.error("Army Forge failed to export list. Sorry!");
+      alert("Army Forge failed to export list. Sorry!");
     }
     if (!data) {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
@@ -135,17 +143,26 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     }
     // then get the core rules for the game we're playing
     const gameSystemUrlSlug = getUrlSlugForGameSystem(data.gameSystem);
-    coreRulesResponseData = await fetch(
-      `https://army-forge-studio.onepagerules.com/api/public/game-systems/${gameSystemUrlSlug}/common-rules`
-    ).then(async (res) => await res.json());
+
+    switch (gameSystemUrlSlug) {
+      case "grimdark-future":
+      case "age-of-fantasy":
+        relevantCoreSpecialRules = [...commonRules] as iCommonRule[];
+        break;
+      case "grimdark-future-firefight":
+      case "age-of-fantasy-skirmish":
+        relevantCoreSpecialRules = [...commonRulesSkirmish] as iCommonRule[];
+        break;
+      case "age-of-fantasy-regiments":
+        relevantCoreSpecialRules = [...commonRulesRegiments] as iCommonRule[];
+        break;
+      default:
+        relevantCoreSpecialRules = [...commonRules] as iCommonRule[];
+        break;
+    }
 
     state.gameSystem = data.gameSystem;
-    state.coreSpecialRulesDict = coreRulesResponseData.map((c: any) => {
-      return {
-        name: c.name,
-        description: c.description,
-      };
-    });
+    state.coreSpecialRulesDict = relevantCoreSpecialRules;
     // @ts-ignore
     if (data && data.error) {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
@@ -262,14 +279,22 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
     const unitId = nanoid();
 
     unitProfile.models.forEach((model) => {
-      const { name, loadoutCSV, ttsNameOutput, ttsDescriptionOutput } =
-        generateUnitOutput(unitProfile, model, stateView);
+      const {
+        name,
+        loadoutCSV,
+        ttsNameOutput,
+        ttsDescriptionOutput,
+        originalCasterValue = 0,
+        originalToughValue = 0,
+      } = generateUnitOutput(unitProfile, model, stateView);
 
       thisUnitsModelDefinitions.push({
-        name: name,
-        loadoutCSV: loadoutCSV,
-        ttsNameOutput: ttsNameOutput,
-        ttsDescriptionOutput: ttsDescriptionOutput,
+        name,
+        loadoutCSV,
+        ttsNameOutput,
+        ttsDescriptionOutput,
+        originalToughValue,
+        originalCasterValue,
       });
     });
 
@@ -358,6 +383,8 @@ export const generateUnitOutput = (
     model,
     stateView.ttsOutputConfig
   );
+  let totalToughRating = 0;
+  let totalCasterRating = 0;
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
     .map((l) => {
@@ -589,21 +616,20 @@ export const generateUnitOutput = (
       .join("\r\n");
 
   // if the model has a Tough special rule, add its rating into the modelstringname
-  let totalToughRating = 0;
-  if (stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
-    allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
-      if (sr === null) {
-        return;
-      }
-      if (sr.name === "Tough") {
-        totalToughRating += parseInt(sr.rating);
-      }
-    });
-
-    if (totalToughRating >= 1) {
-      modelNameString += ` [${TTS_TOUGH_COLOUR}](${totalToughRating})[-]`;
+  // let totalToughRating = 0;
+  // if (stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
+  allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
+    if (sr === null) {
+      return;
     }
-  }
+    if (sr.name === "Tough") {
+      totalToughRating += parseInt(sr.rating);
+    }
+    if (sr.name === "Caster") {
+      totalCasterRating += parseInt(sr.rating);
+    }
+  });
+  // }
 
   let nameLines = [
     `${modelNameString}`,
@@ -644,6 +670,8 @@ export const generateUnitOutput = (
       // remove smart quotes
       .replace(/[’]/g, "'")
       .replace(/[”]/g, "''"),
+    originalToughValue: totalToughRating,
+    originalCasterValue: totalCasterRating,
   };
 };
 

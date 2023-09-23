@@ -27,7 +27,8 @@ export const initialTtsOutputConfig = {
 };
 
 export const state = proxy<iAppState>({
-  armyListShareLink: "",
+  armyListShareLink:
+    "https://army-forge.onepagerules.com/share?id=eozLqVsXDZCi&name=Battle_Brothers",
   shareableLinkForTTS: undefined,
   gameSystem: undefined,
   armySpecialRulesDict: [],

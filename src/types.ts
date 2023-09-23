@@ -22,6 +22,8 @@ export interface iUnitProfileModelTTSOutput {
   loadoutCSV: string;
   ttsNameOutput: string;
   ttsDescriptionOutput: string;
+  originalToughValue?: number;
+  originalCasterValue?: number;
 }
 
 export interface iUnitProfileModel {
