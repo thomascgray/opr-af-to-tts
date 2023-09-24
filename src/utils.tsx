@@ -633,7 +633,7 @@ export const generateUnitOutput = (
 
   let nameLines = [
     `${modelNameString}`,
-    `[${TTS_QUA_COLOUR}][b]${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]${model.def}[/b]+[-]`,
+    `[${TTS_QUA_COLOUR}][b]Q${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]D${model.def}[/b]+[-]`,
     stateView.ttsOutputConfig.includeWeaponsListInName
       ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
       : "",
