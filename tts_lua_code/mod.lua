@@ -14,6 +14,7 @@ local descriptionToAssign = nil;
 local unitIdToAssign = nil;
 local originalToughValueToAssign = nil;
 local originalCasterValueToAssign = nil;
+local armyNameToAssign = nil;
 
 local perModelCode = [[
     function tablelength(T)
@@ -48,6 +49,22 @@ local perModelCode = [[
         end
     end
 
+    function mergeTables(table1, table2)
+        local mergedTable = {}
+    
+        -- Copy the contents of table1 to mergedTable
+        for key, value in pairs(table1) do
+            mergedTable[key] = value
+        end
+    
+        -- Merge the contents of table2 into mergedTable, overwriting duplicates
+        for key, value in pairs(table2) do
+            mergedTable[key] = value
+        end
+    
+        return mergedTable
+    end
+
     function onLoad()
         local bounds = self.getBoundsNormalized();
         modelSizeX = bounds['size']['x'];
@@ -68,7 +85,7 @@ local perModelCode = [[
             thickness         = 0.1,         --thickness of the circle line
         }
 
-        isPinnedCircle = {
+        isShakenCircle = {
             color             = {241 / 255, 196 / 255, 15 / 255, 1}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
             steps             = 5,          --number of segments that make up the circle
@@ -89,47 +106,26 @@ local perModelCode = [[
 
     function hpUp(player_color)
         local decodedMemo = JSON.decode(self.memo)
-        
+
         printToAll("Model '" .. decodedMemo['unitName'] .. "' gained 1 Wound. Now at " .. decodedMemo['currentToughValue'] + 1 .. " Wounds remaining.");
         
-        self.memo = JSON.encode({
-            isActivated = not decodedMemo['isActivated'],
-            isPinned = decodedMemo['isPinned'],
-            isStunned = decodedMemo['isStunned'],
-            gameSystem = decodedMemo['gameSystem'],
-            unitId = decodedMemo['unitId'],
-            armyId = decodedMemo['armyId'],
-            unitName = decodedMemo['unitName'],
-            nameToAssign = decodedMemo['nameToAssign'],
-            originalToughValue = decodedMemo['originalToughValue'],
-            originalCasterValue = decodedMemo['originalCasterValue'],
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentToughValue = decodedMemo['currentToughValue'] + 1,
-            currentCasterValue = decodedMemo['currentCasterValue'],
-        })
+        }))
+        
 
         self.call('rebuildName');
     end
 
     function hpDown(player_color)
         local decodedMemo = JSON.decode(self.memo)
-        
+
         printToAll("Model '" .. decodedMemo['unitName'] .. "' lost 1 Wound. Now at " .. decodedMemo['currentToughValue'] - 1 .. " Wounds remaining.");
         
-        self.memo = JSON.encode({
-            isActivated = not decodedMemo['isActivated'],
-            isPinned = decodedMemo['isPinned'],
-            isStunned = decodedMemo['isStunned'],
-            gameSystem = decodedMemo['gameSystem'],
-            unitId = decodedMemo['unitId'],
-            armyId = decodedMemo['armyId'],
-            unitName = decodedMemo['unitName'],
-            nameToAssign = decodedMemo['nameToAssign'],
-            originalToughValue = decodedMemo['originalToughValue'],
-            originalCasterValue = decodedMemo['originalCasterValue'],
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentToughValue = decodedMemo['currentToughValue'] - 1,
-            currentCasterValue = decodedMemo['currentCasterValue'],
-        })
-
+        }))
+        
         self.call('rebuildName');
     end
 
@@ -138,20 +134,9 @@ local perModelCode = [[
         
         printToAll("Model '" .. decodedMemo['unitName'] .. "' gained 1 Spell Token. Now at " .. decodedMemo['currentCasterValue'] + 1 .. " Spell Tokens remaining.");
         
-        self.memo = JSON.encode({
-            isActivated = not decodedMemo['isActivated'],
-            isPinned = decodedMemo['isPinned'],
-            isStunned = decodedMemo['isStunned'],
-            gameSystem = decodedMemo['gameSystem'],
-            unitId = decodedMemo['unitId'],
-            armyId = decodedMemo['armyId'],
-            unitName = decodedMemo['unitName'],
-            nameToAssign = decodedMemo['nameToAssign'],
-            originalToughValue = decodedMemo['originalToughValue'],
-            originalCasterValue = decodedMemo['originalCasterValue'],
-            currentToughValue = decodedMemo['currentToughValue'],
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentCasterValue = decodedMemo['currentCasterValue'] + 1,
-        })
+        }))
 
         self.call('rebuildName');
     end
@@ -161,20 +146,9 @@ local perModelCode = [[
         
         printToAll("Model '" .. decodedMemo['unitName'] .. "' lost 1 Spell Token. Now at " .. decodedMemo['currentCasterValue'] - 1 .. " Spell Tokens remaining.");
         
-        self.memo = JSON.encode({
-            isActivated = not decodedMemo['isActivated'],
-            isPinned = decodedMemo['isPinned'],
-            isStunned = decodedMemo['isStunned'],
-            gameSystem = decodedMemo['gameSystem'],
-            unitId = decodedMemo['unitId'],
-            armyId = decodedMemo['armyId'],
-            unitName = decodedMemo['unitName'],
-            nameToAssign = decodedMemo['nameToAssign'],
-            originalToughValue = decodedMemo['originalToughValue'],
-            originalCasterValue = decodedMemo['originalCasterValue'],
-            currentToughValue = decodedMemo['currentToughValue'],
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentCasterValue = decodedMemo['currentCasterValue'] - 1,
-        })
+        }))
 
         self.call('rebuildName');
     end
@@ -184,20 +158,11 @@ local perModelCode = [[
         local unitMates = getAllUnitMates();
         printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled activation")
         for _, unitMate in ipairs(unitMates) do
-            unitMate.memo = JSON.encode({
+
+            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
                 isActivated = not decodedMemo['isActivated'],
-                isPinned = decodedMemo['isPinned'],
-                isStunned = decodedMemo['isStunned'],
-                gameSystem = decodedMemo['gameSystem'],
-                unitId = decodedMemo['unitId'],
-                armyId = decodedMemo['armyId'],
-                unitName = decodedMemo['unitName'],
-                nameToAssign = decodedMemo['nameToAssign'],
-                originalToughValue = decodedMemo['originalToughValue'],
-                originalCasterValue = decodedMemo['originalCasterValue'],
-                currentToughValue = decodedMemo['currentToughValue'],
-                currentCasterValue = decodedMemo['currentCasterValue'],
-            })
+            }))
+            
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
@@ -206,55 +171,28 @@ local perModelCode = [[
     function toggleStunned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
-        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled stunned")
+        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled Stunned")
         
         for _, unitMate in ipairs(unitMates) do
-            unitMate.memo = JSON.encode({
-                isActivated = decodedMemo['isActivated'],
-                isPinned = decodedMemo['isPinned'],
+            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
                 isStunned = not decodedMemo['isStunned'],
-                unitId = decodedMemo['unitId'],
-                armyId = decodedMemo['armyId'],
-                gameSystem = decodedMemo['gameSystem'],
-                unitName = decodedMemo['unitName'],
-                nameToAssign = decodedMemo['nameToAssign'],
-                originalToughValue = decodedMemo['originalToughValue'],
-                originalCasterValue = decodedMemo['originalCasterValue'],
-                currentToughValue = decodedMemo['currentToughValue'],
-                currentCasterValue = decodedMemo['currentCasterValue'],
-            })
+            }))
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
     end
 
-    function togglePinned(player_color)
+    function toggleShaken(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
         
-        if (decodedMemo['gameSystem'] == 'gf') then
-            printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled pinned")
-        end
-
-        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
-            printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled wavering")
-        end
+        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled Shaken")
 
         for _, unitMate in ipairs(unitMates) do
-            unitMate.memo = JSON.encode({
-                isActivated = decodedMemo['isActivated'],
-                isPinned = not decodedMemo['isPinned'],
-                isStunned = decodedMemo['isStunned'],
-                unitId = decodedMemo['unitId'],
-                armyId = decodedMemo['armyId'],
-                gameSystem = decodedMemo['gameSystem'],
-                unitName = decodedMemo['unitName'],
-                nameToAssign = decodedMemo['nameToAssign'],
-                originalToughValue = decodedMemo['originalToughValue'],
-                originalCasterValue = decodedMemo['originalCasterValue'],
-                currentToughValue = decodedMemo['currentToughValue'],
-                currentCasterValue = decodedMemo['currentCasterValue'],
-            })
+            
+            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
+                isShaken = not decodedMemo['isShaken'],
+            }))
             unitMate.call('rebuildContext');
             unitMate.call('rebuildStatusEffectThings');
         end
@@ -275,22 +213,41 @@ local perModelCode = [[
     function rebuildName()
         local decodedMemo = JSON.decode(self.memo)
 
+        local gameSystem = decodedMemo['gameSystem']
         local nameToAssign = decodedMemo['nameToAssign']
         local currentTough = decodedMemo['currentToughValue']
         local currentCaster = decodedMemo['currentCasterValue']
         local originalTough = decodedMemo['originalToughValue']
         local originalCaster = decodedMemo['originalCasterValue']
 
-        if (originalTough ~= 0 and originalCaster ~= 0) then
-            self.setName(nameToAssign .. "\r\n" .. "❤: ".. currentTough .. "/" .. originalTough .. "\r\n" .. "✦:" .. currentCaster .. '/6')
-        elseif (originalTough ~= 0 and originalCaster == 0) then
-            self.setName(nameToAssign .. "\r\n" .. "❤:" .. currentTough .. '/' .. originalTough)
-        elseif (originalTough == 0 and originalCaster ~= 0) then
-            self.setName(nameToAssign .. "\r\n" .. "✦:" .. currentCaster .. '/6')
-        else
-            self.setName(nameToAssign)
+        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            if (originalTough ~= 0 and originalCaster ~= 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Wounds: ".. currentTough .. "/" .. originalTough .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
+            elseif (originalTough ~= 0 and originalCaster == 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Wounds:" .. currentTough .. '/' .. originalTough)
+            elseif (originalTough == 0 and originalCaster ~= 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
+            else
+                self.setName(nameToAssign)
+            end
         end
 
+        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            if (originalTough ~= 0) then
+                nameToAssign = nameToAssign .. "\r\nTough: " .. originalTough;
+            end
+
+            nameToAssign = nameToAssign .. "\r\nWounds: " .. currentTough;
+            
+            if (originalCaster ~= 0) then
+                nameToAssign = nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6';
+            end
+            self.setName(nameToAssign)
+        end
+    end
+
+    function __noop()
+        -- deliberately blank
     end
     
     function rebuildContext()
@@ -298,52 +255,51 @@ local perModelCode = [[
         
         self.clearContextMenu()
 
-        if (decodedMemo['originalToughValue'] ~= 0) then
-            self.addContextMenuItem("Mo: Wounds +", hpUp, true)
-            self.addContextMenuItem("Mo: Wounds -", hpDown, true)
+        self.addContextMenuItem("▼ Model", __noop, true)
+
+        if (decodedMemo['originalToughValue'] ~= 0 or decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            self.addContextMenuItem("Wounds +", hpUp, true)
+            self.addContextMenuItem("Wounds -", hpDown, true)
         end
 
         if (decodedMemo['originalCasterValue'] ~= 0) then
-            self.addContextMenuItem("Mo: Spell Tokens +", spellTokensUp, true)
-            self.addContextMenuItem("Mo: Spell Tokens -", spellTokensDown, true)
+            self.addContextMenuItem("Spell Tokens +", spellTokensUp, true)
+            self.addContextMenuItem("Spell Tokens -", spellTokensDown, true)
         end
 
-        self.addContextMenuItem("Mo: Measuring", cycleMeasuringRadius, true)
+        self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
+
+        self.addContextMenuItem("▼ Unit", __noop, true)
 
         if (decodedMemo['isActivated']) then
-            self.addContextMenuItem("Ut: ☑ Activated", toggleActivated, false)
+            self.addContextMenuItem("☑ Activated", toggleActivated, false)
         else
-            self.addContextMenuItem("Ut: ☐ Activated", toggleActivated, false)
+            self.addContextMenuItem("☐ Activated", toggleActivated, false)
         end
 
         if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
             if (decodedMemo['isStunned']) then
-                self.addContextMenuItem("Ut: ☑ Stunned", toggleStunned, false)
+                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
             else
-                self.addContextMenuItem("Ut: ☐ Stunned", toggleStunned, false)
+                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
             end
         end
 
-        if (decodedMemo['gameSystem'] == 'gf') then
-            if (decodedMemo['isPinned']) then
-                self.addContextMenuItem("Ut: ☑ Pinned", togglePinned, false)
+        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            if (decodedMemo['isShaken']) then
+                self.addContextMenuItem("☑ Shaken", toggleShaken, false)
             else
-                self.addContextMenuItem("Ut: ☐ Pinned", togglePinned, false)
-            end
-        end
-
-        if (decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
-            if (decodedMemo['isPinned']) then
-                self.addContextMenuItem("Ut: ☑ Wavering", togglePinned, false)
-            else
-                self.addContextMenuItem("Ut: ☐ Wavering", togglePinned, false)
+                self.addContextMenuItem("☐ Shaken", toggleShaken, false)
             end
         end
     
-        self.addContextMenuItem("Ut: Select All", selectAllUnit)
-        self.addContextMenuItem("Ut: Count", countUnit)
-        self.addContextMenuItem("Ar: Deactivate", deactivateArmy)
-        self.addContextMenuItem("Ar: ↺ Spell Tokens", armyRefreshSpellTokens)
+        self.addContextMenuItem("Select All", selectAllUnit)
+        self.addContextMenuItem("Count", countUnit)
+
+        self.addContextMenuItem("▼ Army", __noop, true)
+
+        self.addContextMenuItem("Deactivate", deactivateArmy)
+        self.addContextMenuItem("Refresh Spell Tokens", armyRefreshSpellTokens)
     end
 
     function selectAllUnit(player_color)
@@ -362,23 +318,16 @@ local perModelCode = [[
 
     function deactivateArmy()
         local armyMates = getAllArmyMates();
+        local decodedMemo = JSON.decode(self.memo)
+        printToAll("Army '" .. decodedMemo['armyNameToAssign'] .. "' deactivated")
 
         for _, armyMate in ipairs(armyMates) do
             local armyMateMemo = JSON.decode(armyMate.memo);
-            armyMate.memo = JSON.encode({
+            
+            armyMate.memo = JSON.encode(mergeTables(armyMateMemo, {
                 isActivated = false,
-                isPinned = armyMateMemo['isPinned'],
-                isStunned = armyMateMemo['isStunned'],
-                unitId = armyMateMemo['unitId'],
-                gameSystem = armyMateMemo['gameSystem'],
-                armyId = armyMateMemo['armyId'],
-                unitName = armyMateMemo['unitName'],
-                nameToAssign = armyMateMemo['nameToAssign'],
-                originalToughValue = armyMateMemo['originalToughValue'],
-                originalCasterValue = armyMateMemo['originalCasterValue'],
-                currentToughValue = armyMateMemo['currentToughValue'],
-                currentCasterValue = armyMateMemo['currentCasterValue'],
-            })
+            }))
+
             armyMate.call('rebuildContext');
             armyMate.call('rebuildStatusEffectThings');
         end
@@ -386,23 +335,15 @@ local perModelCode = [[
 
     function armyRefreshSpellTokens()
         local armyMates = getAllArmyMates();
+        local decodedMemo = JSON.decode(self.memo)
+        printToAll("Army '" .. decodedMemo['armyNameToAssign'] .. "' Spell Tokens refreshed")
 
         for _, armyMate in ipairs(armyMates) do
             local armyMateMemo = JSON.decode(armyMate.memo);
-            armyMate.memo = JSON.encode({
-                isActivated = armyMateMemo['isActivated'],
-                isPinned = armyMateMemo['isPinned'],
-                isStunned = armyMateMemo['isStunned'],
-                unitId = armyMateMemo['unitId'],
-                gameSystem = armyMateMemo['gameSystem'],
-                armyId = armyMateMemo['armyId'],
-                unitName = armyMateMemo['unitName'],
-                nameToAssign = armyMateMemo['nameToAssign'],
-                originalToughValue = armyMateMemo['originalToughValue'],
-                originalCasterValue = armyMateMemo['originalCasterValue'],
-                currentToughValue = armyMateMemo['currentToughValue'],
+            
+            armyMate.memo = JSON.encode(mergeTables(armyMateMemo, {
                 currentCasterValue = numOrMax(armyMateMemo['currentCasterValue'] + armyMateMemo['originalCasterValue'], 6),
-            })
+            }))
             armyMate.call('rebuildContext');
             armyMate.call('rebuildName');
             armyMate.call('rebuildStatusEffectThings');
@@ -434,11 +375,11 @@ local perModelCode = [[
             })
         end
 
-        if (decodedMemo['isPinned']) then
+        if (decodedMemo['isShaken']) then
             table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isPinnedCircle.radius, isPinnedCircle.steps, heightForCircles + 0.2, true),
-                color     = isPinnedCircle.color,
-                thickness = isPinnedCircle.thickness,
+                points    = getCircleVectorPoints(isShakenCircle.radius, isShakenCircle.steps, heightForCircles + 0.2, true),
+                color     = isShakenCircle.color,
+                thickness = isShakenCircle.thickness,
                 rotation  = {0,0,0},
             })
         end
@@ -674,9 +615,15 @@ function assignNameAndDescriptionToObjects( object )
         target.setLuaScript(perModelCode);
         target.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
         target.addTag('OPRAFTTS_army_id_' .. armyId)
+
+        local currentToughValue = originalToughValueToAssign;
+        if (gameSystemToAssign == 'aofs' or gameSystemToAssign == 'gff') then
+            currentToughValue = 0
+        end
+
         target.memo = JSON.encode({
             isActivated = false,
-            isPinned = false,
+            isShaken = false,
             isWavering = false,
             isStunned = false,
             gameSystem = gameSystemToAssign,
@@ -686,8 +633,9 @@ function assignNameAndDescriptionToObjects( object )
             nameToAssign = nameToAssign,
             originalToughValue = originalToughValueToAssign,
             originalCasterValue = originalCasterValueToAssign,
-            currentToughValue = originalToughValueToAssign,
+            currentToughValue = currentToughValue,
             currentCasterValue = 0,
+            armyNameToAssign = armyNameToAssign,
         })
         target.reload();
     end
@@ -751,6 +699,7 @@ function handleResponse(response)
 
     armyId = data['listId'];
     gameSystemToAssign = data['listJson']['gameSystem'];
+    armyNameToAssign = data['listJson']['listName'];
 
     local units = {}
     for _, unitDefinition in ipairs(data['listJson']['units']) do

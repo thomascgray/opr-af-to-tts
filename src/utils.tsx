@@ -144,6 +144,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     // then get the core rules for the game we're playing
     const gameSystemUrlSlug = getUrlSlugForGameSystem(data.gameSystem);
 
+    state.listName = data.name;
     switch (gameSystemUrlSlug) {
       case "grimdark-future":
       case "age-of-fantasy":
@@ -272,6 +273,7 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
   const totalOutput: iTotalShareableOutput = {
     gameSystem: stateView.gameSystem || ArmyForgeTypes.eGameSystemInitials.GF,
     units: [],
+    listName: state.listName || "UNDEFINED",
   };
 
   stateView.unitProfiles.forEach((unitProfile, unitIndex) => {
