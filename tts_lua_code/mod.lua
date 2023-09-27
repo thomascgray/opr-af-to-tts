@@ -107,7 +107,7 @@ local perModelCode = [[
     function hpUp(player_color)
         local decodedMemo = JSON.decode(self.memo)
 
-        printToAll("Model '" .. decodedMemo['unitName'] .. "' gained 1 Wound. Now at " .. decodedMemo['currentToughValue'] + 1 .. " Wounds remaining.");
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Wound.");
         
         self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentToughValue = decodedMemo['currentToughValue'] + 1,
@@ -120,7 +120,7 @@ local perModelCode = [[
     function hpDown(player_color)
         local decodedMemo = JSON.decode(self.memo)
 
-        printToAll("Model '" .. decodedMemo['unitName'] .. "' lost 1 Wound. Now at " .. decodedMemo['currentToughValue'] - 1 .. " Wounds remaining.");
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Wound.");
         
         self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentToughValue = decodedMemo['currentToughValue'] - 1,
@@ -132,7 +132,7 @@ local perModelCode = [[
     function spellTokensUp(player_color)
         local decodedMemo = JSON.decode(self.memo)
         
-        printToAll("Model '" .. decodedMemo['unitName'] .. "' gained 1 Spell Token. Now at " .. decodedMemo['currentCasterValue'] + 1 .. " Spell Tokens remaining.");
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Spell Token.");
         
         self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentCasterValue = decodedMemo['currentCasterValue'] + 1,
@@ -144,7 +144,7 @@ local perModelCode = [[
     function spellTokensDown(player_color)
         local decodedMemo = JSON.decode(self.memo)
         
-        printToAll("Model '" .. decodedMemo['unitName'] .. "' lost 1 Spell Token. Now at " .. decodedMemo['currentCasterValue'] - 1 .. " Spell Tokens remaining.");
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Spell Token.");
         
         self.memo = JSON.encode(mergeTables(decodedMemo, {
             currentCasterValue = decodedMemo['currentCasterValue'] - 1,
@@ -156,7 +156,7 @@ local perModelCode = [[
     function toggleActivated(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates();
-        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled activation")
+        printToAll("'" .. decodedMemo['unitName'] .. "' toggled activation")
         for _, unitMate in ipairs(unitMates) do
 
             unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
@@ -171,7 +171,7 @@ local perModelCode = [[
     function toggleStunned(player_color)
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
-        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled Stunned")
+        printToAll("'" .. decodedMemo['unitName'] .. "' toggled Stunned")
         
         for _, unitMate in ipairs(unitMates) do
             unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
@@ -186,7 +186,7 @@ local perModelCode = [[
         local decodedMemo = JSON.decode(self.memo)
         local unitMates = getAllUnitMates()
         
-        printToAll("Unit '" .. decodedMemo['unitName'] .. "' toggled Shaken")
+        printToAll("'" .. decodedMemo['unitName'] .. "' toggled Shaken")
 
         for _, unitMate in ipairs(unitMates) do
             
@@ -319,7 +319,7 @@ local perModelCode = [[
     function deactivateArmy()
         local armyMates = getAllArmyMates();
         local decodedMemo = JSON.decode(self.memo)
-        printToAll("Army '" .. decodedMemo['armyNameToAssign'] .. "' deactivated")
+        printToAll("'" .. decodedMemo['armyNameToAssign'] .. "' deactivated")
 
         for _, armyMate in ipairs(armyMates) do
             local armyMateMemo = JSON.decode(armyMate.memo);
@@ -336,7 +336,7 @@ local perModelCode = [[
     function armyRefreshSpellTokens()
         local armyMates = getAllArmyMates();
         local decodedMemo = JSON.decode(self.memo)
-        printToAll("Army '" .. decodedMemo['armyNameToAssign'] .. "' Spell Tokens refreshed")
+        printToAll("'" .. decodedMemo['armyNameToAssign'] .. "' Spell Tokens refreshed")
 
         for _, armyMate in ipairs(armyMates) do
             local armyMateMemo = JSON.decode(armyMate.memo);
@@ -613,6 +613,10 @@ function assignNameAndDescriptionToObjects( object )
         target.setName(nameToAssign)
         target.setDescription(descriptionToAssign)
         target.setLuaScript(perModelCode);
+        -- clear out existing tags
+        target.setTags({});
+
+        -- set the new tags
         target.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
         target.addTag('OPRAFTTS_army_id_' .. armyId)
 
@@ -665,8 +669,6 @@ function onObjectPickUp(player_color, picked_up_object)
     if descriptionToAssign == nil then
         return
     end
-
-    picked_up_object.measure_movement = false;
 
     assignNameAndDescriptionToObjects(picked_up_object);
     
