@@ -616,11 +616,6 @@ function assignNameAndDescriptionToObjects( object )
         target.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
         target.addTag('OPRAFTTS_army_id_' .. armyId)
 
-        local currentToughValue = originalToughValueToAssign;
-        if (gameSystemToAssign == 'aofs' or gameSystemToAssign == 'gff') then
-            currentToughValue = 0
-        end
-
         target.memo = JSON.encode({
             isActivated = false,
             isShaken = false,
@@ -633,7 +628,7 @@ function assignNameAndDescriptionToObjects( object )
             nameToAssign = nameToAssign,
             originalToughValue = originalToughValueToAssign,
             originalCasterValue = originalCasterValueToAssign,
-            currentToughValue = currentToughValue,
+            currentToughValue = 0,
             currentCasterValue = 0,
             armyNameToAssign = armyNameToAssign,
         })
