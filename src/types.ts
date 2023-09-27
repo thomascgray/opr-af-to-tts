@@ -9,6 +9,7 @@ export enum eNetworkRequestState {
 
 export interface iTotalShareableOutput {
   gameSystem: ArmyForgeTypes.eGameSystemInitials;
+  listName: string;
   units: {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
@@ -22,6 +23,8 @@ export interface iUnitProfileModelTTSOutput {
   loadoutCSV: string;
   ttsNameOutput: string;
   ttsDescriptionOutput: string;
+  originalToughValue?: number;
+  originalCasterValue?: number;
 }
 
 export interface iUnitProfileModel {
@@ -60,6 +63,7 @@ export interface iUnitProfile {
 export interface iAppState {
   armyListShareLink: string;
   shareableLinkForTTS?: string;
+  listName?: string;
   armySpecialRulesDict: {
     name: string;
     description: string;

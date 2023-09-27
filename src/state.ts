@@ -30,6 +30,7 @@ export const state = proxy<iAppState>({
   armyListShareLink: "",
   shareableLinkForTTS: undefined,
   gameSystem: undefined,
+  listName: undefined,
   armySpecialRulesDict: [],
   coreSpecialRulesDict: [],
   armySpecialRulesDictNames: [],

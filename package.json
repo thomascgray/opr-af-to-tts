@@ -19,10 +19,10 @@
     "lodash": "4.17.21",
     "mysql2": "3.2.4",
     "nanoid": "3.3.6",
+    "netlify-cli": "^16.4.2",
     "pluralize": "8.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hot-toast": "2.4.1",
     "use-local-storage-state": "18.3.3",
     "valtio": "1.10.4"
   },

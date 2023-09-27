@@ -24,7 +24,6 @@ import {
   getUnitIndexForSelectionId,
   isUnitHero,
 } from "./utils";
-import { Toaster } from "react-hot-toast";
 
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
@@ -423,7 +422,6 @@ ${ttsDescriptionOutput}`}
           </div>
         </>
       )}
-      <Toaster position="bottom-left" />
     </div>
   );
 }

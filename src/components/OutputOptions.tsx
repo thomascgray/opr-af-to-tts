@@ -144,27 +144,6 @@ export const OutputOptions = () => {
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={
-              stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName
-            }
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeToughSpecialRuleRatingInName =
-                !stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName;
-            }}
-          />
-          <div className="w-11/12">
-            <p className="font-bold">Include Tough rating in model name</p>
-            <p className="text-xs">
-              If enabled, if the model has the "Tough" special rule, then the
-              rating for that special rule will be displayed in square brackets
-              after the model's name.
-            </p>
-          </div>
-        </label>
-        <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={
               stateView.ttsOutputConfig
                 .swapCustomNameBracketingForUnitsWithMultipleModels
             }
