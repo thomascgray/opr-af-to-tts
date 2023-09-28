@@ -17,6 +17,24 @@ local originalCasterValueToAssign = nil;
 local armyNameToAssign = nil;
 
 local perModelCode = [[
+    function distributeObjects(numObjects, spacing)
+        if numObjects <= 0 then
+            return {} -- Return an empty table for an invalid input
+        elseif numObjects == 1 then
+            return {0} -- Center position for a single object
+        end
+    
+        local positions = {}
+        local totalWidth = (numObjects - 1) * spacing
+    
+        for i = 1, numObjects do
+            local position = (i - 1) * spacing - totalWidth / 2
+            table.insert(positions, position)
+        end
+    
+        return positions
+    end
+
     function tablelength(T)
         local c = 0
         for _ in pairs(T) do
@@ -52,17 +70,23 @@ local perModelCode = [[
     function mergeTables(table1, table2)
         local mergedTable = {}
     
-        -- Copy the contents of table1 to mergedTable
         for key, value in pairs(table1) do
             mergedTable[key] = value
         end
     
-        -- Merge the contents of table2 into mergedTable, overwriting duplicates
         for key, value in pairs(table2) do
             mergedTable[key] = value
         end
     
         return mergedTable
+    end
+
+    function roundToTwoDecimalPlaces(number)
+        return math.floor(number * 100 + 0.5) / 100
+    end
+
+    function __noop()
+        -- deliberately blank
     end
 
     function onLoad()
@@ -102,6 +126,7 @@ local perModelCode = [[
         rebuildContext();
         rebuildStatusEffectThings();
         rebuildName();
+        rebuildXml();
     end
 
     function hpUp(player_color)
@@ -115,6 +140,7 @@ local perModelCode = [[
         
 
         self.call('rebuildName');
+        self.call('rebuildXml');
     end
 
     function hpDown(player_color)
@@ -127,6 +153,7 @@ local perModelCode = [[
         }))
         
         self.call('rebuildName');
+        self.call('rebuildXml');
     end
 
     function spellTokensUp(player_color)
@@ -139,6 +166,7 @@ local perModelCode = [[
         }))
 
         self.call('rebuildName');
+        self.call('rebuildXml');
     end
 
     function spellTokensDown(player_color)
@@ -151,6 +179,7 @@ local perModelCode = [[
         }))
 
         self.call('rebuildName');
+        self.call('rebuildXml');
     end
 
     function toggleActivated(player_color)
@@ -210,98 +239,6 @@ local perModelCode = [[
         return armyObjects
     end
 
-    function rebuildName()
-        local decodedMemo = JSON.decode(self.memo)
-
-        local gameSystem = decodedMemo['gameSystem']
-        local nameToAssign = decodedMemo['nameToAssign']
-        local currentTough = decodedMemo['currentToughValue']
-        local currentCaster = decodedMemo['currentCasterValue']
-        local originalTough = decodedMemo['originalToughValue']
-        local originalCaster = decodedMemo['originalCasterValue']
-
-        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
-            if (originalTough ~= 0 and originalCaster ~= 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Wounds: ".. currentTough .. "/" .. originalTough .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
-            elseif (originalTough ~= 0 and originalCaster == 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Wounds:" .. currentTough .. '/' .. originalTough)
-            elseif (originalTough == 0 and originalCaster ~= 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
-            else
-                self.setName(nameToAssign)
-            end
-        end
-
-        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
-            if (originalTough ~= 0) then
-                nameToAssign = nameToAssign .. "\r\nTough: " .. originalTough;
-            end
-
-            nameToAssign = nameToAssign .. "\r\nWounds: " .. currentTough;
-            
-            if (originalCaster ~= 0) then
-                nameToAssign = nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6';
-            end
-            self.setName(nameToAssign)
-        end
-    end
-
-    function __noop()
-        -- deliberately blank
-    end
-    
-    function rebuildContext()
-        local decodedMemo = JSON.decode(self.memo)
-        
-        self.clearContextMenu()
-
-        self.addContextMenuItem("▼ Model", __noop, true)
-
-        if (decodedMemo['originalToughValue'] ~= 0 or decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
-            self.addContextMenuItem("Wounds +", hpUp, true)
-            self.addContextMenuItem("Wounds -", hpDown, true)
-        end
-
-        if (decodedMemo['originalCasterValue'] ~= 0) then
-            self.addContextMenuItem("Spell Tokens +", spellTokensUp, true)
-            self.addContextMenuItem("Spell Tokens -", spellTokensDown, true)
-        end
-
-        self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
-
-        self.addContextMenuItem("▼ Unit", __noop, true)
-
-        if (decodedMemo['isActivated']) then
-            self.addContextMenuItem("☑ Activated", toggleActivated, false)
-        else
-            self.addContextMenuItem("☐ Activated", toggleActivated, false)
-        end
-
-        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
-            if (decodedMemo['isStunned']) then
-                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
-            else
-                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
-            end
-        end
-
-        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
-            if (decodedMemo['isShaken']) then
-                self.addContextMenuItem("☑ Shaken", toggleShaken, false)
-            else
-                self.addContextMenuItem("☐ Shaken", toggleShaken, false)
-            end
-        end
-    
-        self.addContextMenuItem("Select All", selectAllUnit)
-        self.addContextMenuItem("Count", countUnit)
-
-        self.addContextMenuItem("▼ Army", __noop, true)
-
-        self.addContextMenuItem("Deactivate", deactivateArmy)
-        self.addContextMenuItem("Refresh Spell Tokens", armyRefreshSpellTokens)
-    end
-
     function selectAllUnit(player_color)
         local unitMates = getAllUnitMates();
         
@@ -346,55 +283,12 @@ local perModelCode = [[
             }))
             armyMate.call('rebuildContext');
             armyMate.call('rebuildName');
+            armyMate.call('rebuildXml');
             armyMate.call('rebuildStatusEffectThings');
         end
     end
         
-    function rebuildStatusEffectThings()
-        local decodedMemo = JSON.decode(self.memo)
-           
-        local vectorPointsTable = {}
-        
-        local scale = self.getScale();
-        local heightForCircles = 0.4 / scale['y'];
-
-        if (measuringCircle.radius > 0) then
-            table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(measuringCircle.radius, measuringCircle.steps, measuringCircle.vertical_position, true),
-                color     = measuringCircle.color,
-                thickness = measuringCircle.thickness,
-                rotation  = {0,0,0},
-            })
-        end
-        if (decodedMemo['isActivated']) then
-            table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isActivatedCircle.radius, isActivatedCircle.steps, heightForCircles, true),
-                color     = isActivatedCircle.color,
-                thickness = isActivatedCircle.thickness,
-                rotation  = {0,0,0},
-            })
-        end
-
-        if (decodedMemo['isShaken']) then
-            table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isShakenCircle.radius, isShakenCircle.steps, heightForCircles + 0.2, true),
-                color     = isShakenCircle.color,
-                thickness = isShakenCircle.thickness,
-                rotation  = {0,0,0},
-            })
-        end
-
-        if (decodedMemo['isStunned']) then
-            table.insert(vectorPointsTable, {
-                points    = getCircleVectorPoints(isStunnedCircle.radius, isStunnedCircle.steps, heightForCircles + 0.2, true),
-                color     = isStunnedCircle.color,
-                thickness = isStunnedCircle.thickness,
-                rotation  = {0,0,0},
-            })
-        end
     
-        self.setVectorLines(vectorPointsTable)
-    end
     
     -- code taken from https://pastebin.com/Y1tTQ8Yw with huge appreciation to the original author
     function getCircleVectorPoints(radius, steps, y, accountForScale)
@@ -456,8 +350,238 @@ local perModelCode = [[
         rebuildStatusEffectThings();
     end
 
-    function roundToTwoDecimalPlaces(number)
-        return math.floor(number * 100 + 0.5) / 100
+    
+
+    function rebuildStatusEffectThings()
+        local decodedMemo = JSON.decode(self.memo)
+           
+        local vectorPointsTable = {}
+        
+        local scale = self.getScale();
+        local heightForCircles = 0.4 / scale['y'];
+
+        if (measuringCircle.radius > 0) then
+            table.insert(vectorPointsTable, {
+                points    = getCircleVectorPoints(measuringCircle.radius, measuringCircle.steps, measuringCircle.vertical_position, true),
+                color     = measuringCircle.color,
+                thickness = measuringCircle.thickness,
+                rotation  = {0,0,0},
+            })
+        end
+        if (decodedMemo['isActivated']) then
+            table.insert(vectorPointsTable, {
+                points    = getCircleVectorPoints(isActivatedCircle.radius, isActivatedCircle.steps, heightForCircles, true),
+                color     = isActivatedCircle.color,
+                thickness = isActivatedCircle.thickness,
+                rotation  = {0,0,0},
+            })
+        end
+
+        if (decodedMemo['isShaken']) then
+            table.insert(vectorPointsTable, {
+                points    = getCircleVectorPoints(isShakenCircle.radius, isShakenCircle.steps, heightForCircles + 0.2, true),
+                color     = isShakenCircle.color,
+                thickness = isShakenCircle.thickness,
+                rotation  = {0,0,0},
+            })
+        end
+
+        if (decodedMemo['isStunned']) then
+            table.insert(vectorPointsTable, {
+                points    = getCircleVectorPoints(isStunnedCircle.radius, isStunnedCircle.steps, heightForCircles + 0.2, true),
+                color     = isStunnedCircle.color,
+                thickness = isStunnedCircle.thickness,
+                rotation  = {0,0,0},
+            })
+        end
+    
+        self.setVectorLines(vectorPointsTable)
+    end
+
+    function rebuildXml()
+        local decodedMemo = JSON.decode(self.memo)
+
+        local bounds = self.getVisualBoundsNormalized();
+        local modelSizeY = bounds['size']['y'] + (bounds['size']['y'] / 2);
+
+        local rowCount = 1;
+        if (decodedMemo['originalCasterValue'] ~= 0) then
+            rowCount = rowCount + 1;
+        end
+
+        local buttonRowsDistribution = distributeObjects(rowCount, 0.35);
+
+        self.clearButtons();
+
+        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            local woundsDistribution = distributeObjects(decodedMemo['originalToughValue'], 0.275);
+            
+            -- do wounds for non skirmish games
+            for key, value in pairs(woundsDistribution) do
+                if (decodedMemo['currentToughValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                self.createButton({
+                    click_function = "__noop",
+                    function_owner = self,
+                    label          = "",
+                    position       = {value, modelSizeY, buttonRowsDistribution[1]},
+                    rotation       = {0, 0, 0},
+                    width          = 100,
+                    height         = 100,
+                    font_size      = 340,
+                    color          = {1, 0, 0, opacity},
+                    font_color     = {1, 1, 1},
+                    tooltip        = "Wounds: " .. decodedMemo['currentToughValue'] .. "/" .. decodedMemo['originalToughValue'],
+                })
+            end
+        end
+
+        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            local woundsDistribution = distributeObjects(decodedMemo['originalToughValue'] + 5, 0.275);
+            
+            -- do wounds for skirmish games
+                -- basically, they have as many wounds as they have tough plus 5
+            for key, value in pairs(woundsDistribution) do
+                if (decodedMemo['currentToughValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                self.createButton({
+                    click_function = "__noop",
+                    function_owner = self,
+                    label          = "",
+                    position       = {value, modelSizeY, buttonRowsDistribution[1]},
+                    rotation       = {0, 0, 0},
+                    width          = 100,
+                    height         = 100,
+                    font_size      = 340,
+                    color          = {1, 0, 0, opacity},
+                    font_color     = {1, 1, 1},
+                    tooltip        = "Wounds: " .. decodedMemo['currentToughValue'],
+                })
+            end
+        end
+
+        -- do spell tokens
+        -- spell tokens are always the same regardless of game system
+
+        if (decodedMemo['originalCasterValue'] > 0) then
+            local spellTokensDistribution = distributeObjects(6, 0.275);
+            local opacity = 1;
+            for key, value in pairs(spellTokensDistribution) do
+                if (decodedMemo['currentCasterValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                self.createButton({
+                    click_function = "__noop",
+                    function_owner = self,
+                    label          = "",
+                    position       = {value, modelSizeY, buttonRowsDistribution[2]},
+                    rotation       = {0, 0, 0},
+                    width          = 100,
+                    height         = 100,
+                    font_size      = 340,
+                    color          = {0, 1, 1, opacity},
+                    font_color     = {1, 1, 1},
+                    tooltip        = "Spell Tokens: " .. decodedMemo['currentCasterValue'] .. "/6",
+                })
+            end
+        end
+
+    end
+
+    function rebuildName()
+        local decodedMemo = JSON.decode(self.memo)
+
+        local gameSystem = decodedMemo['gameSystem']
+        local nameToAssign = decodedMemo['nameToAssign']
+        local currentTough = decodedMemo['currentToughValue']
+        local currentCaster = decodedMemo['currentCasterValue']
+        local originalTough = decodedMemo['originalToughValue']
+        local originalCaster = decodedMemo['originalCasterValue']
+
+        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            if (originalTough ~= 0 and originalCaster ~= 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Wounds: ".. currentTough .. "/" .. originalTough .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
+            elseif (originalTough ~= 0 and originalCaster == 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Wounds:" .. currentTough .. '/' .. originalTough)
+            elseif (originalTough == 0 and originalCaster ~= 0) then
+                self.setName(nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
+            else
+                self.setName(nameToAssign)
+            end
+        end
+
+        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            if (originalTough ~= 0) then
+                nameToAssign = nameToAssign .. "\r\nTough: " .. originalTough;
+            end
+
+            nameToAssign = nameToAssign .. "\r\nWounds: " .. currentTough;
+            
+            if (originalCaster ~= 0) then
+                nameToAssign = nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6';
+            end
+            self.setName(nameToAssign)
+        end
+    end
+    
+    function rebuildContext()
+        local decodedMemo = JSON.decode(self.memo)
+        
+        self.clearContextMenu()
+
+        self.addContextMenuItem("▼ Model", __noop, true)
+
+        if (decodedMemo['originalToughValue'] ~= 0 or decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            self.addContextMenuItem("Wounds +", hpUp, true)
+            self.addContextMenuItem("Wounds -", hpDown, true)
+        end
+
+        if (decodedMemo['originalCasterValue'] ~= 0) then
+            self.addContextMenuItem("Spell Tokens +", spellTokensUp, true)
+            self.addContextMenuItem("Spell Tokens -", spellTokensDown, true)
+        end
+
+        self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
+
+        self.addContextMenuItem("▼ Unit", __noop, true)
+
+        if (decodedMemo['isActivated']) then
+            self.addContextMenuItem("☑ Activated", toggleActivated, false)
+        else
+            self.addContextMenuItem("☐ Activated", toggleActivated, false)
+        end
+
+        if (decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff') then
+            if (decodedMemo['isStunned']) then
+                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
+            else
+                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
+            end
+        end
+
+        if (decodedMemo['gameSystem'] == 'gf' or decodedMemo['gameSystem'] == 'aof' or decodedMemo['gameSystem'] == 'aofr') then
+            if (decodedMemo['isShaken']) then
+                self.addContextMenuItem("☑ Shaken", toggleShaken, false)
+            else
+                self.addContextMenuItem("☐ Shaken", toggleShaken, false)
+            end
+        end
+    
+        self.addContextMenuItem("Select All", selectAllUnit)
+        self.addContextMenuItem("Count", countUnit)
+
+        self.addContextMenuItem("▼ Army", __noop, true)
+
+        self.addContextMenuItem("Deactivate", deactivateArmy)
+        self.addContextMenuItem("Refresh Spell Tokens", armyRefreshSpellTokens)
     end
 ]]
 
@@ -636,6 +760,7 @@ function assignNameAndDescriptionToObjects( object )
             currentCasterValue = 0,
             armyNameToAssign = armyNameToAssign,
         })
+        target.setRotation({0, 180, 0});
         target.reload();
     end
 
@@ -661,6 +786,12 @@ function onScriptingButtonDown(index, player_color)
         cancelCurrentAssigning();
     end
 end
+
+function click_func()
+
+end
+
+
 
 function onObjectPickUp(player_color, picked_up_object)
     if nameToAssign == nil then
