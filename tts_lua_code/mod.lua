@@ -94,6 +94,8 @@ local perModelCode = [[
         modelSizeX = bounds['size']['x'];
         local decodedMemo = JSON.decode(self.memo)
     
+        isShowWoundsAndSpellTokens = true;
+
         measuringCircle = {
             color             = {255, 255, 255, 0.9}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
@@ -350,7 +352,11 @@ local perModelCode = [[
         rebuildStatusEffectThings();
     end
 
-    
+
+    function cycleShowHideWoundsAndSpellTokens()
+        isShowWoundsAndSpellTokens = not isShowWoundsAndSpellTokens;
+        self.call('rebuildXml');
+    end
 
     function rebuildStatusEffectThings()
         local decodedMemo = JSON.decode(self.memo)
@@ -399,10 +405,15 @@ local perModelCode = [[
     end
 
     function rebuildXml()
+        if (isShowWoundsAndSpellTokens == false) then
+            self.clearButtons();
+            return;
+        end
+
         local decodedMemo = JSON.decode(self.memo)
 
         local bounds = self.getVisualBoundsNormalized();
-        local modelSizeY = bounds['size']['y'] + (bounds['size']['y'] / 2);
+        local modelSizeY = (bounds['size']['y'] + (bounds['size']['y'] / 2)) / self.getScale()['y'];    
 
         local rowCount = 1;
         if (decodedMemo['originalCasterValue'] ~= 0) then
@@ -434,7 +445,7 @@ local perModelCode = [[
                     font_size      = 340,
                     color          = {1, 0, 0, opacity},
                     font_color     = {1, 1, 1},
-                    tooltip        = "Wounds: " .. decodedMemo['currentToughValue'] .. "/" .. decodedMemo['originalToughValue'],
+                    
                 })
             end
         end
@@ -461,7 +472,7 @@ local perModelCode = [[
                     font_size      = 340,
                     color          = {1, 0, 0, opacity},
                     font_color     = {1, 1, 1},
-                    tooltip        = "Wounds: " .. decodedMemo['currentToughValue'],
+                    
                 })
             end
         end
@@ -489,11 +500,10 @@ local perModelCode = [[
                     font_size      = 340,
                     color          = {0, 1, 1, opacity},
                     font_color     = {1, 1, 1},
-                    tooltip        = "Spell Tokens: " .. decodedMemo['currentCasterValue'] .. "/6",
+                    
                 })
             end
         end
-
     end
 
     function rebuildName()
@@ -548,6 +558,10 @@ local perModelCode = [[
             self.addContextMenuItem("Spell Tokens +", spellTokensUp, true)
             self.addContextMenuItem("Spell Tokens -", spellTokensDown, true)
         end
+
+        if (decodedMemo['originalToughValue'] ~= 0 or decodedMemo['gameSystem'] == 'aofs' or decodedMemo['gameSystem'] == 'gff' or decodedMemo['originalCasterValue'] ~= 0) then
+            self.addContextMenuItem("Toggle W/SP Count", cycleShowHideWoundsAndSpellTokens, false)
+        end    
 
         self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
 
