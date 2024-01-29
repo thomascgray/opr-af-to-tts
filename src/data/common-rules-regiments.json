@@ -2,13 +2,13 @@
     {
         "id": 59,
         "name": "Aircraft",
-        "description": "The hero and its unit get +1 attack when shooting.",
+        "description": "Must deploy before all other units, ignores all units and terrain when moving/stopping, can't seize objectives, and can't be moved in contact with. May only use Advance actions, moving in a straight line by 30”-36” without turning. If it moves off-table, its activation ends, and it must be deployed on any table edge at the beginning of the next round. Units targeting this model get -12” range and -1 to hit rolls.",
         "hasRating": false
     },
     {
         "id": 60,
         "name": "Ambush",
-        "description": "This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere over 12” away from enemy units. If both players have Ambush, roll-off to see who goes first, and alternate deploying units. Units that deploy like this on the last round can’t seize or contest objectives.",
+        "description": "This model may be kept in reserve instead of deploying. At the start of any round after the first, you may place the model anywhere over 12” away from enemy units. If both players have Ambush, roll-off to see who goes first, and alternate deploying units. Units that deploy like this on the last round can't seize or contest objectives.",
         "hasRating": false
     },
     {
@@ -50,19 +50,19 @@
     {
         "id": 88,
         "name": "Blast",
-        "description": "Each attack ignores cover and multiplies hits by X, but can’t deal more hits than models in the target unit.",
+        "description": "Each attack ignores cover and multiplies hits by X, but can't deal more hits than models in the target unit.",
         "hasRating": true
     },
     {
         "id": 849,
         "name": "Caster",
-        "description": "Gets X spell tokens at the beginning of each round, but can’t hold more than 6 tokens at once. At any point before attacking, spend as many tokens as the spell’s value to try casting one or more spells (only one try per spell). Roll one die, on 4+ resolve the effect on a target in line of sight. This model and other casters within 18” in line of sight may spend any number of tokens at the same time before rolling, to give the caster +1/-1 to the roll per token.",
+        "description": "Gets X spell tokens at the beginning of each round, but can't hold more than 6 tokens at once. At any point before attacking, spend as many tokens as the spell's value to try casting one or more spells (only one try per spell). Roll one die, on 4+ resolve the effect on a target in line of sight. This model and other casters within 18” in line of sight may spend any number of tokens at the same time before rolling, to give the caster +1/-1 to the roll per token.",
         "hasRating": true
     },
     {
         "id": 81,
         "name": "Counter",
-        "description": "Strikes first with this weapon when charged, and the charging unit gets -1 total Impact attacks (per model with this rule).",
+        "description": "Strikes first with this weapon when charged, and the charging unit gets -1 total Impact attacks (per model with this rule in the front rank).",
         "hasRating": false
     },
     {
@@ -86,7 +86,7 @@
     {
         "id": 61,
         "name": "Entrenched",
-        "description": "Enemies get -2 to hit when shooting at this model from over 12” away, as long as it hasn’t moved since the beginning of its last activation.",
+        "description": "Enemies get -2 to hit when shooting at this model from over 9” away, as long as it hasn't moved since the beginning of its last activation.",
         "hasRating": false
     },
     {
@@ -104,7 +104,7 @@
     {
         "id": 65,
         "name": "Fearless",
-        "description": "When failing a morale test, roll one die. On a 4+ it’s passed instead.",
+        "description": "When failing a morale test, roll one die. On a 4+ it's passed instead.",
         "hasRating": false
     },
     {
@@ -122,7 +122,7 @@
     {
         "id": 68,
         "name": "Hero",
-        "description": "Heroes with up to Tough(6) may deploy as part of one multi-model unit without another Hero. The hero may take morale tests on behalf of the unit, but must use the unit’s Defense until all other models have been killed.",
+        "description": "Heroes with up to Tough(6) may deploy as part of one multi-model unit without another Hero. The hero may take morale tests on behalf of the unit, but must use the unit's Defense until all other models have been killed.",
         "hasRating": false
     },
     {
@@ -146,7 +146,7 @@
     {
         "id": 70,
         "name": "Impact",
-        "description": "Gets X attacks that hit on 2+ when charging.",
+        "description": "Roll X dice when attacking after charging (may not be fatigued), for each 2+ the target takes one hit.",
         "hasRating": true
     },
     {
@@ -174,6 +174,12 @@
         "hasRating": null
     },
     {
+        "id": 1013,
+        "name": "Limited",
+        "description": "May only be used once.",
+        "hasRating": false
+    },
+    {
         "id": 86,
         "name": "Lock-On",
         "description": "Ignores cover and all negative modifiers to hit rolls and range.",
@@ -194,7 +200,7 @@
     {
         "id": 92,
         "name": "Poison",
-        "description": "Targets get -1 to Regeneration rolls, and must re-roll unmodified Defense rolls of 6 when blocking hits.",
+        "description": "Wounds can't be regenerated, and must re-roll unmodified Defense rolls of 6 when blocking hits.",
         "hasRating": false
     },
     {
@@ -230,7 +236,7 @@
     {
         "id": 93,
         "name": "Rending",
-        "description": "Targets get -1 to Regeneration rolls, and unmodified results of 6 to hit count as having AP(4).",
+        "description": "Wounds can't be regenerated, and unmodified results of 6 to hit count as having AP(4).",
         "hasRating": false
     },
     {
@@ -266,7 +272,7 @@
     {
         "id": 94,
         "name": "Sniper",
-        "description": "Shoots at Quality 2+, and may pick one model in a unit as its target, which is resolved as if it’s a unit of 1.",
+        "description": "Shoots at Quality 2+, and may pick one model in a unit as its target, which is resolved as if it's a unit of 1.",
         "hasRating": false
     },
     {
@@ -278,7 +284,7 @@
     {
         "id": 78,
         "name": "Stealth",
-        "description": "Enemies get -1 to hit rolls when shooting at units where all models have this rule from over 12\" away.",
+        "description": "Enemies get -1 to hit rolls when shooting at units where all models have this rule from over 9\" away.",
         "hasRating": false
     },
     {
