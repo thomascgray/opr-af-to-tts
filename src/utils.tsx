@@ -236,26 +236,57 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
       // by default. however, for these upgrades we DO want them to in "our" loadout
       // so that they can be selected on and off. therefore, we do this sort-of
       // hack where we manually insert them into the units loadout
-      unit.selectedUpgrades
-        .filter((su) => {
-          return (
-            su.option.gains.length === 1 &&
-            su.option.gains[0].type === "ArmyBookRule"
-          );
-        })
-        .forEach((su) => {
-          unitProfile.models[0].loadout.push({
-            id: nanoid(),
-            includeInName: false,
-            name: pluralize.singular(su.option.label),
-            definition: "",
-            quantity: 1,
-            originalLoadout: {
-              // @ts-ignore again, loadouts CAN have `content`
-              content: su.option.gains,
-            },
-          });
+      // unit.selectedUpgrades
+      //   .filter((su) => {
+      //     return (
+      //       su.option.gains.length === 1 &&
+      //       su.option.gains[0].type === "ArmyBookRule"
+      //     );
+      //   })
+      //   .forEach((su) => {
+      //     unitProfile.models[0].loadout.push({
+      //       id: nanoid(),
+      //       includeInName: false,
+      //       name: pluralize.singular(su.option.label),
+      //       definition: "",
+      //       quantity: 1,
+      //       originalLoadout: {
+      //         // @ts-ignore again, loadouts CAN have `content`
+      //         content: su.option.gains,
+      //       },
+      //     });
+      //   });
+
+      // some of the upgrades modify existing rule value that they have. e.g they've taken an upgrade and it gives them +6 to their Impact or something
+      // we need to handle that here
+
+      unit.selectedUpgrades.forEach((su) => {
+        su.option.gains.forEach((g) => {
+          if (g.type !== "ArmyBookRule") {
+            return;
+          }
+
+          // @ts-ignore
+          if (g.modify) {
+            // dont do anything for modify cus it gets sorted later
+          } else {
+            unitProfile.models[0].loadout.push({
+              id: nanoid(),
+              includeInName: false,
+              name: pluralize.singular(g.label),
+              definition: "",
+              quantity: 1,
+              originalLoadout: {
+                // @ts-ignore again, loadouts CAN have `content`
+                // this originalLoadout is a bit of a hack, and makes things get added up
+                content: su.option.gains,
+              },
+            });
+          }
         });
+      });
+
+      // console.log("unitProfile", JSON.stringify(unitProfile, null, 2));
 
       return unitProfile;
     }
