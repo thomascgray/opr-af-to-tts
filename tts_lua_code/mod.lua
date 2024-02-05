@@ -189,8 +189,8 @@ local perModelCode = [[
         local unitMates = getAllUnitMates();
         printToAll("'" .. decodedMemo['unitName'] .. "' toggled activation")
         for _, unitMate in ipairs(unitMates) do
-
-            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
+            
+            unitMate.memo = JSON.encode(mergeTables(JSON.decode(unitMate.memo), {
                 isActivated = not decodedMemo['isActivated'],
             }))
             
@@ -205,7 +205,7 @@ local perModelCode = [[
         printToAll("'" .. decodedMemo['unitName'] .. "' toggled Stunned")
         
         for _, unitMate in ipairs(unitMates) do
-            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
+            unitMate.memo = JSON.encode(mergeTables(JSON.decode(unitMate.memo), {
                 isStunned = not decodedMemo['isStunned'],
             }))
             unitMate.call('rebuildContext');
@@ -221,7 +221,7 @@ local perModelCode = [[
 
         for _, unitMate in ipairs(unitMates) do
             
-            unitMate.memo = JSON.encode(mergeTables(decodedMemo, {
+            unitMate.memo = JSON.encode(mergeTables(JSON.decode(unitMate.memo), {
                 isShaken = not decodedMemo['isShaken'],
             }))
             unitMate.call('rebuildContext');
@@ -261,9 +261,7 @@ local perModelCode = [[
         printToAll("'" .. decodedMemo['armyNameToAssign'] .. "' deactivated")
 
         for _, armyMate in ipairs(armyMates) do
-            local armyMateMemo = JSON.decode(armyMate.memo);
-            
-            armyMate.memo = JSON.encode(mergeTables(armyMateMemo, {
+            armyMate.memo = JSON.encode(mergeTables(JSON.decode(armyMate.memo), {
                 isActivated = false,
             }))
 
@@ -289,9 +287,7 @@ local perModelCode = [[
             armyMate.call('rebuildStatusEffectThings');
         end
     end
-        
-    
-    
+
     -- code taken from https://pastebin.com/Y1tTQ8Yw with huge appreciation to the original author
     function getCircleVectorPoints(radius, steps, y, accountForScale)
         local bounds = self.getBoundsNormalized();
@@ -360,7 +356,7 @@ local perModelCode = [[
 
     function rebuildStatusEffectThings()
         local decodedMemo = JSON.decode(self.memo)
-           
+            
         local vectorPointsTable = {}
         
         local scale = self.getScale();
@@ -626,16 +622,16 @@ local function BuildUnitLayout(unitDefinition, unitIndex)
     return string.format([[
         <VerticalLayout
         childForceExpandHeight="false"
-          height="100"
-          spacing="10">
-          <Text
-              fontSize="30"
-              color="#FFFFFF"
-              fontStyle="bold"
-          >Ut: %s</Text>
-          
+            height="100"
+            spacing="10">
+            <Text
+                fontSize="30"
+                color="#FFFFFF"
+                fontStyle="bold"
+            >Ut: %s</Text>
+            
             <HorizontalLayout
-              spacing="40">
+                spacing="40">
                 %s
             </HorizontalLayout>
         </VerticalLayout>
