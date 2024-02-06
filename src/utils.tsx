@@ -474,7 +474,9 @@ export const generateUnitOutput = (
         .flat()
         .filter((sr) => sr.type === "ArmyBookRule"),
     ]),
-    "key"
+    (x) => {
+      return x.key || x.name;
+    }
   ).map((x) => {
     const isCoreSpecialRule = stateView.coreSpecialRulesDict.some(
       (csr) => csr.name === x.name
@@ -517,7 +519,9 @@ export const generateUnitOutput = (
       // get all the special rules from the loadout
       ...unit.models.map((m) => m.originalSpecialRules || []),
     ]),
-    "key"
+    (x) => {
+      return x.key || x.name;
+    }
   ).map((x) => {
     const isCoreSpecialRule = stateView.coreSpecialRulesDict.some(
       (csr) => csr.name === x.name
