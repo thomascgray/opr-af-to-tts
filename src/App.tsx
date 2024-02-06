@@ -51,10 +51,6 @@ function App() {
         <DarkModeSwitch />
       </div>
 
-      <h2 className="text-2xl font-bold dark:text-white my-2 italic text-red-400 font-mono">
-        preview: reworking-upgrade-04-02-2024
-      </h2>
-
       <span className="mt-1 block text-xs text-stone-500 dark:text-white">
         This tool is under active development! If you find any bugs, please
         report them on the{" "}
