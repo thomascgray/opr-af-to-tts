@@ -232,43 +232,16 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
         ],
       };
 
-      // some of the upgrades that a unit can take DON'T appear in the loadout
-      // by default. however, for these upgrades we DO want them to in "our" loadout
-      // so that they can be selected on and off. therefore, we do this sort-of
-      // hack where we manually insert them into the units loadout
-      // unit.selectedUpgrades
-      //   .filter((su) => {
-      //     return (
-      //       su.option.gains.length === 1 &&
-      //       su.option.gains[0].type === "ArmyBookRule"
-      //     );
-      //   })
-      //   .forEach((su) => {
-      //     unitProfile.models[0].loadout.push({
-      //       id: nanoid(),
-      //       includeInName: false,
-      //       name: pluralize.singular(su.option.label),
-      //       definition: "",
-      //       quantity: 1,
-      //       originalLoadout: {
-      //         // @ts-ignore again, loadouts CAN have `content`
-      //         content: su.option.gains,
-      //       },
-      //     });
-      //   });
-
       // some of the upgrades modify existing rule value that they have. e.g they've taken an upgrade and it gives them +6 to their Impact or something
       // we need to handle that here
 
       unit.selectedUpgrades.forEach((su) => {
         su.option.gains.forEach((g) => {
-          if (g.type !== "ArmyBookRule") {
-            return;
-          }
+          // only add the upgrade into the loudout if it's not already there
+          // based on the name of the upgrade and the name of the loadout item
 
-          // @ts-ignore
-          if (g.modify) {
-            // dont do anything for modify cus it gets sorted later
+          if (unitProfile.models[0].loadout.some((l) => l.name === g.name)) {
+            // maaaaaybe we need to do something with quantity here?
           } else {
             unitProfile.models[0].loadout.push({
               id: nanoid(),
@@ -285,8 +258,6 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
           }
         });
       });
-
-      // console.log("unitProfile", JSON.stringify(unitProfile, null, 2));
 
       return unitProfile;
     }
@@ -418,6 +389,9 @@ export const generateUnitOutput = (
   );
   let totalToughRating = 0;
   let totalCasterRating = 0;
+
+  // some special rules add to Defense (american spelling)
+  let totalExtraDefense = 0;
   const loadoutNames = equippedLoadoutItems
     .filter((l) => l.includeInName)
     .map((l) => {
@@ -493,8 +467,10 @@ export const generateUnitOutput = (
     ) {
       return null;
     }
-    const specialRule = stateView.armySpecialRulesDict.find(
-      (sr) => sr.name === x.name
+    const specialRule = stateView.armySpecialRulesDict.find((sr) =>
+      x.key
+        ? sr.name.toLowerCase() === x.key.toLowerCase()
+        : sr.name.toLowerCase() === x.name.toLowerCase()
     );
     let definition = "";
     if (
@@ -618,8 +594,6 @@ export const generateUnitOutput = (
     }
   });
 
-  // this currently contains more than 1 tough, so we need to make it so tough only
-  // appears once, and add up the tough ratings
   const allApplicableSpecialRulesBBCode =
     allApplicableSpecialRulesWithAddedUpRatings
       .map((w) => {
@@ -652,10 +626,8 @@ export const generateUnitOutput = (
       .filter((x) => x !== "")
       .join("\r\n");
 
-  // if the model has a Tough special rule, add its rating into the modelstringname
-  // let totalToughRating = 0;
-  // if (stateView.ttsOutputConfig.includeToughSpecialRuleRatingInName) {
   allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
+    console.log("sr", sr);
     if (sr === null) {
       return;
     }
@@ -665,12 +637,18 @@ export const generateUnitOutput = (
     if (sr.name === "Caster") {
       totalCasterRating += parseInt(sr.rating);
     }
+    // we COULD add up all the extra Defense, but Army Forge DOESNT do that, so i think it might prove confusing?
+    // e.g army forge DOES add up all the extra Tough, but not Defense
+    // if (sr.name === "Defense") {
+    //   totalExtraDefense += parseInt(sr.rating);
+    // }
   });
-  // }
 
   let nameLines = [
     `${modelNameString}`,
-    `[${TTS_QUA_COLOUR}][b]Q${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]D${model.def}[/b]+[-]`,
+    `[${TTS_QUA_COLOUR}][b]Q${model.qua}[/b]+[-] / [${TTS_DEF_COLOUR}][b]D${
+      model.def + totalExtraDefense
+    }[/b]+[-]`,
     stateView.ttsOutputConfig.includeWeaponsListInName
       ? `[sup][${TTS_WEAPON_COLOUR}]${activeWeaponNamesCommaSeparated}[-][/sup]`
       : "",
