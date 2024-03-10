@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { Handler } from "@netlify/functions";
-import * as MySQL from "mysql2/promise";
 import { nanoid } from "nanoid";
+import { createClient } from "@libsql/client";
 
 const httpError = (code: number, message: string) => ({
   statusCode: code,
@@ -16,37 +16,32 @@ const handleGET = async (event) => {
   if (!listId) {
     return httpError(400, "Must supply `listId`");
   }
-  const connection = await MySQL.createConnection(
-    process.env.PLANETSCALE_DATABASE_URL!
-  );
+  const client = createClient({
+    url: process.env.TURSO_DB_URL!,
+    authToken: process.env.TURSO_AUTH_STRING!,
+  });
 
-  const [rows] = (await connection.query(
-    "SELECT * FROM `lists` WHERE `id` = ?",
-    [listId]
-  )) as any[][];
+  const results = await client.execute({
+    sql: "SELECT * FROM `lists` WHERE `id` = ?",
+    args: [listId],
+  });
+
+  const { rows } = results;
 
   if (rows.length !== 1) {
     return httpError(404, "List not found");
   }
 
-  const { list_json } = rows[0];
-
-  const parsedListJson = JSON.parse(list_json);
-
   return {
     statusCode: 200,
     body: JSON.stringify({
       listId,
-      listJson: parsedListJson,
+      listJson: JSON.parse(rows[0].list_json as string),
     }),
   };
 };
 
 const handlePOST = async (event) => {
-  const connection = await MySQL.createConnection(
-    process.env.PLANETSCALE_DATABASE_URL!
-  );
-
   const id = nanoid();
   const body = JSON.parse(event.body);
   const { list_json } = body;
@@ -56,10 +51,15 @@ const handlePOST = async (event) => {
   }
 
   try {
-    await connection.execute(
-      "INSERT INTO `lists` (id, list_json) VALUES (?, ?)",
-      [id, JSON.stringify(list_json)]
-    );
+    const client = createClient({
+      url: process.env.TURSO_DB_URL!,
+      authToken: process.env.TURSO_AUTH_STRING!,
+    });
+
+    await client.execute({
+      sql: "INSERT INTO `lists` (id, list_json) VALUES (?, ?)",
+      args: [id, JSON.stringify(list_json)],
+    });
 
     return {
       statusCode: 200,
