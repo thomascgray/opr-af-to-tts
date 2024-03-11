@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@libsql/client": "^0.5.3",
+    "@libsql/client": "^0.3.3",
     "@netlify/functions": "1.4.0",
     "@types/node": "14.18.42",
     "classnames": "2.3.2",
