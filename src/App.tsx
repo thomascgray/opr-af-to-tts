@@ -28,6 +28,8 @@ import {
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
 
+// @ts-ignore No types for this
+import { render as bbcoderender } from "@bbob/react";
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 

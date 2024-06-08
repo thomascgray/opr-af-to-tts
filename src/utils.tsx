@@ -182,8 +182,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     // @ts-ignore interface doesn't include new specialRules array
     ...data.specialRules.map((sr) => {
       return {
-        name: sr.name,
-        description: sr.description,
+        ...sr,
       };
     }),
   ];
@@ -232,15 +231,24 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
         ],
       };
 
-      // some of the upgrades modify existing rule value that they have. e.g they've taken an upgrade and it gives them +6 to their Impact or something
-      // we need to handle that here
+      /**
+       * As of 08/06/2024 it seems like we dont need to do this?
+       * OK, more testing - without this the DAO Shield drones aren't working. so we DO need this... in some capcity
+       * basically, i think we need to add the upgrade to the loadout if its NOT a weapon, and its not already in the loadout
+       * that leaves things like special rules (DAO Shield Drones) and Items (DAO Gun drones)
+       */
+
+      const idsAlreadyInLoadout = unitProfile.models[0].loadout
+        .map((li) => li.originalLoadout.id)
+        .flat();
 
       unit.selectedUpgrades.forEach((su) => {
         su.option.gains.forEach((g) => {
-          // only add the upgrade into the loudout if it's not already there
-          // based on the name of the upgrade and the name of the loadout item
-
-          if (unitProfile.models[0].loadout.some((l) => l.name === g.name)) {
+          // if we already have the thing in loadout, or if its a weapon, we don't need to add it
+          if (
+            idsAlreadyInLoadout.includes(g.id) ||
+            g.type === "ArmyBookWeapon"
+          ) {
             // maaaaaybe we need to do something with quantity here?
           } else {
             unitProfile.models[0].loadout.push({
@@ -467,11 +475,17 @@ export const generateUnitOutput = (
     ) {
       return null;
     }
-    const specialRule = stateView.armySpecialRulesDict.find((sr) =>
-      x.key
+    let specialRule = stateView.armySpecialRulesDict.find((sr) =>
+      !_.isNil(x.key)
         ? sr.name.toLowerCase() === x.key.toLowerCase()
         : sr.name.toLowerCase() === x.name.toLowerCase()
     );
+    // if we've not found it, sometimes the keys are fucky. just search by name again and hope for the best
+    if (_.isNil(specialRule)) {
+      specialRule = stateView.armySpecialRulesDict.find(
+        (sr) => sr.name.toLowerCase() === x.name.toLowerCase()
+      );
+    }
     let definition = "";
     if (
       stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules &&
@@ -571,6 +585,7 @@ export const generateUnitOutput = (
     })
     .join("\r\n");
 
+  // console.log("activeSpecialRulesFromLoadout", activeSpecialRulesFromLoadout);
   const allApplicableSpecialRules = _.sortBy(
     [...activeSpecialRulesFromLoadout, ...activeSpecialRulesFromNotLoadout],
     "name"
@@ -627,7 +642,6 @@ export const generateUnitOutput = (
       .join("\r\n");
 
   allApplicableSpecialRulesWithAddedUpRatings.forEach((sr) => {
-    console.log("sr", sr);
     if (sr === null) {
       return;
     }
