@@ -691,14 +691,15 @@ export const generateUnitOutput = (
     name: `${modelNamePlainWithLoudoutString}`, // this is the MODEL name
     loadoutCSV: activeWeaponNamesCommaSeparated
       .replace(/[’]/g, "'")
-      .replace(/[”]/g, "''"),
+      .replace(/[”]/g, "''")
+      .replace(/["]/g, "''"),
     ttsNameOutput: nameLines.filter((x) => x !== "").join("\r\n"),
     ttsDescriptionOutput: descriptionFieldLines
       .filter((x) => x !== "")
       .join("\r\n")
-      // remove smart quotes
       .replace(/[’]/g, "'")
-      .replace(/[”]/g, "''"),
+      .replace(/[”]/g, "''")
+      .replace(/["]/g, "''"),
     originalToughValue: totalToughRating,
     originalCasterValue: totalCasterRating,
   };
