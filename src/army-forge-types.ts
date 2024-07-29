@@ -97,7 +97,6 @@ export interface IUpgradeOption {
 }
 
 export interface IUpgradeGains {
-  id: string;
   name: string;
   label: string;
   count: number;
@@ -107,6 +106,9 @@ export interface IUpgradeGains {
   attacks?: number;
   specialRules?: IUpgradeGainsRule[];
   isModel?: boolean;
+  // id: string;
+  id?: string; // the fact this can be undefined is from my testing
+  key?: string; // and the fact this is here at all is the same
 }
 
 export interface IUpgradeGainsItem extends IUpgradeGains {

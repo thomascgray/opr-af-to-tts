@@ -236,17 +236,37 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
        * OK, more testing - without this the DAO Shield drones aren't working. so we DO need this... in some capcity
        * basically, i think we need to add the upgrade to the loadout if its NOT a weapon, and its not already in the loadout
        * that leaves things like special rules (DAO Shield Drones) and Items (DAO Gun drones)
+       *
        */
 
-      const idsAlreadyInLoadout = unitProfile.models[0].loadout
-        .map((li) => li.originalLoadout.id)
+      /**
+       * 29/07/2024
+       * ok so see https://github.com/thomascgray/opr-af-to-tts/issues/47 but tl;dr theres 2 kinds of upgrades?
+       * (see the screenshot we added on the issue) and the typescript types were a bit fucked
+       * basically, the originalLoadout below, it turns out sometimes DOESNT have ids??? and also sometimes doesnt event have a KEY?!
+       * so we try and do id, then key, then name
+       * this is obviously a hack but the types just seem fucked? i think dno im working this out at 1am lol
+       * but anyway, the original bug was because `undefined` was matching `undefined` inside the idsAlreadyInLoadout
+       * i also renamed idsAlreadyInLoadout to identifiersAlreadyInLoadout because lets be sensible
+       */
+
+      const identifiersAlreadyInLoadout = unitProfile.models[0].loadout
+        .map((li) =>
+          li.originalLoadout.id
+            ? li.originalLoadout.id
+            : li.originalLoadout.key
+            ? li.originalLoadout.key
+            : li.originalLoadout.name
+        )
         .flat();
 
       unit.selectedUpgrades.forEach((su) => {
         su.option.gains.forEach((g) => {
           // if we already have the thing in loadout, or if its a weapon, we don't need to add it
           if (
-            idsAlreadyInLoadout.includes(g.id) ||
+            identifiersAlreadyInLoadout.includes(
+              g.id ? g.id : g.key ? g.key : g.name
+            ) ||
             g.type === "ArmyBookWeapon"
           ) {
             // maaaaaybe we need to do something with quantity here?
