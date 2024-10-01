@@ -44,9 +44,9 @@ export interface IUnit {
   cost: number;
   quality: string;
   defense: string;
-  specialRules?: ISpecialRule[];
+  rules?: ISpecialRule[];
   upgrades: string[];
-  equipment: IUpgradeGains[]; // IUpgradeGainsWeapon[]; //IEquipment[];
+  weapons: IUpgradeGains[]; // IUpgradeGainsWeapon[]; //IEquipment[];
   disabledUpgradeSections: string[];
 }
 export interface IUnitSelectionData {

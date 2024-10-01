@@ -214,7 +214,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
             originalName: unit.name,
             qua: parseInt(unit.quality),
             def: parseInt(unit.defense),
-            originalSpecialRules: unit.specialRules || [],
+            originalSpecialRules: unit.rules || [],
             loadout: _.uniqBy(unit.loadout, "label").map((loadoutItem) => {
               return {
                 id: nanoid(),
@@ -511,9 +511,13 @@ export const generateUnitOutput = (
       stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules &&
       specialRule?.shortDescription
     ) {
-      definition = specialRule?.shortDescription || "";
+      definition =
+        specialRule?.shortDescription ||
+        "[[Rule short description missing in Army Forge data!]]";
     } else {
-      definition = specialRule?.description || "";
+      definition =
+        specialRule?.description ||
+        "[[Rule description missing in Army Forge data!]]";
     }
     return {
       id: nanoid(),
