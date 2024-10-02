@@ -76,7 +76,14 @@ export const generateLoadoutItemDefinition = (
     return `(${chunks.join(", ")})`;
   }
   if (loadoutItem.type === "ArmyBookItem") {
-    return loadoutItem.label.replace(loadoutItem.name, "").trim();
+    let label = loadoutItem.label;
+    if (label == null) {
+      // for some reason, sometimes things dont have labels. if thats the case, try and build it from the raw content, just smashing together names
+      // @ts-ignore
+      label = loadoutItem.content.map((c) => c.name).join(", ");
+      label = `(${label})`;
+    }
+    return label.replace(loadoutItem.name, "").trim();
   }
 
   if (loadoutItem.type === "ArmyBookRule") {
@@ -433,12 +440,21 @@ export const generateUnitOutput = (
     modelNamePlainWithLoudoutString += ` w/ ${loadoutNames.join(", ")}`;
   }
 
+  // console.log("model.originalSpecialRules", model.originalSpecialRules);
+  // console.log("model.loadout", model.loadout);
   const modelSpecialRules = [
     ...model.originalSpecialRules,
     ...model.loadout
       .filter((l) => l.originalLoadout.type === "ArmyBookItem")
-      // @ts-ignore loadouts can definitely have content
-      .map((l) => l.originalLoadout.content)
+      .map((l) => {
+        // console.log("l", l);
+        return [
+          // @ts-ignore loadouts can definitely have content
+          ...l.originalLoadout.content,
+          // @ts-ignore loadouts can definitely have content
+          ...l.originalLoadout.content.map((c) => c.specialRules || []).flat(),
+        ];
+      })
       .flat(),
   ]
     .map((sr) => {
@@ -475,6 +491,20 @@ export const generateUnitOutput = (
         .map((c) => c.specialRules || [])
         .flat()
         .filter((sr) => sr.type === "ArmyBookRule"),
+
+      // and get the new weird nested special rules i guess?
+      ...equippedLoadoutItems
+        .map(
+          (l) =>
+            [
+              // @ts-ignore loadouts can definitely have content
+              ...(l.originalLoadout.content || [])
+                // @ts-ignore loadouts can definitely have content
+                .map((c) => c.specialRules || [])
+                .flat(),
+            ] || []
+        )
+        .flat(),
     ]),
     (x) => {
       return x.key || x.name;
@@ -560,9 +590,13 @@ export const generateUnitOutput = (
       stateView.ttsOutputConfig.useShorterVersionOfCoreSpecialRules &&
       specialRule?.shortDescription
     ) {
-      definition = specialRule?.shortDescription || "";
+      definition =
+        specialRule?.shortDescription ||
+        "[[Rule short description missing in Army Forge data!]]";
     } else {
-      definition = specialRule?.description || "";
+      definition =
+        specialRule?.description ||
+        "[[Rule description missing in Army Forge data!]]";
     }
     return {
       id: nanoid(),
@@ -583,20 +617,41 @@ export const generateUnitOutput = (
     .join(", ");
 
   // this should somehow include things like gundrones, where its an ITEM that gives you weapons
+  let fallbackDefinitionData: any = {};
+
   const activeWeaponsList = _.flattenDeep([
     ...equippedLoadoutItems.filter(
       (l) => l.originalLoadout.type === "ArmyBookWeapon"
     ),
     ...equippedLoadoutItems
-      // @ts-ignore loadouts can definitely have content
-      .map((l) => l.originalLoadout.content || [])
+      .map((l) => {
+        fallbackDefinitionData = parseString(l.definition.slice(1, -1));
+        // @ts-ignore loadouts can definitely have content
+        return l.originalLoadout.content || [];
+      })
       .flat()
-      .filter((c) => c.type === "ArmyBookWeapon")
-      .map((ci) => ({
-        name: ci.name,
-        definition: ci.label.replace(ci.name, "").trim(),
-        quantity: ci.quantity,
-      })),
+      .filter((c) => {
+        return c.type === "ArmyBookWeapon";
+      })
+      .map((ci) => {
+        let { name, label, quantity } = ci;
+        // if the quantity is null, then we're going to try to do a fallback lookup
+        if (quantity == null) {
+          label = fallbackDefinitionData[name];
+          quantity = 1;
+        }
+
+        // if label is STILL null after trying to do a fallback lookup, then we're out of options
+        if (label == null) {
+          label = "[[Weapon definition missing in Army Forge data!]]";
+        }
+
+        return {
+          name: ci.name,
+          definition: label,
+          quantity: quantity,
+        };
+      }),
   ])
     .map((w) => {
       if (w.quantity > 1) {
@@ -609,7 +664,6 @@ export const generateUnitOutput = (
     })
     .join("\r\n");
 
-  // console.log("activeSpecialRulesFromLoadout", activeSpecialRulesFromLoadout);
   const allApplicableSpecialRules = _.sortBy(
     [...activeSpecialRulesFromLoadout, ...activeSpecialRulesFromNotLoadout],
     "name"
@@ -864,3 +918,38 @@ export const insertLineBreaksIntoString = (str: string) => {
   }
   return result;
 };
+
+function parseString(str: string) {
+  const result: Record<string, string> = {};
+  let current = "";
+  let level = 0; // This keeps track of whether we're inside parentheses.
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+
+    if (char === "(") {
+      level++; // Entering parentheses.
+    } else if (char === ")") {
+      level--; // Exiting parentheses.
+    } else if (char === "," && level === 0) {
+      const key = current.split("(")[0].trim(); // Extract key (before parentheses).
+      const value = current.substring(current.indexOf("(")).trim(); // Extract the value inside parentheses.
+      result[key] = value;
+      current = "";
+      continue;
+    }
+
+    current += char; // Add the character to the current substring.
+  }
+
+  // Push the last part.
+  if (current.trim()) {
+    const key = current.split("(")[0].trim();
+    const value = current.substring(current.indexOf("(")).trim();
+    result[key] = value;
+  }
+
+  return result;
+
+  return result;
+}

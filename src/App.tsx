@@ -45,7 +45,7 @@ function App() {
     <div className="container mx-auto mt-4 mb-28">
       <div className="flex flex-row items-end justify-between space-x-2">
         <h1 className="text-4xl font-bold dark:text-white">
-          Tombola's OPR Army Forge to TTS Tool
+          🎲 Tombola's OPR Army Forge to TTS Tool
         </h1>
 
         <DarkModeSwitch />
