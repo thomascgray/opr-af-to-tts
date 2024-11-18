@@ -13,6 +13,8 @@ import {
   iUnitProfileModelTTSOutput,
 } from "./types";
 import { state } from "./state";
+
+// to get the data hit https://army-forge.onepagerules.com/api/rules/common/3 where the number is the game system. ask Adam @ army forge for the right one
 import commonRules from "./data/common-rules.json";
 import commonRulesSkirmish from "./data/common-rules-skirmish.json";
 import commonRulesRegiments from "./data/common-rules-regiments.json";
@@ -494,16 +496,13 @@ export const generateUnitOutput = (
 
       // and get the new weird nested special rules i guess?
       ...equippedLoadoutItems
-        .map(
-          (l) =>
-            [
-              // @ts-ignore loadouts can definitely have content
-              ...(l.originalLoadout.content || [])
-                // @ts-ignore loadouts can definitely have content
-                .map((c) => c.specialRules || [])
-                .flat(),
-            ] || []
-        )
+        .map((l) => [
+          // @ts-ignore loadouts can definitely have content
+          ...(l.originalLoadout.content || [])
+            // @ts-ignore loadouts can definitely have content
+            .map((c) => c.specialRules || [])
+            .flat(),
+        ])
         .flat(),
     ]),
     (x) => {
@@ -625,7 +624,10 @@ export const generateUnitOutput = (
     ),
     ...equippedLoadoutItems
       .map((l) => {
-        fallbackDefinitionData = parseString(l.definition.slice(1, -1));
+        fallbackDefinitionData = {
+          ...fallbackDefinitionData,
+          ...parseString(l.definition.slice(1, -1)),
+        };
         // @ts-ignore loadouts can definitely have content
         return l.originalLoadout.content || [];
       })
@@ -643,7 +645,7 @@ export const generateUnitOutput = (
 
         // if label is STILL null after trying to do a fallback lookup, then we're out of options
         if (label == null) {
-          label = "[[Weapon definition missing in Army Forge data!]]";
+          label = `[[Weapon definition missing in Army Forge data]]`;
         }
 
         return {
