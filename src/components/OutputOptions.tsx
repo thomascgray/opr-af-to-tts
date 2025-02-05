@@ -3,7 +3,11 @@ import { state, initialTtsOutputConfig } from "../state";
 import { useSnapshot } from "valtio";
 import useLocalStorageState from "use-local-storage-state";
 import { Cross } from "./icons";
+import { usei18n } from "../usei18n";
+
 export const OutputOptions = () => {
+  const { t } = usei18n();
+
   const stateView = useSnapshot(state, { sync: true });
 
   const [allConfigs, setAllConfigs] = useLocalStorageState<any>(
@@ -28,13 +32,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Include "Core" special rules in model description
-            </p>
-            <p className="text-xs">
-              If enabled, the TTS "description" outputs will include the model's
-              relevant core special rules.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration1.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration1.label")}</p>
           </div>
         </label>
         <label className="flex flex-row items-center space-x-4">
@@ -48,14 +47,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Include the full text for core special rules
-            </p>
-            <p className="text-xs">
-              If enabled, the TTS "description" outputs will include the model's
-              relevant core special rules text in full. If disabled, only the
-              special rule's name will be included.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration2.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration2.label")}</p>
           </div>
         </label>
         <hr />
@@ -70,13 +63,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Include "Army" special rules in model description
-            </p>
-            <p className="text-xs">
-              If enabled, the TTS "description" outputs will include the model's
-              relevant rules from the army, and from that model's loadout.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration3.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration3.label")}</p>
           </div>
         </label>
         <label className="flex flex-row items-center space-x-4">
@@ -90,14 +78,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Include the full text for army special rules
-            </p>
-            <p className="text-xs">
-              If enabled, the TTS "description" outputs will include the model's
-              relevant army special rules text in full. If disabled, only the
-              special rule's name will be included.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration4.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration4.label")}</p>
           </div>
         </label>
         <hr />
@@ -112,12 +94,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">Include "Loadout List" in model name</p>
-            <p className="text-xs">
-              If enabled, the TTS "name" output will include a comma separated,
-              colour coded list of the model's equipped loadout under the
-              model's name.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration5.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration5.label")}</p>
           </div>
         </label>
         <label className="flex flex-row items-center space-x-4">
@@ -131,14 +109,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Include "Special Rules List" in model name
-            </p>
-            <p className="text-xs">
-              If enabled, the TTS "name" output will include a comma separated,
-              colour coded list of the model's relevant special rules under the
-              model's name.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration6.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration6.label")}</p>
           </div>
         </label>
         <label className="flex flex-row items-center space-x-4">
@@ -156,16 +128,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Swap custom name and original name ordering for units with
-              multiple models in them
-            </p>
-            <p className="text-xs">
-              If enabled, then a unit with a custom name and whose original
-              model size is greater than 1 will have the custom name in the
-              brackets in the output, instead of the original name. This often
-              looks better and makes more semantic sense.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration7.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration7.label")}</p>
           </div>
         </label>
         <label className="flex flex-row items-center space-x-4">
@@ -181,76 +145,12 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">
-              Completely replace original model names with any custom name
-            </p>
-            <p className="text-xs">
-              If enabled, then a unit with a custom name will have that custom
-              name completely replace the original, with the original not being
-              in brackets or anywhere else on the model.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration8.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration8.label")}</p>
           </div>
         </label>
         <hr />
-        {/* <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeCampaignXp}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeCampaignXp =
-                !stateView.ttsOutputConfig.includeCampaignXp;
-            }}
-          />
-          <div className="w-11/12">
-            <p className="font-bold">Include campaign XP</p>
-            <p className="text-xs">
-              If enabled, then model descriptions will include the units
-              campaign XP.
-            </p>
-          </div>
-        </label>
 
-        <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeCampaignXp}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeCampaignXp =
-                !stateView.ttsOutputConfig.includeCampaignXp;
-            }}
-          />
-          <div className="w-11/12">
-            <p className="font-bold">Include campaign traits</p>
-            <p className="text-xs">
-              If enabled, then model descriptions will include the units
-              campaign traits.
-            </p>
-          </div>
-        </label>
-
-        <label className="flex flex-row items-center space-x-4">
-          <input
-            checked={stateView.ttsOutputConfig.includeCampaignTraitsFullText}
-            className="w-5 h-5"
-            type="checkbox"
-            onChange={(e) => {
-              state.ttsOutputConfig.includeCampaignTraitsFullText =
-                !stateView.ttsOutputConfig.includeCampaignTraitsFullText;
-            }}
-          />
-          <div className="w-11/12">
-            <p className="font-bold">Include campaign traits full text</p>
-            <p className="text-xs">
-              If enabled, then for any campaign traits that the model has, the
-              full rules text of that trait will be included. If disabled, only
-              the name of the trait will be included.
-            </p>
-          </div>
-        </label>
-
-        <hr /> */}
         <label className="flex flex-row items-center space-x-4">
           <input
             checked={stateView.ttsOutputConfig.disableSmallText}
@@ -262,12 +162,8 @@ export const OutputOptions = () => {
             }}
           />
           <div className="w-11/12">
-            <p className="font-bold">Disable small text</p>
-            <p className="text-xs">
-              If enabled, then none of the text in the name or description will
-              be small. Enable this if you have trouble reading the small text
-              in TTS.
-            </p>
+            <p className="font-bold">{t("ttsOutputConfiguration9.name")}</p>
+            <p className="text-xs">{t("ttsOutputConfiguration9.label")}</p>
           </div>
         </label>
         <hr />

@@ -25,11 +25,72 @@ import {
   isUnitHero,
 } from "./utils";
 
+/**
+ * https://army-forge.onepagerules.com/api/rules/common/1 is ???
+ * https://army-forge.onepagerules.com/api/rules/common/2 is grimdark future
+ * https://army-forge.onepagerules.com/api/rules/common/3 is grimdark future firefight
+ * https://army-forge.onepagerules.com/api/rules/common/4 is age of fantasy
+ * https://army-forge.onepagerules.com/api/rules/common/5 is age of fantasy skirmish
+ * https://army-forge.onepagerules.com/api/rules/common/6 is age of fantasy: regiments
+ * https://army-forge.onepagerules.com/api/rules/common/7 is age of fantasy: quest
+ * https://army-forge.onepagerules.com/api/rules/common/9 is grimdark future: star quest
+ * warfleets doesnt seem to have one?
+ */
+
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
+import { useEffect, useState } from "react";
+import { LanguagePicker } from "./components/LanguagePicker";
+
+const gameSystemMappingCommonRules = {
+  "grimdark-future": 2,
+  "grimdark-future-firefight": 3,
+  "age-of-fantasy": 4,
+  "age-of-fantasy-skirmish": 5,
+  "age-of-fantasy-regiments": 6,
+} as const;
 
 function App() {
   const stateView = useSnapshot(state, { sync: true });
+
+  const [commonRules, setCommonRules] = useState({
+    [gameSystemMappingCommonRules["grimdark-future"]]: [],
+    [gameSystemMappingCommonRules["grimdark-future-firefight"]]: [],
+    [gameSystemMappingCommonRules["age-of-fantasy"]]: [],
+    [gameSystemMappingCommonRules["age-of-fantasy-skirmish"]]: [],
+    [gameSystemMappingCommonRules["age-of-fantasy-regiments"]]: [],
+  });
+
+  useEffect(() => {
+    const x = async () => {
+      (
+        Object.keys(
+          gameSystemMappingCommonRules
+        ) as (keyof typeof gameSystemMappingCommonRules)[]
+      ).forEach(async (gameSystem) => {
+        const id = gameSystemMappingCommonRules[gameSystem];
+        const response = await fetch(
+          `https://army-forge.onepagerules.com/api/rules/common/${id}`
+        );
+        const data = await response.json();
+
+        setCommonRules((prev) => ({
+          ...prev,
+          [gameSystemMappingCommonRules[gameSystem]]: data,
+        }));
+      });
+
+      const response = await fetch(
+        `https://army-forge.onepagerules.com/api/rules/common/${gameSystemMappingCommonRules["grimdark-future"]}`
+      );
+      const data = await response.json();
+      if (response.status !== 200) {
+        alert("Army Forge failed to export list. Sorry!");
+      }
+    };
+
+    // x();
+  }, []);
 
   const areAllLoadoutsChecked = stateView.unitProfiles.every((unit) => {
     return unit.models.every((model) => {
@@ -41,22 +102,25 @@ function App() {
       });
     });
   });
+
   return (
-    <div className="container mx-auto mt-4 mb-28">
-      <div className="flex flex-row items-end justify-between space-x-2">
-        <h1 className="text-4xl font-bold dark:text-white">
+    <div className="container mx-auto mt-4 mb-28 px-4 md:px-0">
+      <div className="flex flex-row items-center justify-between space-x-2">
+        <h1 className="text-4xl font-bold dark:text-white w-3/4 lg:w-full">
           🎲 Tombola's OPR Army Forge to TTS Tool
         </h1>
 
-        <DarkModeSwitch />
+        <div className="flex gap-6 items-center">
+          <DarkModeSwitch />
+          <LanguagePicker />
+        </div>
       </div>
 
-      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
-        This tool is under active development! If you find any bugs, please
-        report them on the{" "}
+      <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
+        If you find any bugs, please report them on the{" "}
         <a
           target="_blank"
-          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
           href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
         >
           github issues page
@@ -64,11 +128,11 @@ function App() {
         . Thanks!
       </span>
 
-      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
+      <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
         Please take a look at the{" "}
         <a
           target="_blank"
-          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
           href="https://github.com/thomascgray/opr-af-to-tts/releases"
         >
           releases page on Github
@@ -83,9 +147,10 @@ function App() {
               Army Forge Share Link
             </span>
             <span className="block text-xs text-stone-500 dark:text-white">
+              tl;dr: go to{" "}
               <a
                 target="_blank"
-                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+                className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
                 href="https://army-forge.onepagerules.com/"
               >
                 Army Forge
