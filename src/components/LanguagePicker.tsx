@@ -3,7 +3,7 @@ import {
   BrazilFlag,
   GermanyFlag,
   PolandFlag,
-  TurkeyFlag,
+  TürkiyeFlag,
   UnitedKingdomFlag,
 } from "./icons";
 import { useState } from "react";
@@ -28,7 +28,7 @@ const LANGUAGES = [
   },
   {
     id: "tr",
-    flag: () => <TurkeyFlag />,
+    flag: () => <TürkiyeFlag />,
   },
 ];
 

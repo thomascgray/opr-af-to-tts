@@ -273,7 +273,7 @@ export const PolandFlag = ({
   );
 };
 
-export const TurkeyFlag = ({
+export const TürkiyeFlag = ({
   className = "w-6 h-6",
   width = "24",
   height = "24",
