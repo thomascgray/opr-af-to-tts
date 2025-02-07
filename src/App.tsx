@@ -52,7 +52,7 @@ function App() {
 
         <div className="flex gap-6 items-center">
           <DarkModeSwitch />
-          <LanguagePicker />
+          {/* <LanguagePicker /> */}
         </div>
       </div>
 
@@ -66,18 +66,6 @@ function App() {
           github issues page
         </a>
         . Thanks!
-      </span>
-
-      <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
-        Please take a look at the{" "}
-        <a
-          target="_blank"
-          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
-          href="https://github.com/thomascgray/opr-af-to-tts/releases"
-        >
-          releases page on Github
-        </a>{" "}
-        to see the latest release notes
       </span>
 
       <div className="inputs flex flex-row space-x-5 mt-6">
