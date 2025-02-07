@@ -27,6 +27,7 @@ import {
 
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
+import { LanguagePicker } from "./components/LanguagePicker";
 
 function App() {
   const stateView = useSnapshot(state, { sync: true });
@@ -41,39 +42,30 @@ function App() {
       });
     });
   });
+
   return (
-    <div className="container mx-auto mt-4 mb-28">
-      <div className="flex flex-row items-end justify-between space-x-2">
-        <h1 className="text-4xl font-bold dark:text-white">
+    <div className="container mx-auto mt-4 mb-28 px-4 md:px-0">
+      <div className="flex flex-row items-center justify-between space-x-2">
+        <h1 className="text-4xl font-bold dark:text-white w-3/4 lg:w-full">
           🎲 Tombola's OPR Army Forge to TTS Tool
         </h1>
 
-        <DarkModeSwitch />
+        <div className="flex gap-6 items-center">
+          <DarkModeSwitch />
+          {/* <LanguagePicker /> */}
+        </div>
       </div>
 
-      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
-        This tool is under active development! If you find any bugs, please
-        report them on the{" "}
+      <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
+        If you find any bugs, please report them on the{" "}
         <a
           target="_blank"
-          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
           href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
         >
           github issues page
         </a>
         . Thanks!
-      </span>
-
-      <span className="mt-1 block text-xs text-stone-500 dark:text-white">
-        Please take a look at the{" "}
-        <a
-          target="_blank"
-          className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
-          href="https://github.com/thomascgray/opr-af-to-tts/releases"
-        >
-          releases page on Github
-        </a>{" "}
-        to see the latest release notes
       </span>
 
       <div className="inputs flex flex-row space-x-5 mt-6">
@@ -83,9 +75,10 @@ function App() {
               Army Forge Share Link
             </span>
             <span className="block text-xs text-stone-500 dark:text-white">
+              tl;dr: go to{" "}
               <a
                 target="_blank"
-                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+                className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
                 href="https://army-forge.onepagerules.com/"
               >
                 Army Forge

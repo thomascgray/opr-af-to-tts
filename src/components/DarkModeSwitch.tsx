@@ -9,9 +9,10 @@ export const DarkModeSwitch = () => {
   );
 
   return (
-    <div className="dark:text-white">
+    <>
       {isDarkMode && (
         <button
+          className="dark:text-white"
           title="Switch app theme to Light mode"
           onClick={() => {
             setIsDarkMode(false);
@@ -23,6 +24,7 @@ export const DarkModeSwitch = () => {
       )}
       {!isDarkMode && (
         <button
+          className="dark:text-white"
           title="Switch app theme to Dark mode"
           onClick={() => {
             setIsDarkMode(true);
@@ -32,6 +34,6 @@ export const DarkModeSwitch = () => {
           <Moon />
         </button>
       )}
-    </div>
+    </>
   );
 };

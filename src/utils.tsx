@@ -15,9 +15,9 @@ import {
 import { state } from "./state";
 
 // to get the data hit https://army-forge.onepagerules.com/api/rules/common/3 where the number is the game system. ask Adam @ army forge for the right one
-import commonRules from "./data/common-rules.json";
-import commonRulesSkirmish from "./data/common-rules-skirmish.json";
-import commonRulesRegiments from "./data/common-rules-regiments.json";
+// import commonRules from "./data/common-rules.json";
+// import commonRulesSkirmish from "./data/common-rules-skirmish.json";
+// import commonRulesRegiments from "./data/common-rules-regiments.json";
 
 interface iCommonRule {
   id: number;
@@ -128,6 +128,7 @@ export const generateLoadoutItemDefinition = (
 
 export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.PENDING;
+  state.unitProfiles = [];
   const id = extractIdFromUrl(stateView.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
   let relevantCoreSpecialRules: iCommonRule[];
@@ -150,26 +151,27 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
       return;
     }
+
     // then get the core rules for the game we're playing
     const gameSystemUrlSlug = getUrlSlugForGameSystem(data.gameSystem);
+    const gameSystemMappingCommonRules = {
+      "grimdark-future": 2,
+      "grimdark-future-firefight": 3,
+      "age-of-fantasy": 4,
+      "age-of-fantasy-skirmish": 5,
+      "age-of-fantasy-regiments": 6,
+    };
+
+    // get the common special rules for whatever army forge game system we're playing
+    const commonRulesId = gameSystemMappingCommonRules[gameSystemUrlSlug];
+    const commonRulesResponse = await fetch(
+      `https://army-forge.onepagerules.com/api/rules/common/${commonRulesId}`
+    );
+    const commonRulesData = await commonRulesResponse.json();
 
     state.listName = data.name;
-    switch (gameSystemUrlSlug) {
-      case "grimdark-future":
-      case "age-of-fantasy":
-        relevantCoreSpecialRules = [...commonRules] as iCommonRule[];
-        break;
-      case "grimdark-future-firefight":
-      case "age-of-fantasy-skirmish":
-        relevantCoreSpecialRules = [...commonRulesSkirmish] as iCommonRule[];
-        break;
-      case "age-of-fantasy-regiments":
-        relevantCoreSpecialRules = [...commonRulesRegiments] as iCommonRule[];
-        break;
-      default:
-        relevantCoreSpecialRules = [...commonRules] as iCommonRule[];
-        break;
-    }
+
+    relevantCoreSpecialRules = [...commonRulesData.rules] as iCommonRule[];
 
     state.gameSystem = data.gameSystem;
     state.coreSpecialRulesDict = relevantCoreSpecialRules;
@@ -442,14 +444,11 @@ export const generateUnitOutput = (
     modelNamePlainWithLoudoutString += ` w/ ${loadoutNames.join(", ")}`;
   }
 
-  // console.log("model.originalSpecialRules", model.originalSpecialRules);
-  // console.log("model.loadout", model.loadout);
   const modelSpecialRules = [
     ...model.originalSpecialRules,
     ...model.loadout
       .filter((l) => l.originalLoadout.type === "ArmyBookItem")
       .map((l) => {
-        // console.log("l", l);
         return [
           // @ts-ignore loadouts can definitely have content
           ...l.originalLoadout.content,

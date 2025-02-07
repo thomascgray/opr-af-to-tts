@@ -1,7 +1,11 @@
+import { usei18n } from "../usei18n";
+
 export const Tutorial = () => {
+  const { t } = usei18n();
+
   return (
     <details className="dark:text-slate-200">
-      <summary className="cursor-pointer">How-To / Tutorial</summary>
+      <summary className="cursor-pointer">{t("tutorialHeader")}</summary>
       <div className="p-2 bg-stone-100 dark:bg-slate-600 space-y-2">
         <ol className="list-decimal ml-4">
           <li>Build your army in OPR's Army Forge.</li>
@@ -53,14 +57,6 @@ export const Tutorial = () => {
           Check the "TTS Output Configuration" options below to adjust what is
           included in each model's name and description fields in TTS.
         </p>
-        {/* <iframe
-          className="mx-auto"
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/O7ERtMcB8NQ"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        ></iframe> */}
       </div>
     </details>
   );
