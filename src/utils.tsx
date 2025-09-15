@@ -52,8 +52,10 @@ export const removeQuantityStringFromStartOfString = (str: string) => {
 
 export const extractIdFromUrl = (url: string) => {
   const idRegex = /id=([^&]+)/;
-  const match = idRegex.exec(url);
-  return match ? match[1] : null;
+  const idMatch = idRegex.exec(url);
+  const isBeta = url.includes("army-forge-beta.onepagerules.com");
+  console.log(idMatch, isBeta);
+  return [idMatch ? idMatch[1] : null, isBeta];
 };
 
 export const generateLoadoutItemDefinition = (
@@ -129,7 +131,7 @@ export const generateLoadoutItemDefinition = (
 export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.PENDING;
   state.unitProfiles = [];
-  const id = extractIdFromUrl(stateView.armyListShareLink);
+  const [id, isBeta] = extractIdFromUrl(stateView.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
   let relevantCoreSpecialRules: iCommonRule[];
   if (!id) {
@@ -142,7 +144,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
 
   try {
     // get the army list
-    const response = await fetch(`/.netlify/functions/get-army?armyId=${id}`);
+    const response = await fetch(`/.netlify/functions/get-army?armyId=${id}&isBeta=${isBeta}`);
     data = await response.json();
     if (response.status !== 200) {
       alert("Army Forge failed to export list. Sorry!");
