@@ -54,7 +54,6 @@ export const extractIdFromUrl = (url: string) => {
   const idRegex = /id=([^&]+)/;
   const idMatch = idRegex.exec(url);
   const isBeta = url.includes("army-forge-beta.onepagerules.com");
-  console.log(idMatch, isBeta);
   return [idMatch ? idMatch[1] : null, isBeta];
 };
 
