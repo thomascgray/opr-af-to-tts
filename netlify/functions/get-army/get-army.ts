@@ -3,11 +3,17 @@ import got from "got";
 
 export const handler: Handler = async (event, context) => {
   const { armyId = null } = event.queryStringParameters as any;
+  const { isBeta = null } = event.queryStringParameters as boolean | any;
 
   if (armyId) {
     try {
+
+      const baseUrl = isBeta === 'true'
+        ? 'https://army-forge-beta.onepagerules.com/api/tts'
+        : 'https://army-forge.onepagerules.com/api/tts';
+
       const res = await got
-        .get(`https://army-forge.onepagerules.com/api/tts?id=${armyId}`)
+        .get(`${baseUrl}?id=${armyId}`)
         .json();
 
       return {
