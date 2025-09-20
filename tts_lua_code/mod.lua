@@ -16,6 +16,8 @@ local originalToughValueToAssign = nil;
 local originalCasterValueToAssign = nil;
 local armyNameToAssign = nil;
 
+-- When saving, remove the --lua
+-- local perModelCode = [[
 local perModelCode = [[
     function distributeObjects(numObjects, spacing)
         if numObjects <= 0 then
@@ -348,7 +350,6 @@ local perModelCode = [[
         rebuildStatusEffectThings();
     end
 
-
     function cycleShowHideWoundsAndSpellTokens()
         isShowWoundsAndSpellTokens = not isShowWoundsAndSpellTokens;
         self.call('rebuildXml');
@@ -356,7 +357,7 @@ local perModelCode = [[
 
     function rebuildStatusEffectThings()
         local decodedMemo = JSON.decode(self.memo)
-            
+           
         local vectorPointsTable = {}
         
         local scale = self.getScale();
@@ -537,6 +538,26 @@ local perModelCode = [[
             self.setName(nameToAssign)
         end
     end
+
+    function measuringOff()
+        local decodedMemo = JSON.decode(self.memo)
+        measuringCircle.radius = 0;
+        printToAll("'" .. decodedMemo['unitName'] .. "' Measuring Off")
+        rebuildStatusEffectThings();
+    end
+
+    function measuringOffArmy()
+        local decodedMemo = JSON.decode(self.memo)
+
+        local armyMates = getAllArmyMates();
+        for _, armyMate in ipairs(armyMates) do
+            armyMate.call('measuringOff');
+        end
+        
+        printToAll("'" .. decodedMemo['armyNameToAssign'] .. "' Measuring Off")
+        rebuildStatusEffectThings();
+
+    end
     
     function rebuildContext()
         local decodedMemo = JSON.decode(self.memo)
@@ -560,6 +581,7 @@ local perModelCode = [[
         end    
 
         self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
+        self.addContextMenuItem("Measuring Off", measuringOff, true) 
 
         self.addContextMenuItem("▼ Unit", __noop, true)
 
@@ -589,7 +611,8 @@ local perModelCode = [[
         self.addContextMenuItem("Count", countUnit)
 
         self.addContextMenuItem("▼ Army", __noop, true)
-
+        
+        self.addContextMenuItem("Army Measuring Off", measuringOffArmy)
         self.addContextMenuItem("Deactivate", deactivateArmy)
         self.addContextMenuItem("Refresh Spell Tokens", armyRefreshSpellTokens)
     end
@@ -622,16 +645,16 @@ local function BuildUnitLayout(unitDefinition, unitIndex)
     return string.format([[
         <VerticalLayout
         childForceExpandHeight="false"
-            height="100"
-            spacing="10">
-            <Text
-                fontSize="30"
-                color="#FFFFFF"
-                fontStyle="bold"
-            >Ut: %s</Text>
-            
+          height="100"
+          spacing="10">
+          <Text
+              fontSize="30"
+              color="#FFFFFF"
+              fontStyle="bold"
+          >Ut: %s</Text>
+          
             <HorizontalLayout
-                spacing="40">
+              spacing="40">
                 %s
             </HorizontalLayout>
         </VerticalLayout>
@@ -791,7 +814,7 @@ function onScriptingButtonDown(index, player_color)
     end
 
     -- scripting key 2 is cancel assigning
-    if (index == 2) then
+    if (index == 2 and nameOfModelAssigning ~= nil) then
         broadcastToAll("Stopped assigning '" .. nameOfModelAssigning .. "'")
         cancelCurrentAssigning();
     end
@@ -827,9 +850,29 @@ function createCards(unitsDefinitions)
     cardsAnchor.UI.setXml(BuildLayout(cardsXml, totalUnitCount))
 end
 
+local function isValidJson(jsonString)
+    -- First, check if the string is not nil or empty
+    if not jsonString or jsonString:match("^%s*$") then
+        return false
+    end
+
+    -- Use pcall to catch any errors during JSON decoding
+    local success, result = pcall(function()
+        return JSON.decode(jsonString)
+    end)
+
+    -- Return true if decoding was successful
+    return success
+end
+
 function handleResponse(response)
     if response.is_error then
-        broadcastToAll("Something went wrong at the server!", ERROR_RED)
+        broadcastToAll("Couldn't get the list from the server! Please re-load and try again", ERROR_RED)
+        return
+    end
+
+    if not isValidJson(response.text) then
+        broadcastToAll("Data from the server is not structured data - are you sure you copied the right URL? Please double check your URL and try again", ERROR_RED)
         return
     end
 
