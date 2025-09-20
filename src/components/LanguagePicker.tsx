@@ -59,7 +59,7 @@ export const LanguagePicker = () => {
             onClick={() => {
               setIsExpanded(true);
             }}
-            className="bg-stone-400 px-2 py-1 min-w-[120px] flex justify-around"
+            className="bg-stone-400 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 px-2 py-1 min-w-[120px] flex justify-around rounded-md shadow-md"
           >
             <RenderFlagBadge
               id={currentLanguage.id}
@@ -80,7 +80,7 @@ export const LanguagePicker = () => {
                     setIsExpanded(false);
                   }}
                   className={classNames(
-                    "bg-stone-400 px-2 py-1 min-w-[120px] flex justify-around",
+                    "bg-stone-400 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 px-2 py-1 min-w-[120px] flex justify-around rounded-md shadow-md",
                     {
                       "outline outline-4 outline-offset-1 outline-teal-400":
                         isSelected,

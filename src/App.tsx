@@ -28,10 +28,12 @@ import {
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
 import { LanguagePicker } from "./components/LanguagePicker";
+import { usei18n } from "./usei18n";
 
 function App() {
   const stateView = useSnapshot(state, { sync: true });
 
+  const { t } = usei18n();
   const areAllLoadoutsChecked = stateView.unitProfiles.every((unit) => {
     return unit.models.every((model) => {
       return model.loadout.every((loadoutItem) => {
@@ -52,48 +54,37 @@ function App() {
 
         <div className="flex gap-6 items-center">
           <DarkModeSwitch />
-          {/* <LanguagePicker /> */}
+          <LanguagePicker />
         </div>
       </div>
 
       <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
-        If you find any bugs, please report them on the{" "}
-        <a
-          target="_blank"
-          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
-          href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
-        >
-          github issues page
-        </a>
-        . Thanks!
+        <span
+          dangerouslySetInnerHTML={{
+            __html: t("foundBugs", [
+              "https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues",
+            ]),
+          }}
+        />
       </span>
 
+      {/* https://army-forge.onepagerules.com/ */}
+      {/* https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810 */}
       <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
           <label>
             <span className="block font-bold text-xl dark:text-white">
-              Army Forge Share Link
+              {t("mainInputLabel")}
             </span>
             <span className="block text-xs text-stone-500 dark:text-white">
-              tl;dr: go to{" "}
-              <a
-                target="_blank"
-                className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
-                href="https://army-forge.onepagerules.com/"
-              >
-                Army Forge
-              </a>
-              → army listing → menu at the top right → click "Share as Link" →
-              paste that link into the box below → define model definitions →
-              hit "Generate shareable link for TTS" at the bottom of the screen
-              → paste <em>that</em> URL into{" "}
-              <a
-                target="_blank"
-                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
-                href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
-              >
-                this mod
-              </a>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("tldrExplainerText", [
+                    "https://army-forge.onepagerules.com/",
+                    "https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810",
+                  ]),
+                }}
+              />
             </span>
             <input
               placeholder="https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
@@ -112,7 +103,7 @@ function App() {
         disabled={stateView.armyListShareLink === ""}
         onClick={() => onGenerateDefinitions(stateView as iAppState)}
         className={classnames(
-          "bg-stone-500 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 text-white px-4 py-2",
+          "bg-stone-500 dark:bg-slate-500 border-stone-600 dark:border-zinc-800 text-white px-4 py-2 rounded-md shadow-md",
           {
             "hover:scale-105 active:scale-95": !(
               stateView.armyListShareLink === ""
@@ -132,7 +123,7 @@ function App() {
                 eNetworkRequestState.PENDING,
             })}
           />
-          <span>Import Army & Generate Definitions</span>
+          <span>{t("mainImportButtonLabel")}</span>
         </span>
       </button>
 

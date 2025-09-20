@@ -17,7 +17,7 @@ export const i18n = {
     tutorialInstruction6c:
       'Duplicate any model definition using the "Duplicate this model definition" button.',
     tutorialInstruction7:
-      'Once you\'re done, hit "Generate shareable link for TTS" at the bottom, and then paste that URL into the TTS mod.',
+      'Once you\'re done, hit "Generate shareable link for TTS" at the bottom, and then paste that URL into {{link1}}the TTS mod.{{/link1}}',
     hint: "Hint",
     hintInstruction1:
       'Check the "TTS Output Configuration" options below to adjust what is included in each model\'s name and description fields in TTS.',
@@ -96,6 +96,15 @@ export const i18n = {
     loadAppDefaultConfigButton: "Load app default config",
     loadCustomConfigHeader: "Load Custom Configs",
     loadCustomConfigPlaceholder: "You have no saved TTS output configs",
+    mainImportButtonLabel: "Import Army & Generate Definitions",
+    mainInputLabel: "Army Forge Share Link",
+    tldrExplainerText: `tl;dr: go to {{link1}}Army Forge{{/link1}}
+              → army listing → menu at the top right → click "Share as Link" →
+              paste that link into the box below → define model definitions →
+              hit "Generate shareable link for TTS" at the bottom of the screen
+              → paste THAT URL into {{link2}}this mod{{/link2}}`,
+    foundBugs:
+      "If you find any bugs, please report them on the {{link1}}github issues page{{/link1}}. Thanks!",
   },
   de: {
     // data here

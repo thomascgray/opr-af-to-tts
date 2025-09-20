@@ -19,7 +19,9 @@ export const OutputOptions = () => {
 
   return (
     <details className="dark:text-slate-200">
-      <summary className="cursor-pointer">TTS Output Configuration</summary>
+      <summary className="cursor-pointer">
+        {t("ttsOutputConfigurationHeader")}
+      </summary>
       <div className="py-2 px-4 bg-stone-100 dark:bg-slate-600 space-y-4">
         <label className="flex flex-row items-center space-x-4">
           <input
