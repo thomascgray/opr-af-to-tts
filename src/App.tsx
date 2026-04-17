@@ -410,6 +410,17 @@ ${ttsDescriptionOutput}`}
                   value={stateView.shareableLinkForTTS}
                   className="block whitespace-pre text-lg w-full overflow-x-hidden bg-green-500 p-4 text-center text-white font-bold"
                 />
+                {stateView.shareableJsonForTTS && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(stateView.shareableJsonForTTS!);
+                      alert("JSON copied to clipboard! Paste it into the TTS mod.");
+                    }}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
+                  >
+                    Or copy JSON to paste directly in TTS
+                  </button>
+                )}
               </div>
             )}
           </div>
