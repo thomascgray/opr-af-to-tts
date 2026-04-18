@@ -63,7 +63,6 @@ export interface iUnitProfile {
 export interface iAppState {
   armyListShareLink: string;
   shareableLinkForTTS?: string;
-  shareableJsonForTTS?: string;
   listName?: string;
   armySpecialRulesDict: {
     name: string;

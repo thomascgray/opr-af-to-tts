@@ -399,7 +399,6 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
     data = await response.json();
     const { listId } = data as any;
     state.shareableLinkForTTS = `${window.location.href}.netlify/functions/save-list?listId=${listId}`;
-    state.shareableJsonForTTS = JSON.stringify(totalOutput);
     state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;
   } catch (e) {
     console.error(e);
