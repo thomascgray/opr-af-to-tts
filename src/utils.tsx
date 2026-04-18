@@ -391,7 +391,6 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
       const localListId = `local-${nanoid(10)}`;
       localStorage.setItem(localListId, JSON.stringify(totalOutput));
       state.shareableLinkForTTS = `${window.location.href}?localListId=${localListId}`;
-      state.shareableJsonForTTS = JSON.stringify(totalOutput);
       state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;
       return;
     }
