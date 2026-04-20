@@ -145,10 +145,8 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     // get the army list
     const response = await fetch(`/.netlify/functions/get-army?armyId=${id}&isBeta=${isBeta}`);
     data = await response.json();
-    if (response.status !== 200) {
-      alert("Army Forge failed to export list. Sorry!");
-    }
-    if (!data) {
+    if (response.status !== 200 || !data || (data as any).error) {
+      alert((data as any)?.error || "Army Forge failed to export list. Sorry!");
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
       return;
     }
@@ -166,9 +164,14 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     // get the common special rules for whatever army forge game system we're playing
     const commonRulesId = gameSystemMappingCommonRules[gameSystemUrlSlug];
     const commonRulesResponse = await fetch(
-      `https://army-forge.onepagerules.com/api/rules/common/${commonRulesId}`
+      `/.netlify/functions/get-army?commonRulesId=${commonRulesId}&isBeta=${isBeta}`
     );
     const commonRulesData = await commonRulesResponse.json();
+    if (commonRulesResponse.status !== 200 || commonRulesData.error) {
+      alert(commonRulesData?.error || "Failed to fetch common rules. Sorry!");
+      state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
+      return;
+    }
 
     state.listName = data.name;
 
@@ -375,14 +378,24 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
   state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
 
   try {
-    data = await ky
+    const response = await ky
       .post("/.netlify/functions/save-list", {
         json: {
           list_json: totalOutput,
         },
-      })
-      .json();
+        throwHttpErrors: false,
+      });
 
+    if (response.status === 503) {
+      // Fallback to localStorage when database is not configured
+      const localListId = `local-${nanoid(10)}`;
+      localStorage.setItem(localListId, JSON.stringify(totalOutput));
+      state.shareableLinkForTTS = `${window.location.href}?localListId=${localListId}`;
+      state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;
+      return;
+    }
+
+    data = await response.json();
     const { listId } = data as any;
     state.shareableLinkForTTS = `${window.location.href}.netlify/functions/save-list?listId=${listId}`;
     state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;

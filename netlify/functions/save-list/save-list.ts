@@ -10,12 +10,21 @@ const httpError = (code: number, message: string) => ({
   }),
 });
 
-const handleGET = async (event) => {
+const isTursoConfigured = () => {
+  return process.env.TURSO_DB_URL && process.env.TURSO_AUTH_STRING;
+};
+
+const handleGET = async (event: any) => {
   const { listId = null } = event.queryStringParameters as any;
 
   if (!listId) {
     return httpError(400, "Must supply `listId`");
   }
+
+  if (!isTursoConfigured()) {
+    return httpError(503, "Database not configured");
+  }
+
   const client = createClient({
     url: process.env.TURSO_DB_URL!,
     authToken: process.env.TURSO_AUTH_STRING!,
@@ -41,13 +50,17 @@ const handleGET = async (event) => {
   };
 };
 
-const handlePOST = async (event) => {
+const handlePOST = async (event: any) => {
   const id = nanoid();
   const body = JSON.parse(event.body);
   const { list_json } = body;
 
   if (!list_json) {
     return httpError(400, "Must supply `list_json`");
+  }
+
+  if (!isTursoConfigured()) {
+    return httpError(503, "Database not configured");
   }
 
   try {
