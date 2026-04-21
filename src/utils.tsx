@@ -378,22 +378,11 @@ export const onGenerateShareableId = async (stateView: Readonly<iAppState>) => {
   state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.PENDING;
 
   try {
-    const response = await ky
-      .post("/.netlify/functions/save-list", {
-        json: {
-          list_json: totalOutput,
-        },
-        throwHttpErrors: false,
-      });
-
-    if (response.status === 503) {
-      // Fallback to localStorage when database is not configured
-      const localListId = `local-${nanoid(10)}`;
-      localStorage.setItem(localListId, JSON.stringify(totalOutput));
-      state.shareableLinkForTTS = `${window.location.href}?localListId=${localListId}`;
-      state.networkState.saveArmyListAsBBToDB = eNetworkRequestState.SUCCESS;
-      return;
-    }
+    const response = await ky.post("/.netlify/functions/save-list", {
+      json: {
+        list_json: totalOutput,
+      },
+    });
 
     data = await response.json();
     const { listId } = data as any;

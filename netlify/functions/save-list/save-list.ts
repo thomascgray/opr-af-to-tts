@@ -14,6 +14,16 @@ const isTursoConfigured = () => {
   return process.env.TURSO_DB_URL && process.env.TURSO_AUTH_STRING;
 };
 
+// Dev-only fallback used when TURSO_* env vars aren't set. Scoped to the
+// netlify-dev process — entries are lost when the process restarts.
+const inMemoryLists = new Map<string, unknown>();
+
+const warnFallback = () => {
+  console.warn(
+    "[save-list] TURSO_DB_URL / TURSO_AUTH_STRING not set — using in-memory store. Data will not persist across restarts."
+  );
+};
+
 const handleGET = async (event: any) => {
   const { listId = null } = event.queryStringParameters as any;
 
@@ -22,7 +32,17 @@ const handleGET = async (event: any) => {
   }
 
   if (!isTursoConfigured()) {
-    return httpError(503, "Database not configured");
+    warnFallback();
+    if (!inMemoryLists.has(listId)) {
+      return httpError(404, "List not found");
+    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        listId,
+        listJson: inMemoryLists.get(listId),
+      }),
+    };
   }
 
   const client = createClient({
@@ -60,7 +80,15 @@ const handlePOST = async (event: any) => {
   }
 
   if (!isTursoConfigured()) {
-    return httpError(503, "Database not configured");
+    warnFallback();
+    inMemoryLists.set(id, list_json);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "List saved (in-memory fallback)",
+        listId: id,
+      }),
+    };
   }
 
   try {
