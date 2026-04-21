@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import { useSnapshot } from "valtio";
+import { Trans, useTranslation } from "react-i18next";
 import {
   eNetworkRequestState,
   iAppState,
@@ -31,6 +32,7 @@ import { LanguagePicker } from "./components/LanguagePicker";
 
 function App() {
   const stateView = useSnapshot(state, { sync: true });
+  const { t } = useTranslation();
 
   const areAllLoadoutsChecked = stateView.unitProfiles.every((unit) => {
     return unit.models.every((model) => {
@@ -47,56 +49,53 @@ function App() {
     <div className="container mx-auto mt-4 mb-28 px-4 md:px-0">
       <div className="flex flex-row items-center justify-between space-x-2">
         <h1 className="text-4xl font-bold dark:text-white w-3/4 lg:w-full">
-          🎲 Tombola's OPR Army Forge to TTS Tool
+          {t("app.title")}
         </h1>
 
         <div className="flex gap-6 items-center">
           <DarkModeSwitch />
-          {/* <LanguagePicker /> */}
+          <LanguagePicker />
         </div>
       </div>
 
       <span className="mt-1 block text-xs text-stone-500 dark:text-stone-300">
-        If you find any bugs, please report them on the{" "}
-        <a
-          target="_blank"
-          className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
-          href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
-        >
-          github issues page
-        </a>
-        . Thanks!
+        <Trans
+          i18nKey="app.bugReport.text"
+          components={[
+            <a
+              target="_blank"
+              className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
+              href="https://github.com/thomascgray/grimdarkfuture-roster-to-tts/issues"
+            />,
+          ]}
+        />
       </span>
 
       <div className="inputs flex flex-row space-x-5 mt-6">
         <div className="w-full">
           <label>
             <span className="block font-bold text-xl dark:text-white">
-              Army Forge Share Link
+              {t("app.armyShareLink.label")}
             </span>
             <span className="block text-xs text-stone-500 dark:text-white">
-              tl;dr: go to{" "}
-              <a
-                target="_blank"
-                className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
-                href="https://army-forge.onepagerules.com/"
-              >
-                Army Forge
-              </a>
-              → army listing → menu at the top right → click "Share as Link" →
-              paste that link into the box below → define model definitions →
-              hit "Generate shareable link for TTS" at the bottom of the screen
-              → paste <em>that</em> URL into{" "}
-              <a
-                target="_blank"
-                className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
-                href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
-              >
-                this mod
-              </a>
+              <Trans
+                i18nKey="app.armyShareLink.tldr"
+                components={[
+                  <a
+                    target="_blank"
+                    className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
+                    href="https://army-forge.onepagerules.com/"
+                  />,
+                  <a
+                    target="_blank"
+                    className="text-blue-700 underline visited:text-purple-700 dark:visited:text-purple-400"
+                    href="https://steamcommunity.com/sharedfiles/filedetails/?id=2969610810"
+                  />,
+                ]}
+              />
             </span>
             <input
-              placeholder="https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
+              placeholder={t("app.armyShareLink.placeholder")}
               value={stateView.armyListShareLink}
               onChange={(e) => {
                 state.armyListShareLink = e.currentTarget.value;
@@ -132,7 +131,7 @@ function App() {
                 eNetworkRequestState.PENDING,
             })}
           />
-          <span>Import Army & Generate Definitions</span>
+          <span>{t("app.importArmyButton")}</span>
         </span>
       </button>
 
@@ -150,13 +149,13 @@ function App() {
             key={"inline-options"}
           >
             <legend className="-ml-8 px-3 py-1 bg-white dark:bg-slate-700 shadow-md border border-stone-200 dark:text-white">
-              Inline Options
+              {t("app.inlineOptions.legend")}
             </legend>
 
             <span className="flex items-center space-x-2">
               <input
                 className="h-5 w-5 cursor-pointer outline-none border-none"
-                title="Check to toggle ALL loadout items to be included in the model name"
+                title={t("app.inlineOptions.toggleAllLoadouts")}
                 checked={areAllLoadoutsChecked}
                 onChange={(e) => {
                   if (areAllLoadoutsChecked) {
@@ -192,8 +191,7 @@ function App() {
                 type="checkbox"
               />
               <span className="dark:text-white">
-                Check to toggle ALL loadout items to be included in the model
-                name
+                {t("app.inlineOptions.toggleAllLoadouts")}
               </span>
             </span>
           </fieldset>
@@ -218,16 +216,17 @@ function App() {
 
                     <span className="text-sm text-">
                       {" "}
-                      {unit.originalModelCountInUnit} model
-                      {unit.originalModelCountInUnit > 1 ? "s" : ""}
+                      {t("app.unit.modelCount", {
+                        count: unit.originalModelCountInUnit,
+                      })}
                     </span>
                     {joinedTo && (
                       <span className="text-sm italic text-stone-500 dark:text-white">
                         {" "}
                         (
                         {isUnitHero(unit as iUnitProfile)
-                          ? "joined to"
-                          : "combined with"}{" "}
+                          ? t("app.unit.joinedTo")
+                          : t("app.unit.combinedWith")}{" "}
                         #
                         {getUnitIndexForSelectionId(
                           joinedTo.originalSelectionId,
@@ -239,7 +238,9 @@ function App() {
                   </legend>
 
                   <p className="mb-2 text-stone-500 dark:text-white italic">
-                    Original Unit Loadout: {unit.originalLoadoutCsvHelperString}
+                    {t("app.unit.originalLoadoutLabel", {
+                      loadout: unit.originalLoadoutCsvHelperString,
+                    })}
                   </p>
 
                   <div className="flex flex-col space-y-10">
@@ -253,14 +254,16 @@ function App() {
                       return (
                         <div key={model.id} className="relative">
                           <p className="text-sm dark:text-white">
-                            Model Definition {modelIndex + 1}
+                            {t("app.model.definitionLabel", {
+                              n: modelIndex + 1,
+                            })}
                           </p>
                           {!model.isGenerated && (
                             <button
                               onClick={() => {
                                 deleteModel(unit.id, model.id);
                               }}
-                              title="Delete this distinct model definition"
+                              title={t("app.model.deleteTitle")}
                               className="border border-solid border-red-500 p-1 absolute -top-3 right-0 bg-red-500 text-white rounded-full hover:scale-110 active:scale-95"
                             >
                               <Cross className="w-4 h-4" />
@@ -294,10 +297,12 @@ function App() {
                                       <span className="flex flex-row items-center space-x-2">
                                         <span className="flex flex-col space-y-1">
                                           <span className="text-xs italic text-stone-600">
-                                            Qty per. model
+                                            {t("app.model.quantityPerModelLabel")}
                                           </span>
                                           <input
-                                            title="Quantity of this item per model"
+                                            title={t(
+                                              "app.model.quantityPerModelTitle"
+                                            )}
                                             className="w-[5.2rem] pl-6 text-center py-1 px-2 text-xl font-bold"
                                             min={0}
                                             onChange={(e) => {
@@ -317,7 +322,9 @@ function App() {
                                         </span>
                                         <input
                                           className="h-5 w-5 cursor-pointer outline-none border-none"
-                                          title="Check to include this item in the model name"
+                                          title={t(
+                                            "app.model.includeInNameTitle"
+                                          )}
                                           checked={loadoutItem.includeInName}
                                           disabled={loadoutItem.quantity <= 0}
                                           onChange={(e) => {
@@ -343,7 +350,7 @@ function App() {
                                 className="flex flex-row space-x-2 items-center text-sm border border-stone-600 dark:border-zinc-800 px-3 py-1 bg-stone-500 dark:bg-slate-500 text-white hover:scale-105 active:scale-95"
                               >
                                 <Duplicate className="w-4 h-4" />
-                                <span>Duplicate this model definition</span>
+                                <span>{t("app.model.duplicateButton")}</span>
                               </button>
                             </div>
 
@@ -353,7 +360,7 @@ function App() {
                                 className="bg-stone-300 dark:bg-slate-300  px-4 pb-4 pt-3"
                               >
                                 <span className="block text-xs italic text-stone-600 mb-2">
-                                  TTS output preview (name and description)
+                                  {t("app.ttsPreview.label")}
                                 </span>
                                 <textarea
                                   onChange={() => {}}
@@ -395,13 +402,13 @@ ${ttsDescriptionOutput}`}
                   eNetworkRequestState.PENDING && (
                   <ArrowPath className="animate-spin w-4 h-4" />
                 )}
-                <span>Generate shareable link for TTS</span>
+                <span>{t("app.shareable.generateButton")}</span>
               </span>
             </button>
             {stateView.shareableLinkForTTS && (
               <div className="block space-y-2">
                 <p className="text-xs dark:text-white">
-                  Copy and paste the link below into the TTS mod
+                  {t("app.shareable.copyPasteHint")}
                 </p>
                 <textarea
                   rows={1}

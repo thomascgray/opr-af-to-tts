@@ -1,0 +1,127 @@
+# English translations — source of truth.
+# Other locales fall back to en for missing keys (see src/i18n/index.ts).
+#
+# Keep keys organised by component/area. Leaf values are strings.
+# Interpolation uses {{variableName}}. Rich-text (embedded JSX) uses <0>, <1>, … placeholders
+# rendered via react-i18next's <Trans> component.
+
+app:
+  title: "🎲 Tombola's OPR Army Forge to TTS Tool"
+  bugReport:
+    # <0> = link to the github issues page
+    text: "If you find any bugs, please report them on the <0>github issues page</0>. Thanks!"
+  armyShareLink:
+    label: "Army Forge Share Link"
+    # <0> = link to Army Forge, <1> = link to the TTS mod on Steam
+    tldr: 'tl;dr: go to <0>Army Forge</0> → army listing → menu at the top right → click "Share as Link" → paste that link into the box below → define model definitions → hit "Generate shareable link for TTS" at the bottom of the screen → paste <em>that</em> URL into <1>this mod</1>'
+    placeholder: "https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
+  importArmyButton: "Import Army & Generate Definitions"
+  inlineOptions:
+    legend: "Inline Options"
+    toggleAllLoadouts: "Check to toggle ALL loadout items to be included in the model name"
+  unit:
+    modelCount_one: "{{count}} model"
+    modelCount_other: "{{count}} models"
+    joinedTo: "joined to"
+    combinedWith: "combined with"
+    originalLoadoutLabel: "Original Unit Loadout: {{loadout}}"
+  model:
+    definitionLabel: "Model Definition {{n}}"
+    deleteTitle: "Delete this distinct model definition"
+    quantityPerModelLabel: "Qty per. model"
+    quantityPerModelTitle: "Quantity of this item per model"
+    includeInNameTitle: "Check to include this item in the model name"
+    duplicateButton: "Duplicate this model definition"
+  ttsPreview:
+    label: "TTS output preview (name and description)"
+  shareable:
+    generateButton: "Generate shareable link for TTS"
+    copyPasteHint: "Copy and paste the link below into the TTS mod"
+
+tutorial:
+  header: "How-To / Tutorial"
+  instructions:
+    item1: "Build your army in OPR's Army Forge."
+    item2: 'Click the menu at the top right of that page and hit "Share as Link".'
+    item3: "Paste that link into the box above on this page."
+    item4: 'Click "Import Army & Generate Definitions" above.'
+    item5: "This app will then build a model definition for each unit in your army."
+    item6: "It's then up to you to then assign quantities of loadout items onto your model, as per your desired army:"
+    item6a: "Change the quantity of a model's loadout items using the inputs on the left."
+    item6b: "Check the box next to a loadout item's quantity to have that item name be present in the model's TTS name."
+    item6c: 'Duplicate any model definition using the "Duplicate this model definition" button.'
+    # <0> = link to the TTS mod on Steam
+    item7: 'Once you''re done, hit "Generate shareable link for TTS" at the bottom, and then paste that URL into <0>the TTS mod</0>.'
+  hint:
+    label: "Hint"
+    text: 'Check the "TTS Output Configuration" options below to adjust what is included in each model''s name and description fields in TTS.'
+
+outputOptions:
+  header: "TTS Output Configuration"
+  rules:
+    includeCoreSpecialRules:
+      name: 'Include "Core" special rules in model description'
+      label: 'If enabled, the TTS "description" outputs will include the model''s relevant core special rules.'
+    includeFullCoreSpecialRulesText:
+      name: "Include the full text for core special rules"
+      label: 'If enabled, the TTS "description" outputs will include the model''s relevant core special rules text in full. If disabled, only the special rule''s name will be included.'
+    includeArmySpecialRules:
+      name: 'Include "Army" special rules in model description'
+      label: 'If enabled, the TTS "description" outputs will include the model''s relevant rules from the army, and from that model''s loadout.'
+    includeFullArmySpecialRulesText:
+      name: "Include the full text for army special rules"
+      label: 'If enabled, the TTS "description" outputs will include the model''s relevant army special rules text in full. If disabled, only the special rule''s name will be included.'
+    includeWeaponsListInName:
+      name: 'Include "Loadout List" in model name'
+      label: 'If enabled, the TTS "name" output will include a comma separated, colour coded list of the model''s equipped loadout under the model''s name.'
+    includeSpecialRulesListInName:
+      name: 'Include "Special Rules List" in model name'
+      label: 'If enabled, the TTS "name" output will include a comma separated, colour coded list of the model''s relevant special rules under the model''s name.'
+    swapCustomName:
+      name: "Swap custom name and original name ordering for units with multiple models in them"
+      label: "If enabled, then a unit with a custom name and whose original model size is greater than 1 will have the custom name in the brackets in the output, instead of the original name. This often looks better and makes more semantic sense."
+    replaceOriginalName:
+      name: "Completely replace original model names with any custom name"
+      label: "If enabled, then a unit with a custom name will have that custom name completely replace the original, with the original not being in brackets or anywhere else on the model."
+    disableSmallText:
+      name: "Disable small text"
+      label: "If enabled, then none of the text in the name or description will be small. Enable this if you have trouble reading the small text in TTS."
+  colours:
+    quality:
+      name: "Model Quality Stat Output Colour"
+      label: "HEX code for the model's quality value in the TTS output."
+    defense:
+      name: "Model Defense Stat Output Colour"
+      label: "HEX code for the model's defense value in the TTS output."
+    loadout:
+      name: "Model Loadout Output Colour"
+      label: "HEX code for the model's loadouts details in the TTS output."
+    specialRules:
+      name: "Model Special Rules Output Colour"
+      label: "HEX code for the model's special rules details in the TTS output."
+    tough:
+      name: "Model Tough Special Rule Rating Output Colour"
+      label: "HEX code for the model's Tough rating, if it has one, in the TTS output."
+  saveLoad:
+    header: "Save & Load TTS Output Configs"
+    description: "Save all of the above configuration into the local storage of your browser by hitting the button below. You can then quickly load different configs by hitting the load buttons below."
+    saveButton: "Save Current Config"
+    loadDefaultButton: "Load app default config"
+    loadCustomHeader: "Load Custom Configs"
+    loadConfigButton: "Load Config"
+    emptyState: "You have no saved TTS output configs"
+
+outputFaq:
+  header: "TTS Output Notes"
+  unitUpgradesNote: 'Special upgrades that apply specifically to entire units (such as Age of Fantasy "Musician" upgrades) are listed as individual loadout items here. While this isn''t technically perfect, it''s the best compromise, and still allows the most flexibility.'
+
+maintenance:
+  heading: "OPR Army Forge to TTS is under maintenance!"
+  body: "Site is currently under construction, please check back soon!"
+
+errors:
+  # These are surfaced via alert(). The raw API error payload, when present, is appended as-is
+  # (untranslated) because it originates from the Army Forge API.
+  noArmyId: "Could not find an Army Forge army ID. Please double check your Army Forge share link and try again."
+  armyForgeExportFailed: "Army Forge failed to export list. Sorry!"
+  fetchCommonRulesFailed: "Failed to fetch common rules. Sorry!"
