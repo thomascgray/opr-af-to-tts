@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@libsql/client": "0.3.2",
+    "@libsql/client": "0.17.2",
     "@netlify/functions": "1.4.0",
     "@types/node": "14.18.42",
     "classnames": "2.3.2",
@@ -18,8 +18,7 @@
     "got": "12.6.0",
     "ky": "0.33.3",
     "lodash": "4.17.21",
-    "nanoid": "3.3.6",
-    "netlify-cli": "^16.4.2",
+    "nanoid": "3.3.11",
     "pluralize": "8.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -33,6 +32,7 @@
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
+    "netlify-cli": "^25.1.1",
     "postcss": "^8.4.22",
     "tailwindcss": "^3.3.1",
     "typescript": "^4.9.5",
