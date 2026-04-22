@@ -49,3 +49,10 @@ This single function in `src/utils.tsx` is the bulk of the logic and is delibera
 ### Deployment
 
 Deploys to Netlify (`opr-af-to-tts.netlify.app`). There is no `netlify.toml` checked in — Netlify auto-detects Vite + the `netlify/functions/` directory.
+
+## Project Memory
+
+When working on these areas, read the relevant memory files:
+
+- "TTS mod", "mod.lua", "Lua", "Object UI", "positioning", "XML UI", "Wait.frames", "inter-object communication" → read `./CLAUDE/tts-lua-api-learnings.md`
+- "mod context", "perModelCode", "model scripts", "action panel", "toggle bar", "stat bars", "unit color", "spell tokens", "caster value", "army mates", "menu close" → read `./CLAUDE/mod-context.md`
