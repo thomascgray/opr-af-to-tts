@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { Handler } from "@netlify/functions";
 import { nanoid } from "nanoid";
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 
 const httpError = (code: number, message: string) => ({
   statusCode: code,
