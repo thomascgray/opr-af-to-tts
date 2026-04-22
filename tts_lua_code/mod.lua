@@ -575,8 +575,23 @@ local perModelCode = [[
                 buttons ..
             '</VerticalLayout>'
         end
-        local function statBar(bgColor, label, onDown, onUp)
-            return '<Panel color="' .. bgColor .. '" minHeight="24" preferredHeight="24">' ..
+        -- Progress-bar style: outer Panel's colour is the border frame. Inside,
+        -- a HorizontalLayout with padding=2 exposes 2px of that colour around a
+        -- row of two Panels — fill (in `color`) sized to current/max, and empty
+        -- (dark) filling the remainder. A second HorizontalLayout sibling holds
+        -- the interactive buttons + text on top.
+        local function statBar(color, label, onDown, onUp, current, max)
+            local innerW = 172   -- bar is 176 wide; 2px padding each side
+            local fillW = 0
+            if max > 0 then
+                fillW = math.max(0, math.min(innerW, math.floor(innerW * current / max)))
+            end
+            local emptyW = innerW - fillW
+            return '<Panel color="' .. color .. '" minHeight="24" preferredHeight="24">' ..
+                '<HorizontalLayout spacing="0" padding="2" childForceExpandWidth="false" childForceExpandHeight="true">' ..
+                    '<Panel color="' .. color .. '" minWidth="' .. fillW .. '" preferredWidth="' .. fillW .. '" />' ..
+                    '<Panel color="rgba(0,0,0,0.7)" minWidth="' .. emptyW .. '" preferredWidth="' .. emptyW .. '" />' ..
+                '</HorizontalLayout>' ..
                 '<HorizontalLayout spacing="0" padding="0" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
                     '<Button minWidth="24" preferredWidth="24" height="24" onClick="' .. onDown .. '" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>-</Button>' ..
                     '<Text minWidth="80" preferredWidth="80" fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. label .. '</Text>' ..
@@ -624,10 +639,10 @@ local perModelCode = [[
             if showHp then
                 -- Skirmish: max = tough + 5. Traditional: max = original tough.
                 local maxWounds = isSkirmishSystem(gameSystem) and (originalTough + 5) or originalTough
-                barContents = barContents .. statBar('#e74c3c', 'HP: ' .. currentTough .. '/' .. maxWounds, 'hpDown', 'hpUp')
+                barContents = barContents .. statBar('#e74c3c', 'HP: ' .. currentTough .. '/' .. maxWounds, 'hpDown', 'hpUp', currentTough, maxWounds)
             end
             if showSp then
-                barContents = barContents .. statBar('#3498db', 'SP: ' .. currentCaster .. '/6', 'spellTokensDown', 'spellTokensUp')
+                barContents = barContents .. statBar('#3498db', 'SP: ' .. currentCaster .. '/6', 'spellTokensDown', 'spellTokensUp', currentCaster, 6)
             end
             if showMeasuring then
                 -- Transparent background, ring-coloured text.
