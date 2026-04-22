@@ -1,0 +1,121 @@
+# German translations.
+# NOTE: First-pass machine translation — flagged for native-speaker review.
+
+app:
+  title: "🎲 Tombolas OPR Army Forge zu TTS Tool"
+  bugReport:
+    # <0> = Link zur GitHub-Issues-Seite
+    text: "Wenn du Fehler findest, melde sie bitte auf der <0>GitHub-Issues-Seite</0>. Danke!"
+  armyShareLink:
+    label: "Army Forge Freigabelink"
+    # <0> = Link zu Army Forge, <1> = Link zum TTS-Mod auf Steam
+    tldr: 'Kurz gesagt: Gehe zu <0>Army Forge</0> → Armeeliste → Menü oben rechts → klicke auf "Share as Link" → füge diesen Link in das Feld unten ein → definiere die Modelle → klicke unten auf "Generate shareable link for TTS" → füge <em>diese</em> URL in <1>diesen Mod</1> ein'
+    placeholder: "https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
+  importArmyButton: "Armee importieren und Definitionen erstellen"
+  inlineOptions:
+    legend: "Inline-Optionen"
+    toggleAllLoadouts: "Ankreuzen, um ALLE Ausrüstungsgegenstände in den Modellnamen aufzunehmen"
+  unit:
+    modelCount_one: "{{count}} Modell"
+    modelCount_other: "{{count}} Modelle"
+    joinedTo: "angeschlossen an"
+    combinedWith: "kombiniert mit"
+    originalLoadoutLabel: "Originale Einheitsausrüstung: {{loadout}}"
+  model:
+    definitionLabel: "Modelldefinition {{n}}"
+    deleteTitle: "Diese Modelldefinition löschen"
+    quantityPerModelLabel: "Anz. pro Modell"
+    quantityPerModelTitle: "Anzahl dieses Gegenstands pro Modell"
+    includeInNameTitle: "Ankreuzen, um diesen Gegenstand in den Modellnamen aufzunehmen"
+    duplicateButton: "Diese Modelldefinition duplizieren"
+  ttsPreview:
+    label: "TTS-Ausgabevorschau (Name und Beschreibung)"
+  shareable:
+    generateButton: "Teilbaren Link für TTS generieren"
+    copyPasteHint: "Kopiere und füge den untenstehenden Link in den TTS-Mod ein"
+
+tutorial:
+  header: "Anleitung / Tutorial"
+  instructions:
+    item1: "Erstelle deine Armee in OPR's Army Forge."
+    item2: 'Klicke auf das Menü oben rechts und wähle "Share as Link".'
+    item3: "Füge diesen Link in das obige Feld ein."
+    item4: 'Klicke oben auf "Armee importieren und Definitionen erstellen".'
+    item5: "Die App erstellt dann eine Modelldefinition für jede Einheit deiner Armee."
+    item6: "Du kannst dann die Mengen der Ausrüstungsgegenstände für jedes Modell festlegen, passend zur gewünschten Armee:"
+    item6a: "Ändere die Anzahl eines Ausrüstungsgegenstands über die Eingabefelder links."
+    item6b: "Aktiviere die Checkbox neben der Menge eines Gegenstands, damit sein Name im TTS-Modellnamen erscheint."
+    item6c: 'Dupliziere jede Modelldefinition mit dem Button "Diese Modelldefinition duplizieren".'
+    # <0> = Link zum TTS-Mod
+    item7: 'Wenn du fertig bist, klicke unten auf "Teilbaren Link für TTS generieren" und füge dann die URL in <0>den TTS-Mod</0> ein.'
+  hint:
+    label: "Tipp"
+    text: 'Nutze die Optionen unter "TTS Output Configuration", um anzupassen, was im Namens- und Beschreibungsfeld jedes Modells in TTS enthalten ist.'
+
+outputOptions:
+  header: "TTS-Ausgabekonfiguration"
+  rules:
+    includeCoreSpecialRules:
+      name: '"Core"-Spezialregeln in Modellbeschreibung einschließen'
+      label: "Wenn aktiviert, enthalten die TTS-Beschreibungen die relevanten Core-Spezialregeln des Modells."
+    includeFullCoreSpecialRulesText:
+      name: "Vollständigen Text der Core-Spezialregeln einschließen"
+      label: "Wenn aktiviert, enthalten die TTS-Beschreibungen den vollständigen Text der Core-Spezialregeln. Andernfalls wird nur der Regelname angezeigt."
+    includeArmySpecialRules:
+      name: '"Army"-Spezialregeln in Modellbeschreibung einschließen'
+      label: "Wenn aktiviert, enthalten die TTS-Beschreibungen die relevanten Regeln der Armee und der Ausrüstung des Modells."
+    includeFullArmySpecialRulesText:
+      name: "Vollständigen Text der Armee-Spezialregeln einschließen"
+      label: "Wenn aktiviert, enthalten die TTS-Beschreibungen den vollständigen Text der Armee-Spezialregeln. Andernfalls wird nur der Regelname angezeigt."
+    includeWeaponsListInName:
+      name: '"Ausrüstungsliste" in Modellnamen einschließen'
+      label: 'Wenn aktiviert, enthält die TTS-"Name"-Ausgabe eine durch Kommas getrennte, farblich markierte Liste der Ausrüstung unter dem Modellnamen.'
+    includeSpecialRulesListInName:
+      name: '"Spezialregelliste" in Modellnamen einschließen'
+      label: 'Wenn aktiviert, enthält die TTS-"Name"-Ausgabe eine durch Kommas getrennte, farblich markierte Liste der relevanten Spezialregeln unter dem Modellnamen.'
+    swapCustomName:
+      name: "Reihenfolge von eigenem und Originalnamen bei Einheiten mit mehreren Modellen vertauschen"
+      label: "Wenn aktiviert, erscheint bei Einheiten mit eigenem Namen und mehr als einem Originalmodell der eigene Name in Klammern statt des Originalnamens. Das sieht oft besser aus und ergibt mehr Sinn."
+    replaceOriginalName:
+      name: "Originale Modellnamen vollständig durch eigenen Namen ersetzen"
+      label: "Wenn aktiviert, ersetzt der eigene Name einer Einheit den Originalnamen vollständig, ohne dass er in Klammern oder an anderer Stelle erscheint."
+    disableSmallText:
+      name: "Kleinen Text deaktivieren"
+      label: "Wenn aktiviert, wird kein Text in Name oder Beschreibung klein dargestellt. Aktiviere dies, wenn du den kleinen Text in TTS schwer lesen kannst."
+  colours:
+    quality:
+      name: "Ausgabefarbe für Modellqualität"
+      label: "HEX-Code für den Qualitätswert des Modells in der TTS-Ausgabe."
+    defense:
+      name: "Ausgabefarbe für Modellverteidigung"
+      label: "HEX-Code für den Verteidigungswert des Modells in der TTS-Ausgabe."
+    loadout:
+      name: "Ausgabefarbe für Modellausrüstung"
+      label: "HEX-Code für die Ausrüstungsdetails des Modells in der TTS-Ausgabe."
+    specialRules:
+      name: "Ausgabefarbe für Modellspezialregeln"
+      label: "HEX-Code für die Spezialregel-Details des Modells in der TTS-Ausgabe."
+    tough:
+      name: "Ausgabefarbe für Tough-Wert des Modells"
+      label: "HEX-Code für den Tough-Wert des Modells, falls vorhanden, in der TTS-Ausgabe."
+  saveLoad:
+    header: "TTS-Ausgabekonfigurationen speichern & laden"
+    description: "Speichere die gesamte obige Konfiguration im lokalen Speicher deines Browsers, indem du auf den Button unten klickst. Du kannst dann schnell verschiedene Konfigurationen laden."
+    saveButton: "Aktuelle Konfiguration speichern"
+    loadDefaultButton: "Standardkonfiguration laden"
+    loadCustomHeader: "Eigene Konfigurationen laden"
+    loadConfigButton: "Konfiguration laden"
+    emptyState: "Du hast keine gespeicherten TTS-Ausgabekonfigurationen"
+
+outputFaq:
+  header: "Hinweise zur TTS-Ausgabe"
+  unitUpgradesNote: 'Spezielle Upgrades, die sich auf ganze Einheiten beziehen (wie z. B. "Musician"-Upgrades in Age of Fantasy), werden hier als einzelne Ausrüstungsgegenstände aufgeführt. Das ist technisch nicht perfekt, aber der beste Kompromiss und bietet maximale Flexibilität.'
+
+maintenance:
+  heading: "OPR Army Forge zu TTS wird gewartet!"
+  body: "Die Seite wird derzeit überarbeitet, bitte schau bald wieder vorbei!"
+
+errors:
+  noArmyId: "Keine Army Forge-Armee-ID gefunden. Bitte überprüfe deinen Army Forge-Freigabelink und versuche es erneut."
+  armyForgeExportFailed: "Army Forge konnte die Liste nicht exportieren. Sorry!"
+  fetchCommonRulesFailed: "Laden der gemeinsamen Regeln fehlgeschlagen. Sorry!"

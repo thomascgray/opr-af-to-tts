@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FranceFlag, UnitedKingdomFlag } from "./icons";
+import {
+  FranceFlag,
+  GermanyFlag,
+  ItalyFlag,
+  SpainFlag,
+  UnitedKingdomFlag,
+} from "./icons";
 import classNames from "classnames";
 
 const LANGUAGES = [
@@ -11,6 +17,18 @@ const LANGUAGES = [
   {
     id: "fr",
     flag: () => <FranceFlag className="w-5 h-5" />,
+  },
+  {
+    id: "de",
+    flag: () => <GermanyFlag className="w-5 h-5" />,
+  },
+  {
+    id: "es",
+    flag: () => <SpainFlag className="w-5 h-5" />,
+  },
+  {
+    id: "it",
+    flag: () => <ItalyFlag className="w-5 h-5" />,
   },
 ];
 
