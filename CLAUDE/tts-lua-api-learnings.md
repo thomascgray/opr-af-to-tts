@@ -185,15 +185,54 @@ Store per-object position/rotation offsets in memo for user adjustability:
 ```lua
 -- In memo:
 menuHeightOffset = 0,      -- Additive offset to Z position
-menuRotationOffset = 0,    -- Additive offset to Y rotation
+menuRotationOffset = 0,    -- Additive fireman's-pole yaw offset
 
 -- In buildActionPanelXml():
 local heightOffset = decodedMemo['menuHeightOffset'] or 0
 local rotationOffset = decodedMemo['menuRotationOffset'] or 0
 
 local toggleBarZ = -((actualHeight * 100) + 80 + heightOffset)
-local menuRotation = "90 " .. (180 + rotationOffset) .. " 0"
 ```
+
+### Spinning a floating panel around a vertical pivot (fireman's-pole yaw)
+
+> Reach for this when the user asks to "spin the panel around a vertical pivot",
+> "rotate the menu so it keeps facing me", "turn the UI sideways", "have the
+> floating UI rotate with the model", or anything else that implies yaw around
+> the world-up axis.
+
+Object UI's local frame has Z as the up-axis (same frame as "negative Z = up"
+for position). So for a flat-by-default panel the rotation axes map to:
+
+- **X rotation** = pitch (tilts forward/back)
+- **Y rotation** = roll (tilts side to side — the see-saw)
+- **Z rotation** = yaw (fireman's-pole spin around the vertical axis) ← this one
+
+**Putting yaw on Y is the classic mistake.** Y rotation pivots the panel around
+the forward/back axis and tilts it like a see-saw (one side of the panel lifts
+up, the other dips down). It looks wrong immediately. Yaw must be on Z.
+
+Don't try to bake yaw into the billboard rotation directly either — once X=90
+is applied, adding Y or Z to the same rotation string runs into gimbal-lock
+weirdness. Instead, **split the rotations across two nested panels** so TTS
+composes them as quaternions (outer-yaw ∘ inner-billboard):
+
+```lua
+local yawRotation = "0 0 " .. rotationOffset      -- Z, not Y
+local menuRotation = "90 180 0"                    -- billboard (X=90 upright, Y=180 face player)
+
+local xml = '<Panel id="action-panel" position="0 0 ' .. z .. '" rotation="' .. yawRotation .. '" ...>' ..
+    '<Panel rotation="' .. menuRotation .. '" ...>' ..
+        -- content
+    '</Panel>' ..
+'</Panel>'
+```
+
+The outer panel keeps the `id` (so `self.UI.show/hide` still works) and owns
+the position + yaw. The inner panel owns the billboard tilt. Apply this
+pattern to **every** floating-UI element you want to rotate together (menu,
+stat bars, any other billboard panels) — driving them all from the same
+`yawRotation` keeps them visually aligned.
 
 Adjustment functions:
 ```lua

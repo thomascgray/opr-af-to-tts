@@ -54,20 +54,76 @@ local unitColorIndexCounter = 0  -- Track which color to assign next
 -- When saving, remove the --lua
 -- local perModelCode = [[
 local perModelCode = [[
+    function distributeObjects(numObjects, spacing)
+        if numObjects <= 0 then
+            return {} -- Return an empty table for an invalid input
+        elseif numObjects == 1 then
+            return {0} -- Center position for a single object
+        end
+    
+        local positions = {}
+        local totalWidth = (numObjects - 1) * spacing
+    
+        for i = 1, numObjects do
+            local position = (i - 1) * spacing - totalWidth / 2
+            table.insert(positions, position)
+        end
+    
+        return positions
+    end
+
     function tablelength(T)
         local c = 0
-        for _ in pairs(T) do c = c + 1 end
+        for _ in pairs(T) do
+            c = c + 1
+        end
         return c
     end
 
-    function numOrMin(a, b) return (a < b) and b or a end
-    function numOrMax(a, b) return (a > b) and b or a end
+    function largestWithMax(a, b, c)
+        return (a > b) and (b > c and c or b) or (a > c and c or a)
+    end
 
-    function mergeTables(t1, t2)
-        local out = {}
-        for k, v in pairs(t1) do out[k] = v end
-        for k, v in pairs(t2) do out[k] = v end
-        return out
+    function smallestWithMin(a, b, c)
+        return (a < b) and (b < c and b or c) or (a < c and a or c)
+    end
+
+    function numOrMin(a, b)
+        if (a < b) then
+            return b
+        else
+            return a
+        end
+    end
+
+    function numOrMax(a, b)
+        if (a > b) then
+            return b
+        else
+            return a
+        end
+    end
+
+    function mergeTables(table1, table2)
+        local mergedTable = {}
+    
+        for key, value in pairs(table1) do
+            mergedTable[key] = value
+        end
+    
+        for key, value in pairs(table2) do
+            mergedTable[key] = value
+        end
+    
+        return mergedTable
+    end
+
+    function roundToTwoDecimalPlaces(number)
+        return math.floor(number * 100 + 0.5) / 100
+    end
+
+    function __noop()
+        -- deliberately blank
     end
 
     -- Constants
@@ -151,19 +207,58 @@ local perModelCode = [[
         rebuildActionPanelXml();
     end
 
-    -- Adjust a numeric memo field by delta, announce, and refresh name + panel.
-    function adjustStat(field, delta, verb)
+    function hpUp(player_color)
         local decodedMemo = JSON.decode(self.memo)
-        printToAll("'" .. decodedMemo['unitName'] .. "' " .. verb)
-        updateMemo({ [field] = decodedMemo[field] + delta })
-        rebuildName()
-        rebuildActionPanelXml()
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Wound.");
+
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentToughValue = decodedMemo['currentToughValue'] + 1,
+        }))
+
+
+        self.call('rebuildName');
+        self.call('rebuildActionPanelXml');
     end
 
-    function hpUp()            adjustStat('currentToughValue',   1, 'gained 1 Wound.') end
-    function hpDown()          adjustStat('currentToughValue',  -1, 'lost 1 Wound.') end
-    function spellTokensUp()   adjustStat('currentCasterValue',  1, 'gained 1 Spell Token.') end
-    function spellTokensDown() adjustStat('currentCasterValue', -1, 'lost 1 Spell Token.') end
+    function hpDown(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Wound.");
+
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentToughValue = decodedMemo['currentToughValue'] - 1,
+        }))
+
+        self.call('rebuildName');
+        self.call('rebuildActionPanelXml');
+    end
+
+    function spellTokensUp(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Spell Token.");
+
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentCasterValue = decodedMemo['currentCasterValue'] + 1,
+        }))
+
+        self.call('rebuildName');
+        self.call('rebuildActionPanelXml');
+    end
+
+    function spellTokensDown(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Spell Token.");
+
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentCasterValue = decodedMemo['currentCasterValue'] - 1,
+        }))
+
+        self.call('rebuildName');
+        self.call('rebuildActionPanelXml');
+    end
 
     function toggleActivated(player_color)
         toggleUnitStatus('isActivated', 'activation')
@@ -208,32 +303,29 @@ local perModelCode = [[
         toggleUnitUiFlag('showMeasuringBar')
     end
 
-    -- Preset ring colours. Ordered so the row renders left-to-right in this
-    -- order; each entry has the button id, display hex, and {r,g,b} 0-1 triple.
-    RING_COLORS = {
-        {id = 'ring-color-white',  hex = '#ffffff', rgb = {1, 1, 1}},
-        {id = 'ring-color-red',    hex = '#e74c3c', rgb = {231/255, 76/255, 60/255}},
-        {id = 'ring-color-orange', hex = '#e67e22', rgb = {230/255, 126/255, 34/255}},
-        {id = 'ring-color-yellow', hex = '#f1c40f', rgb = {241/255, 196/255, 15/255}},
-        {id = 'ring-color-green',  hex = '#2ecc71', rgb = {46/255, 204/255, 113/255}},
-        {id = 'ring-color-blue',   hex = '#3498db', rgb = {52/255, 152/255, 219/255}},
-        {id = 'ring-color-purple', hex = '#9b59b6', rgb = {155/255, 89/255, 182/255}},
-        {id = 'ring-color-pink',   hex = '#e84393', rgb = {232/255, 67/255, 147/255}},
+    -- Preset ring colours. Id -> {r, g, b} in 0-1 range.
+    RING_COLOR_PRESETS = {
+        ['ring-color-white']  = {1, 1, 1},
+        ['ring-color-red']    = {231/255, 76/255, 60/255},
+        ['ring-color-green']  = {46/255, 204/255, 113/255},
+        ['ring-color-blue']   = {52/255, 152/255, 219/255},
+        ['ring-color-yellow'] = {241/255, 196/255, 15/255},
     }
 
     -- Button onClick handler. Reads the colour preset from the element id.
     function setRingColor(player, value, id)
-        local color
-        for _, c in ipairs(RING_COLORS) do
-            if c.id == id then color = c.rgb; break end
-        end
+        local color = RING_COLOR_PRESETS[id]
         if not color then return end
 
-        for _, unitMate in ipairs(getAllUnitMates()) do
+        local unitMates = getAllUnitMates()
+        for _, unitMate in ipairs(unitMates) do
             local mateMemo = JSON.decode(unitMate.memo)
-            unitMate.memo = JSON.encode(mergeTables(mateMemo, { measuringRingColor = color }))
+            unitMate.memo = JSON.encode(mergeTables(mateMemo, {
+                measuringRingColor = color
+            }))
             unitMate.call('rebuildStatusEffectThings')
-            unitMate.call('rebuildActionPanelXml')  -- so the measuring-bar text recolours too
+            -- Rebuild the action panel so the measuring-bar text recolours too
+            unitMate.call('rebuildActionPanelXml')
         end
     end
 
@@ -478,16 +570,41 @@ local perModelCode = [[
     end
     
     -- Menu position/rotation adjustment functions
-    function adjustMenuOffset(field, delta)
+    function moveMenuUp()
         local decodedMemo = JSON.decode(self.memo)
-        updateMemo({ [field] = (decodedMemo[field] or 0) + delta })
+        local currentOffset = decodedMemo['menuHeightOffset'] or 0
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            menuHeightOffset = currentOffset + 20
+        }))
         rebuildActionPanelXml()
     end
 
-    function moveMenuUp()      adjustMenuOffset('menuHeightOffset',    20) end
-    function moveMenuDown()    adjustMenuOffset('menuHeightOffset',   -20) end
-    function rotateMenuLeft()  adjustMenuOffset('menuRotationOffset', -15) end
-    function rotateMenuRight() adjustMenuOffset('menuRotationOffset',  15) end
+    function moveMenuDown()
+        local decodedMemo = JSON.decode(self.memo)
+        local currentOffset = decodedMemo['menuHeightOffset'] or 0
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            menuHeightOffset = currentOffset - 20
+        }))
+        rebuildActionPanelXml()
+    end
+
+    function rotateMenuLeft()
+        local decodedMemo = JSON.decode(self.memo)
+        local currentRotation = decodedMemo['menuRotationOffset'] or 0
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            menuRotationOffset = currentRotation - 15
+        }))
+        rebuildActionPanelXml()
+    end
+
+    function rotateMenuRight()
+        local decodedMemo = JSON.decode(self.memo)
+        local currentRotation = decodedMemo['menuRotationOffset'] or 0
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            menuRotationOffset = currentRotation + 15
+        }))
+        rebuildActionPanelXml()
+    end
 
     function rebuildContext()
         self.clearContextMenu()
@@ -513,8 +630,13 @@ local perModelCode = [[
         self.UI.hide('action-panel')
         isActionPanelOpen = false
     end
-    -- Alias: called by army mates when another menu opens.
-    closeMenuFromExternal = closeActionPanel
+
+    -- Called by army mates to close this object's menu
+    function closeMenuFromExternal()
+        if not isActionPanelOpen then return end
+        self.UI.hide('action-panel')
+        isActionPanelOpen = false
+    end
 
     function toggleActionPanel(player, value, id)
         if isActionPanelOpen then
@@ -536,110 +658,145 @@ local perModelCode = [[
 
     function buildActionPanelXml()
         local decodedMemo = JSON.decode(self.memo)
-        local gameSystem  = decodedMemo['gameSystem']
-        local hasTough    = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
-        local hasCaster   = decodedMemo['originalCasterValue'] ~= 0
+        local gameSystem = decodedMemo['gameSystem']
+        local hasTough = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
+        local hasCaster = decodedMemo['originalCasterValue'] ~= 0
 
-        -- UI visibility flags. Missing (pre-upgrade models) defaults to true; any
-        -- stored value other than `false` (i.e. nil or true) means visible.
-        local showHpBar        = decodedMemo['showHpBar']        ~= false
-        local showSpBar        = decodedMemo['showSpBar']        ~= false
-        local showMeasuringBar = decodedMemo['showMeasuringBar'] ~= false
+        -- UI visibility flags. Missing (pre-upgrade models) defaults to true.
+        local showHpBar = decodedMemo['showHpBar']
+        if showHpBar == nil then showHpBar = true end
+        local showSpBar = decodedMemo['showSpBar']
+        if showSpBar == nil then showSpBar = true end
+        local showMeasuringBar = decodedMemo['showMeasuringBar']
+        if showMeasuringBar == nil then showMeasuringBar = true end
 
-        local currentTough  = decodedMemo['currentToughValue']  or 0
+        -- Get current HP/SP values for the bars
+        local currentTough = decodedMemo['currentToughValue'] or 0
         local originalTough = decodedMemo['originalToughValue'] or 0
         local currentCaster = decodedMemo['currentCasterValue'] or 0
 
+        -- Measuring ring colour (hex) for the measuring bar text
         local ringColor = decodedMemo['measuringRingColor'] or {1, 1, 1}
         local ringColorHex = string.format("#%02x%02x%02x",
-            math.floor(ringColor[1] * 255), math.floor(ringColor[2] * 255), math.floor(ringColor[3] * 255))
+            math.floor(ringColor[1] * 255),
+            math.floor(ringColor[2] * 255),
+            math.floor(ringColor[3] * 255))
 
-        local btnColors    = 'colors="rgba(255,255,255,0.9)|rgba(255,255,255,1)|rgba(200,200,200,1)|rgba(128,128,128,0.5)"'
+        local btnColors = 'colors="rgba(255,255,255,0.9)|rgba(255,255,255,1)|rgba(200,200,200,1)|rgba(128,128,128,0.5)"'
+        -- Colors for small inline +/- buttons on the stat bars (dark semi-transparent)
         local barBtnColors = 'colors="rgba(0,0,0,0.4)|rgba(0,0,0,0.7)|rgba(0,0,0,0.9)|rgba(0,0,0,0.2)"'
 
-        -- XML builder helpers. All close over btnColors / barBtnColors.
-        local function btn(onClick, label, fontSize)
-            return '<Button onClick="' .. onClick .. '" fontSize="' .. (fontSize or 14) .. '" ' .. btnColors .. '>' .. label .. '</Button>'
-        end
-        local function section(title, innerXml)
-            return '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
-                '<VerticalLayout spacing="5" childForceExpandHeight="false">' ..
-                    '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. title .. '</Text>' ..
-                    innerXml ..
-                '</VerticalLayout>' ..
-            '</Panel>'
-        end
-        local function column(title, buttons)
-            return '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
-                '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. title .. '</Text>' ..
-                buttons ..
-            '</VerticalLayout>'
-        end
-        local function statBar(bgColor, label, onDown, onUp)
-            return '<Panel color="' .. bgColor .. '" minHeight="24" preferredHeight="24">' ..
-                '<HorizontalLayout spacing="0" padding="0" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
-                    '<Button minWidth="24" preferredWidth="24" height="24" onClick="' .. onDown .. '" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>-</Button>' ..
-                    '<Text minWidth="80" preferredWidth="80" fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. label .. '</Text>' ..
-                    '<Button minWidth="24" preferredWidth="24" height="24" onClick="' .. onUp .. '" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>+</Button>' ..
-                '</HorizontalLayout>' ..
-            '</Panel>'
-        end
-
-        -- Model column (conditional on stats)
+        -- Build Model column buttons (conditionally)
         local modelButtons = ""
-        if hasTough  then modelButtons = modelButtons .. btn('hpUp', 'HP +') .. btn('hpDown', 'HP -') end
-        if hasCaster then modelButtons = modelButtons .. btn('spellTokensUp', 'SP +') .. btn('spellTokensDown', 'SP -') end
-        modelButtons = modelButtons .. btn('cycleMeasuringRadius', 'Measuring') .. btn('measuringOff', 'Measuring Off', 12)
+        if hasTough then
+            modelButtons = modelButtons .. '<Button onClick="hpUp" fontSize="14" ' .. btnColors .. '>HP +</Button>'
+            modelButtons = modelButtons .. '<Button onClick="hpDown" fontSize="14" ' .. btnColors .. '>HP -</Button>'
+        end
+        if hasCaster then
+            modelButtons = modelButtons .. '<Button onClick="spellTokensUp" fontSize="14" ' .. btnColors .. '>SP +</Button>'
+            modelButtons = modelButtons .. '<Button onClick="spellTokensDown" fontSize="14" ' .. btnColors .. '>SP -</Button>'
+        end
+        modelButtons = modelButtons .. '<Button onClick="cycleMeasuringRadius" fontSize="14" ' .. btnColors .. '>Measuring</Button>'
+        modelButtons = modelButtons .. '<Button onClick="measuringOff" fontSize="12" ' .. btnColors .. '>Measuring Off</Button>'
 
-        -- Unit column (conditional on game system)
-        local unitButtons = btn('toggleActivated', 'Activated')
-        if isSkirmishSystem(gameSystem)    then unitButtons = unitButtons .. btn('toggleStunned', 'Stunned') end
-        if isTraditionalSystem(gameSystem) then unitButtons = unitButtons .. btn('toggleShaken',  'Shaken')  end
-        unitButtons = unitButtons .. btn('selectAllUnit', 'Select All') .. btn('countUnit', 'Count')
+        -- Build Unit column buttons (conditionally based on game system)
+        local unitButtons = '<Button onClick="toggleActivated" fontSize="14" ' .. btnColors .. '>Activated</Button>'
+        if isSkirmishSystem(gameSystem) then
+            unitButtons = unitButtons .. '<Button onClick="toggleStunned" fontSize="14" ' .. btnColors .. '>Stunned</Button>'
+        end
+        if isTraditionalSystem(gameSystem) then
+            unitButtons = unitButtons .. '<Button onClick="toggleShaken" fontSize="14" ' .. btnColors .. '>Shaken</Button>'
+        end
+        unitButtons = unitButtons .. '<Button onClick="selectAllUnit" fontSize="14" ' .. btnColors .. '>Select All</Button>'
+        unitButtons = unitButtons .. '<Button onClick="countUnit" fontSize="14" ' .. btnColors .. '>Count</Button>'
 
-        -- Army column
-        local armyButtons = btn('measuringOffArmy', 'Measuring Off', 12) ..
-            btn('deactivateArmy', 'Deactivate') ..
-            btn('armyRefreshSpellTokens', 'Refresh Spells', 12)
+        -- Build Army column buttons
+        local armyButtons = '<Button onClick="measuringOffArmy" fontSize="12" ' .. btnColors .. '>Measuring Off</Button>'
+        armyButtons = armyButtons .. '<Button onClick="deactivateArmy" fontSize="14" ' .. btnColors .. '>Deactivate</Button>'
+        armyButtons = armyButtons .. '<Button onClick="armyRefreshSpellTokens" fontSize="12" ' .. btnColors .. '>Refresh Spells</Button>'
 
-        -- Positions + rotations. See CLAUDE/tts-lua-api-learnings.md for the axis
-        -- rules (negative Z = up for position; yaw is Z on the outer wrapper to
-        -- compose cleanly with the X=90/Y=180 billboard).
-        local actualHeight   = self.getBounds()['size']['y']
-        local heightOffset   = decodedMemo['menuHeightOffset']   or 0
+        -- Calculate positions based on actual model height
+        -- getBounds() returns world-space dimensions including inherent model size
+        -- Negative Z moves up for Object UI
+        local bounds = self.getBounds()
+        local actualHeight = bounds['size']['y']
+
+        -- Get custom offset values from memo (for per-model adjustment)
+        local heightOffset = decodedMemo['menuHeightOffset'] or 0
         local rotationOffset = decodedMemo['menuRotationOffset'] or 0
-        local statBarsZ      = -((actualHeight * 100) + 130 + heightOffset)
-        local actionPanelZ   = -((actualHeight * 100) + 430 + heightOffset)
-        local menuRotation   = "90 180 0"
-        local yawRotation    = "0 0 " .. rotationOffset
 
-        -- Stat bars: HP/SP gated on unit stat + user toggle; measuring only when
-        -- radius > 0 AND its toggle is on.
-        local showHp        = hasTough and showHpBar
-        local showSp        = hasCaster and showSpBar
+        local statBarsZ = -((actualHeight * 100) + 130 + heightOffset)
+        -- Action panel center Z. Offset chosen so the panel's bottom edge sits
+        -- just above the stat bars regardless of panel height (see height below).
+        local actionPanelZ = -((actualHeight * 100) + 430 + heightOffset)
+
+        -- Billboard rotation per CLAUDE/tts-lua-api-learnings.md "Rotation for
+        -- Billboard-Style Panels": X=90 tilts upright, Y=180 compensates for the
+        -- object's own Y=180 assignment rotation to face the viewer.
+        local menuRotation = "90 180 0"
+        -- User's yaw offset applied via an outer wrapper panel (see below) so it
+        -- composes cleanly with the billboard rotation. Z is the up-axis in the
+        -- outer panel's local frame (matching the "negative Z = up" position
+        -- convention), so Z rotation is the fireman's-pole spin we want. Y
+        -- rotation here would pivot around the forward/back axis and tilt the
+        -- panel like a see-saw instead.
+        local yawRotation = "0 0 " .. rotationOffset
+
+        -- Build stat bars XML. HP and SP bars are gated on the unit having that
+        -- stat AND the user's UI toggle. The measuring bar appears only when
+        -- measuring is active (radius > 0) AND its toggle is on; its text
+        -- matches the current ring colour.
+        local showHp = hasTough and showHpBar
+        local showSp = hasCaster and showSpBar
         local showMeasuring = (measuringCircle.radius > 0) and showMeasuringBar
         local statBarsXml = ""
         if showHp or showSp or showMeasuring then
             local barContents = ""
+
+            -- HP bar first (will be on top in VerticalLayout)
             if showHp then
-                -- Skirmish: max = tough + 5. Traditional: max = original tough.
-                local maxWounds = isSkirmishSystem(gameSystem) and (originalTough + 5) or originalTough
-                barContents = barContents .. statBar('#e74c3c', 'HP: ' .. currentTough .. '/' .. maxWounds, 'hpDown', 'hpUp')
+                -- For skirmish systems, show current wounds out of (tough + 5)
+                -- For traditional systems, show current wounds out of original tough
+                local maxWounds = originalTough
+                if isSkirmishSystem(gameSystem) then
+                    maxWounds = originalTough + 5
+                end
+                barContents = barContents .. '<Panel color="#e74c3c" minHeight="24" preferredHeight="24">' ..
+                    '<HorizontalLayout spacing="0" padding="0" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
+                        '<Button minWidth="24" preferredWidth="24" height="24" onClick="hpDown" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>-</Button>' ..
+                        '<Text minWidth="80" preferredWidth="80" fontSize="16" fontStyle="Bold" color="#FFFFFF">HP: ' .. currentTough .. '/' .. maxWounds .. '</Text>' ..
+                        '<Button minWidth="24" preferredWidth="24" height="24" onClick="hpUp" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>+</Button>' ..
+                    '</HorizontalLayout>' ..
+                '</Panel>'
             end
+
+            -- SP bar second (will be below HP in VerticalLayout)
             if showSp then
-                barContents = barContents .. statBar('#3498db', 'SP: ' .. currentCaster .. '/6', 'spellTokensDown', 'spellTokensUp')
+                barContents = barContents .. '<Panel color="#3498db" minHeight="24" preferredHeight="24">' ..
+                    '<HorizontalLayout spacing="0" padding="0" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
+                        '<Button minWidth="24" preferredWidth="24" height="24" onClick="spellTokensDown" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>-</Button>' ..
+                        '<Text minWidth="80" preferredWidth="80" fontSize="16" fontStyle="Bold" color="#FFFFFF">SP: ' .. currentCaster .. '/6</Text>' ..
+                        '<Button minWidth="24" preferredWidth="24" height="24" onClick="spellTokensUp" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>+</Button>' ..
+                    '</HorizontalLayout>' ..
+                '</Panel>'
             end
+
+            -- Measuring bar (bottom). Transparent background, ring-coloured text.
             if showMeasuring then
-                -- Transparent background, ring-coloured text.
                 barContents = barContents .. '<Panel color="rgba(0,0,0,0)" minHeight="24" preferredHeight="24">' ..
                     '<Text fontSize="16" fontStyle="Bold" color="' .. ringColorHex .. '">Measuring ' .. measuringCircle.radius .. "''" .. '</Text>' ..
                 '</Panel>'
             end
 
-            local barCount = (showHp and 1 or 0) + (showSp and 1 or 0) + (showMeasuring and 1 or 0)
+            -- Height based only on visible bars
+            local barCount = 0
+            if showHp then barCount = barCount + 1 end
+            if showSp then barCount = barCount + 1 end
+            if showMeasuring then barCount = barCount + 1 end
             local panelHeight = (barCount * 26) + ((barCount - 1) * 4) + 4  -- 26 per bar + spacing + padding
 
-            -- Same outer-yaw / inner-billboard split as the action panel.
+            -- Same outer-yaw / inner-billboard split as the action panel so the
+            -- stat bars follow the user's fireman's-pole yaw offset too.
             statBarsXml = '<Panel id="stat-bars-panel" position="0 0 ' .. statBarsZ .. '" rotation="' .. yawRotation .. '" width="180" height="' .. panelHeight .. '">' ..
                 '<Panel rotation="' .. menuRotation .. '" width="180" height="' .. panelHeight .. '">' ..
                     '<VerticalLayout spacing="4" padding="2" childAlignment="MiddleCenter" childForceExpandHeight="false">' ..
@@ -649,46 +806,93 @@ local perModelCode = [[
             '</Panel>'
         end
 
-        -- UI Toggles: HP/SP gated on unit stat; measuring-bar toggle for everyone.
+        -- UI Toggles row - visibility toggles for the floating stat bars.
+        -- HP / SP toggles are conditional on the unit having that stat;
+        -- the measuring-bar toggle applies to everyone (any model can measure).
         local uiToggleButtons = ""
-        if hasTough  then uiToggleButtons = uiToggleButtons .. btn('toggleHpBar', 'HP Bar') end
-        if hasCaster then uiToggleButtons = uiToggleButtons .. btn('toggleSpBar', 'SP Bar') end
-        uiToggleButtons = uiToggleButtons .. btn('toggleMeasuringBar', 'Measuring Bar')
-        local uiTogglesXml = section('UI Toggles',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' .. uiToggleButtons .. '</HorizontalLayout>')
-
-        -- Measuring Ring Colour row, driven by RING_COLORS.
-        local colorBtns = ""
-        for _, c in ipairs(RING_COLORS) do
-            colorBtns = colorBtns .. '<Button id="' .. c.id .. '" onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="' .. c.hex .. '"></Button>'
+        if hasTough then
+            uiToggleButtons = uiToggleButtons .. '<Button onClick="toggleHpBar" fontSize="14" ' .. btnColors .. '>HP Bar</Button>'
         end
-        local ringColourXml = section('Measuring Ring Colour',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="false" childAlignment="MiddleCenter">' .. colorBtns .. '</HorizontalLayout>')
+        if hasCaster then
+            uiToggleButtons = uiToggleButtons .. '<Button onClick="toggleSpBar" fontSize="14" ' .. btnColors .. '>SP Bar</Button>'
+        end
+        uiToggleButtons = uiToggleButtons .. '<Button onClick="toggleMeasuringBar" fontSize="14" ' .. btnColors .. '>Measuring Bar</Button>'
 
-        -- UI Config row - menu position + rotation.
-        local uiConfigXml = section('UI Config',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
-                btn('moveMenuUp', 'Menu ▲') .. btn('moveMenuDown', 'Menu ▼') ..
-                btn('rotateMenuLeft', 'Menu ↺') .. btn('rotateMenuRight', 'Menu ↻') ..
-            '</HorizontalLayout>')
+        local uiTogglesXml = '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
+            '<VerticalLayout spacing="5" childForceExpandHeight="false">' ..
+                '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">UI Toggles</Text>' ..
+                '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
+                    uiToggleButtons ..
+                '</HorizontalLayout>' ..
+            '</VerticalLayout>' ..
+        '</Panel>'
 
-        return '<Defaults><Button fontSize="14" fontStyle="Bold" /></Defaults>' ..
+        -- Measuring Ring Colour row (unit-wide colour picker)
+        local ringColourXml = '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
+            '<VerticalLayout spacing="5" childForceExpandHeight="false">' ..
+                '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">Measuring Ring Colour</Text>' ..
+                '<HorizontalLayout spacing="10" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
+                    '<Button id="ring-color-white"  onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="#ffffff"></Button>' ..
+                    '<Button id="ring-color-red"    onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="#e74c3c"></Button>' ..
+                    '<Button id="ring-color-green"  onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="#2ecc71"></Button>' ..
+                    '<Button id="ring-color-blue"   onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="#3498db"></Button>' ..
+                    '<Button id="ring-color-yellow" onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="#f1c40f"></Button>' ..
+                '</HorizontalLayout>' ..
+            '</VerticalLayout>' ..
+        '</Panel>'
+
+        -- UI Config row - menu position + rotation controls. All four buttons
+        -- share one row; childForceExpandWidth stretches them to fit.
+        local uiConfigXml = '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
+            '<VerticalLayout spacing="5" childForceExpandHeight="false">' ..
+                '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">UI Config</Text>' ..
+                '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
+                    '<Button onClick="moveMenuUp" fontSize="14" ' .. btnColors .. '>Menu ▲</Button>' ..
+                    '<Button onClick="moveMenuDown" fontSize="14" ' .. btnColors .. '>Menu ▼</Button>' ..
+                    '<Button onClick="rotateMenuLeft" fontSize="14" ' .. btnColors .. '>Menu ↺</Button>' ..
+                    '<Button onClick="rotateMenuRight" fontSize="14" ' .. btnColors .. '>Menu ↻</Button>' ..
+                '</HorizontalLayout>' ..
+            '</VerticalLayout>' ..
+        '</Panel>'
+
+        -- Close button: red background, white text
+
+        -- The action-panel is wrapped in an outer "yaw wrapper" panel. The outer
+        -- panel carries id="action-panel" (so show/hide still works), the position,
+        -- and ONLY the yaw rotation. The inner panel handles the billboard tilt.
+        -- Splitting the rotations across two nested panels sidesteps gimbal lock
+        -- at X=90: TTS composes the transforms as quaternions internally, so the
+        -- final orientation is yaw * billboard — exactly what we want.
+        local xml = '<Defaults><Button fontSize="14" fontStyle="Bold" /></Defaults>' ..
             statBarsXml ..
             '<Panel id="action-panel" position="0 0 ' .. actionPanelZ .. '" rotation="' .. yawRotation .. '" active="false" width="380" height="560">' ..
                 '<Panel rotation="' .. menuRotation .. '" width="380" height="560">' ..
                     '<VerticalLayout spacing="5" padding="10" childForceExpandHeight="false" childForceExpandWidth="false">' ..
                         '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
                             '<HorizontalLayout spacing="10" childForceExpandWidth="false">' ..
-                                column('Model', modelButtons) ..
-                                column('Unit',  unitButtons) ..
-                                column('Army',  armyButtons) ..
+                                '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
+                                    '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">Model</Text>' ..
+                                    modelButtons ..
+                                '</VerticalLayout>' ..
+                                '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
+                                    '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">Unit</Text>' ..
+                                    unitButtons ..
+                                '</VerticalLayout>' ..
+                                '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
+                                    '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">Army</Text>' ..
+                                    armyButtons ..
+                                '</VerticalLayout>' ..
                             '</HorizontalLayout>' ..
                         '</Panel>' ..
-                        ringColourXml .. uiTogglesXml .. uiConfigXml ..
+                        ringColourXml ..
+                        uiTogglesXml ..
+                        uiConfigXml ..
                     '</VerticalLayout>' ..
                     '<Button onClick="closeActionPanel" width="28" height="28" fontSize="14" fontStyle="Bold" textColor="#FFFFFF" color="#e74c3c" rectAlignment="UpperRight" offsetXY="-15 -15">X</Button>' ..
                 '</Panel>' ..
             '</Panel>'
+
+        return xml
     end
 
     function rebuildActionPanelXml()

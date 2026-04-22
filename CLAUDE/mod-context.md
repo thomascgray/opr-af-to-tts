@@ -79,9 +79,13 @@ assignNameAndDescriptionToObjects() → Inject perModelCode → Tag & Configure
   armyNameToAssign = "army_name",
   unitColor = {r, g, b},         -- RGB array for unit visual distinction
   menuHeightOffset = 0,          -- Per-model UI height adjustment
-  menuRotationOffset = 0         -- Per-model UI Y-rotation adjustment
+  menuRotationOffset = 0,        -- Per-model UI Y-rotation adjustment (legacy; not currently user-exposed)
+  showHpBar = true,              -- Unit-wide: show the floating HP stat bar (2026-04)
+  showSpBar = true               -- Unit-wide: show the floating SP stat bar (2026-04)
 }
 ```
+
+**Pre-upgrade models** (assigned before `showHpBar`/`showSpBar` existed) will not have these fields. All read sites must default `nil` to `true` using `if val == nil then val = true end` (not `val or true` — that coerces `false` to `true`).
 
 ## Per-Model Code System
 
@@ -371,28 +375,27 @@ currentCasterValue = min(currentCasterValue + originalCasterValue, 6)
 
 Example: A Caster(3) generates 3 tokens/turn, starts at 3/6, refreshes add 3 more (capped at 6).
 
-## Action Panel UI System (2025)
+## Action Panel UI System (2025, updated 2026-04)
 
-Replaced right-click context menus with a floating 3D action panel for better discoverability and modern UX.
+A floating 3D action panel floats above each model with stat bars plus a toggle-opened button panel. The original `^` toggle-bar button was removed in 2026-04; the panel is now opened via a right-click → "Toggle Menu" context menu entry.
 
 ### UI Components
 
-**1. Toggle Bar** - Small button that floats above model
-- Shows "^" character, rotates 180° when panel open (looks like "v")
-- Background color matches unit color (from `unitColor` in memo)
-- Always visible, positioned just above model
-
-**2. Stat Bars** - HP/SP display (between toggle bar and action panel)
+**1. Stat Bars** - HP/SP display floating above the model
 - HP bar: Red (#e74c3c), shows "HP: X/Y"
 - SP bar: Blue (#3498db), shows "SP: X/6"
-- Always visible at 100% opacity
-- Uses VerticalLayout (HP on top, SP below)
+- Each bar has inline `[-]` / `[+]` buttons on either side of its text for quick wound/token adjustment without opening the full menu (2026-04).
+- Individually togglable via the UI Toggles section in the action panel. Visibility stored in `showHpBar` / `showSpBar` memo fields, unit-wide.
+- Uses VerticalLayout (HP on top, SP below). Panel is hidden entirely if neither bar is visible.
 
-**3. Action Panel** - 3-column button panel (hidden by default)
-- **Model column**: HP +/-, SP +/-, Measuring controls
-- **Unit column**: Activated, Stunned/Shaken, Select All, Count
-- **Army column**: Measuring Off, Deactivate, Refresh Spells
-- Red X close button in top-right corner
+**2. Action Panel** - 3-column button panel + bottom rows (hidden by default)
+- Opened/closed via the right-click "Toggle Menu" entry.
+- **Model column**: HP +/-, SP +/-, Measuring controls, Measuring Off.
+- **Unit column**: Activated, Stunned/Shaken, Select All, Count.
+- **Army column**: Measuring Off, Deactivate, Refresh Spells.
+- **UI Toggles row** (2026-04): `Toggle HP Bar` / `Toggle SP Bar` — conditional on the unit having that stat. Unit-wide.
+- **UI Config row** (2026-04): `Menu ▲` / `Menu ▼` — shunts the entire floating UI up/down by 20 units per click (mirrors the existing right-click `Menu Up` / `Menu Down`).
+- Red X close button in top-right corner (only close action in the panel).
 
 ### Key Functions
 
@@ -400,8 +403,10 @@ Replaced right-click context menus with a floating 3D action panel for better di
 buildActionPanelXml()      -- Generates complete XML for all UI components
 rebuildActionPanelXml()    -- Applies XML and preserves open state
 toggleActionPanel()        -- Opens/closes panel, closes other army menus
-closeActionPanel()         -- Internal close (resets toggle rotation)
+closeActionPanel()         -- Internal close
 closeMenuFromExternal()    -- Called by army mates to close this menu
+toggleHpBar / toggleSpBar  -- Unit-wide visibility toggles (2026-04)
+toggleUnitUiFlag(flag)     -- Shared helper for unit-wide UI toggles; calls rebuildActionPanelXml on each mate
 ```
 
 ### Cross-Object Communication
@@ -418,18 +423,21 @@ end
 
 ### Button Behaviors
 
-**Close panel after action:**
-- Activated, Stunned, Shaken toggles → close panel
-- Army Deactivate → does NOT close panel (user preference)
-- HP/SP buttons → do NOT close panel (allows rapid adjustments)
+**None of the in-panel CTAs close the panel except the X button** (2026-04 change — previously Activated/Stunned/Shaken closed it).
 
-### Per-Model Position Adjustments
+- Activated, Stunned, Shaken toggles → panel stays open
+- Army Deactivate → stays open
+- HP/SP buttons (both the Model column ones and the inline stat-bar ones) → stay open
+- UI Toggles / UI Config actions → stay open
+- Only the red X closes the panel
 
-Users can adjust menu position via right-click context menu:
-- "Menu Up" / "Menu Down" - adjusts `menuHeightOffset` (±20 units)
-- "Rotate Left 15°" / "Rotate Right 15°" - adjusts `menuRotationOffset` (±15°)
+### Context Menu
 
-Offsets stored in memo and applied to all UI panel positions/rotations.
+Right-click a model to get:
+- `Toggle Menu` — opens/closes the action panel. **Closes the right-click menu after click** (2026-04).
+- `Menu Up` / `Menu Down` — adjusts `menuHeightOffset` (±20 units). Keeps the right-click menu open so you can nudge repeatedly.
+
+The same Menu Up/Down actions are also available inside the action panel's UI Config row (2026-04).
 
 ### State Preservation
 
