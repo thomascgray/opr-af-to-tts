@@ -13,6 +13,7 @@ import {
   iUnitProfileModelTTSOutput,
 } from "./types";
 import { state } from "./state";
+import i18n from "./i18n";
 
 // to get the data hit https://army-forge.onepagerules.com/api/rules/common/3 where the number is the game system. ask Adam @ army forge for the right one
 // import commonRules from "./data/common-rules.json";
@@ -134,9 +135,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   let data: ArmyForgeTypes.ListState | undefined = undefined;
   let relevantCoreSpecialRules: iCommonRule[];
   if (!id) {
-    alert(
-      "Could not find an Army Forge army ID. Please double check your Army Forge share link and try again."
-    );
+    alert(i18n.t("errors.noArmyId"));
     state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
     return;
   }
@@ -146,7 +145,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     const response = await fetch(`/.netlify/functions/get-army?armyId=${id}&isBeta=${isBeta}`);
     data = await response.json();
     if (response.status !== 200 || !data || (data as any).error) {
-      alert((data as any)?.error || "Army Forge failed to export list. Sorry!");
+      alert((data as any)?.error || i18n.t("errors.armyForgeExportFailed"));
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
       return;
     }
@@ -168,7 +167,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
     );
     const commonRulesData = await commonRulesResponse.json();
     if (commonRulesResponse.status !== 200 || commonRulesData.error) {
-      alert(commonRulesData?.error || "Failed to fetch common rules. Sorry!");
+      alert(commonRulesData?.error || i18n.t("errors.fetchCommonRulesFailed"));
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
       return;
     }

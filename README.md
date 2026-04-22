@@ -52,6 +52,35 @@ Caveats:
 - Entries are lost when `netlify dev` restarts.
 - The URL points at `localhost`, so it is **not** usable from the TTS Lua mod — round-tripping through Tabletop Simulator needs a real Turso database.
 
+# Contributing translations
+
+The app is translated via [react-i18next](https://react.i18next.com/). Each supported language has its own YAML file under [`src/locales/`](src/locales/):
+
+- [`en.yaml`](src/locales/en.yaml) — English. This is the **source of truth**. New keys are added here first; every other language falls back to English for anything missing.
+- [`fr.yaml`](src/locales/fr.yaml) — French.
+
+### Fixing or improving an existing translation
+
+1. Fork the repo.
+2. Edit the relevant `.yaml` file in [`src/locales/`](src/locales/). Keep the key structure identical to `en.yaml` — only change the string values on the right-hand side.
+3. Preserve any `<0>`, `<1>`, … placeholders and `{{variable}}` interpolations exactly as they appear in English. They are how inline links and dynamic values are rendered.
+4. If you can, run `npm run dev`, switch to your language via the picker in the top-right, and eyeball the app. At minimum, `npm run build` must pass.
+5. Open a PR against `main` describing what you changed. Please cite a source for anything non-obvious (e.g. wargaming terminology).
+
+### Adding a new language
+
+Please **open an issue first** before starting work on a new language. This is so we can:
+
+- Agree on the language code (e.g. `de`, `pt-br`, `es`) and flag icon.
+- Check that nobody else is already mid-way through the same translation.
+- Wire up the language picker on our side — adding a language involves a couple of small code changes beyond just the YAML file, so it's not purely content work.
+
+Once an issue is agreed, the PR itself should:
+
+1. Add `src/locales/<code>.yaml`, mirroring the full key structure of `en.yaml`.
+2. Register the new language in [`src/i18n/index.ts`](src/i18n/index.ts) (`SUPPORTED_LANGUAGES` + `resources`) and in [`src/components/LanguagePicker.tsx`](src/components/LanguagePicker.tsx) (`LANGUAGES`, with its flag icon).
+3. Add the flag icon to [`src/components/icons.tsx`](src/components/icons.tsx) if one doesn't already exist.
+
 ---
 
 Thanks to Army Forge and its developers for support in making this tool possible, and to users over on the OPR Discord for their valuable feedback.
