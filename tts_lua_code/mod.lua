@@ -177,16 +177,22 @@ local perModelCode = [[
         toggleUnitStatus('isShaken', 'Shaken')
     end
 
-    -- Unit-wide toggle for UI flags. Unlike toggleUnitStatus, this rebuilds the
-    -- action panel on every mate so the UI change is reflected immediately.
-    -- Missing flags (pre-upgrade models) are treated as true.
+    -- Grouped-boolean unit toggle for UI flags: if any mate has the flag
+    -- explicitly false, flip ALL mates on. Otherwise (all on) flip them all
+    -- off. Missing flags (pre-upgrade models) count as on, matching the
+    -- default-visible treatment used elsewhere.
     function toggleUnitUiFlag(flagField)
-        local decodedMemo = JSON.decode(self.memo)
-        local current = decodedMemo[flagField]
-        if current == nil then current = true end
-        local newValue = not current
-
         local unitMates = getAllUnitMates()
+
+        local anyOff = false
+        for _, unitMate in ipairs(unitMates) do
+            if JSON.decode(unitMate.memo)[flagField] == false then
+                anyOff = true
+                break
+            end
+        end
+        local newValue = anyOff
+
         for _, unitMate in ipairs(unitMates) do
             local mateMemo = JSON.decode(unitMate.memo)
             unitMate.memo = JSON.encode(mergeTables(mateMemo, {
@@ -196,17 +202,22 @@ local perModelCode = [[
         end
     end
 
-    function toggleHpBar(player_color)
-        toggleUnitUiFlag('showHpBar')
+    -- Per-model variant: flips the flag on self only.
+    function toggleModelUiFlag(flagField)
+        local decodedMemo = JSON.decode(self.memo)
+        local current = decodedMemo[flagField]
+        if current == nil then current = true end
+        updateMemo({ [flagField] = not current })
+        rebuildActionPanelXml()
     end
 
-    function toggleSpBar(player_color)
-        toggleUnitUiFlag('showSpBar')
-    end
+    function toggleHpBar(player_color)        toggleUnitUiFlag('showHpBar')        end
+    function toggleSpBar(player_color)        toggleUnitUiFlag('showSpBar')        end
+    function toggleMeasuringBar(player_color) toggleUnitUiFlag('showMeasuringBar') end
 
-    function toggleMeasuringBar(player_color)
-        toggleUnitUiFlag('showMeasuringBar')
-    end
+    function toggleHpBarModel(player_color)        toggleModelUiFlag('showHpBar')        end
+    function toggleSpBarModel(player_color)        toggleModelUiFlag('showSpBar')        end
+    function toggleMeasuringBarModel(player_color) toggleModelUiFlag('showMeasuringBar') end
 
     -- Preset ring colours. Ordered so the row renders left-to-right in this
     -- order; each entry has the button id, display hex, and {r,g,b} 0-1 triple.
@@ -569,8 +580,9 @@ local perModelCode = [[
                 '</VerticalLayout>' ..
             '</Panel>'
         end
-        local function column(title, buttons)
-            return '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
+        local function column(title, buttons, width)
+            width = width or 110
+            return '<VerticalLayout spacing="5" minWidth="' .. width .. '" preferredWidth="' .. width .. '">' ..
                 '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. title .. '</Text>' ..
                 buttons ..
             '</VerticalLayout>'
@@ -664,13 +676,27 @@ local perModelCode = [[
             '</Panel>'
         end
 
-        -- UI Toggles: HP/SP gated on unit stat; measuring-bar toggle for everyone.
-        local uiToggleButtons = ""
-        if hasTough  then uiToggleButtons = uiToggleButtons .. btn('toggleHpBar', 'HP Bar') end
-        if hasCaster then uiToggleButtons = uiToggleButtons .. btn('toggleSpBar', 'SP Bar') end
-        uiToggleButtons = uiToggleButtons .. btn('toggleMeasuringBar', 'Measuring Bar')
+        -- UI Toggles: two columns — per-model flags on the left, unit-wide on
+        -- the right. Actual on/off state lives in memo and is evaluated at
+        -- click time; the buttons themselves don't reflect current state.
+        local modelToggleBtns = ""
+        local unitToggleBtns  = ""
+        if hasTough then
+            modelToggleBtns = modelToggleBtns .. btn('toggleHpBarModel', 'HP Bar')
+            unitToggleBtns  = unitToggleBtns  .. btn('toggleHpBar',      'HP Bar')
+        end
+        if hasCaster then
+            modelToggleBtns = modelToggleBtns .. btn('toggleSpBarModel', 'SP Bar')
+            unitToggleBtns  = unitToggleBtns  .. btn('toggleSpBar',      'SP Bar')
+        end
+        modelToggleBtns = modelToggleBtns .. btn('toggleMeasuringBarModel', 'Measure Distance Indicator', 12)
+        unitToggleBtns  = unitToggleBtns  .. btn('toggleMeasuringBar',      'Measure Distance Indicator', 12)
+
         local uiTogglesXml = section('UI Toggles',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' .. uiToggleButtons .. '</HorizontalLayout>')
+            '<HorizontalLayout spacing="10" childForceExpandWidth="false">' ..
+                column('Model', modelToggleBtns, 170) ..
+                column('Unit',  unitToggleBtns,  170) ..
+            '</HorizontalLayout>')
 
         -- Measuring Ring Colour row, driven by RING_COLORS.
         local colorBtns = ""
