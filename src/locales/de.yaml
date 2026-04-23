@@ -28,6 +28,13 @@ app:
     quantityPerModelTitle: "Anzahl dieses Gegenstands pro Modell"
     includeInNameTitle: "Ankreuzen, um diesen Gegenstand in den Modellnamen aufzunehmen"
     duplicateButton: "Diese Modelldefinition duplizieren"
+    campaignTraits:
+      heading: "Kampagnen-Merkmale"
+      skillSets: "Fertigkeiten"
+      traits: "Merkmale"
+      injuries: "Verletzungen"
+      talents: "Talente"
+      toggleTitle: "Kampagnen-Merkmal > {{category}} > {{name}} in Modellbeschreibung einschließen"
   ttsPreview:
     label: "TTS-Ausgabevorschau (Name und Beschreibung)"
   shareable:
@@ -82,6 +89,27 @@ outputOptions:
     disableSmallText:
       name: "Kleinen Text deaktivieren"
       label: "Wenn aktiviert, wird kein Text in Name oder Beschreibung klein dargestellt. Aktiviere dies, wenn du den kleinen Text in TTS schwer lesen kannst."
+    includeCampaignTraits:
+      name: "Kampagnen-Merkmale in Modellbeschreibung einschließen"
+      label: "Wenn aktiviert, enthält die TTS-Beschreibung alle Kampagnen-Merkmale des Modells (Fertigkeiten, Merkmale, Verletzungen, Talente). Dies ist der Hauptschalter — die Unterkategorien unten und die Checkboxen pro Merkmal verfeinern die Ausgabe weiter."
+    includeCampaignTraitsFullText:
+      name: "Vollständigen Text der Kampagnen-Merkmale einschließen"
+      label: "Wenn aktiviert, enthält die TTS-Beschreibung den vollständigen Regeltext jedes Kampagnen-Merkmals. Andernfalls wird nur der Name angezeigt."
+    includeCampaignSkillSets:
+      name: "Kampagnen-Fertigkeiten einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Merkmale der Kategorie Fertigkeiten (z. B. Suppressor, Prowler) in die Modellbeschreibung aufgenommen."
+    includeCampaignTraitsCategory:
+      name: "Kampagnen-Merkmale einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Merkmale der Kategorie Merkmale (z. B. Agile, Resilient) in die Modellbeschreibung aufgenommen."
+    includeCampaignInjuries:
+      name: "Kampagnen-Verletzungen einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Verletzungen (z. B. Blinded Eye, Chest Wound) in die Modellbeschreibung aufgenommen."
+    includeCampaignTalents:
+      name: "Kampagnen-Talente einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Talente (z. B. Natural Talent) in die Modellbeschreibung aufgenommen."
+    includeCampaignXp:
+      name: "Kampagnen-XP in Modellbeschreibung einschließen"
+      label: "Wenn aktiviert, endet die TTS-Beschreibung mit den aktuellen Kampagnen-XP des Modells. Modelle mit 0 XP erhalten keinen zusätzlichen Eintrag."
   colours:
     quality:
       name: "Ausgabefarbe für Modellqualität"
@@ -98,6 +126,9 @@ outputOptions:
     tough:
       name: "Ausgabefarbe für Tough-Wert des Modells"
       label: "HEX-Code für den Tough-Wert des Modells, falls vorhanden, in der TTS-Ausgabe."
+    campaign:
+      name: "Ausgabefarbe für Kampagnen-Elemente"
+      label: "HEX-Code für die Kampagnen-Merkmale und Kampagnen-XP des Modells in der TTS-Ausgabe."
   saveLoad:
     header: "TTS-Ausgabekonfigurationen speichern & laden"
     description: "Speichere die gesamte obige Konfiguration im lokalen Speicher deines Browsers, indem du auf den Button unten klickst. Du kannst dann schnell verschiedene Konfigurationen laden."

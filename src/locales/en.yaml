@@ -32,6 +32,13 @@ app:
     quantityPerModelTitle: "Quantity of this item per model"
     includeInNameTitle: "Check to include this item in the model name"
     duplicateButton: "Duplicate this model definition"
+    campaignTraits:
+      heading: "Campaign Traits"
+      skillSets: "Skill Sets"
+      traits: "Traits"
+      injuries: "Injuries"
+      talents: "Talents"
+      toggleTitle: "Include Campaign Trait > {{category}} > {{name}} in model description"
   ttsPreview:
     label: "TTS output preview (name and description)"
   shareable:
@@ -86,6 +93,27 @@ outputOptions:
     disableSmallText:
       name: "Disable small text"
       label: "If enabled, then none of the text in the name or description will be small. Enable this if you have trouble reading the small text in TTS."
+    includeCampaignTraits:
+      name: "Include campaign traits in model description"
+      label: 'If enabled, the TTS "description" output will include each of the model''s campaign traits (Skill Sets, Traits, Injuries, Talents). This is the master switch — the per-category toggles below, and the per-trait checkboxes in the editor, further refine what is shown.'
+    includeCampaignTraitsFullText:
+      name: "Include the full text for campaign traits"
+      label: 'If enabled, the TTS "description" output will include each campaign trait''s rule text in full. If disabled, only the trait''s name will be included.'
+    includeCampaignSkillSets:
+      name: "Include Campaign Skill Sets"
+      label: "If enabled, campaign traits in the Skill Sets category (e.g. Suppressor, Prowler) are included in the model description."
+    includeCampaignTraitsCategory:
+      name: "Include Campaign Traits"
+      label: "If enabled, campaign traits in the Traits category (e.g. Agile, Resilient) are included in the model description."
+    includeCampaignInjuries:
+      name: "Include Campaign Injuries"
+      label: "If enabled, campaign injuries (e.g. Blinded Eye, Chest Wound) are included in the model description."
+    includeCampaignTalents:
+      name: "Include Campaign Talents"
+      label: "If enabled, campaign talents (e.g. Natural Talent) are included in the model description."
+    includeCampaignXp:
+      name: "Include Campaign XP in model description"
+      label: 'If enabled, the TTS "description" output ends with the model''s current campaign XP. Models with 0 XP have nothing added.'
   colours:
     quality:
       name: "Model Quality Stat Output Colour"
@@ -102,6 +130,9 @@ outputOptions:
     tough:
       name: "Model Tough Special Rule Rating Output Colour"
       label: "HEX code for the model's Tough rating, if it has one, in the TTS output."
+    campaign:
+      name: "Model Campaign Stuff Output Colour"
+      label: "HEX code for the model's campaign traits and campaign XP line in the TTS output."
   saveLoad:
     header: "Save & Load TTS Output Configs"
     description: "Save all of the above configuration into the local storage of your browser by hitting the button below. You can then quickly load different configs by hitting the load buttons below."

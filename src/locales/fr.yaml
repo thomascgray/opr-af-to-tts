@@ -28,6 +28,13 @@ app:
     quantityPerModelTitle: "Quantité de cet objet par modèle"
     includeInNameTitle: "Cochez pour inclure cet objet dans le nom du modèle"
     duplicateButton: "Dupliquer cette définition de modèle"
+    campaignTraits:
+      heading: "Traits de campagne"
+      skillSets: "Compétences"
+      traits: "Traits"
+      injuries: "Blessures"
+      talents: "Talents"
+      toggleTitle: "Inclure le trait de campagne > {{category}} > {{name}} dans la description du modèle"
   ttsPreview:
     label: "Aperçu de la sortie TTS (nom et description)"
   shareable:
@@ -82,6 +89,27 @@ outputOptions:
     disableSmallText:
       name: "Désactiver le texte en petit"
       label: "Si activé, aucun texte du nom ou de la description ne sera en petit. Activez cette option si vous avez du mal à lire le petit texte dans TTS."
+    includeCampaignTraits:
+      name: "Inclure les traits de campagne dans la description du modèle"
+      label: "Si activé, la description TTS inclura chacun des traits de campagne du modèle (Compétences, Traits, Blessures, Talents). C'est l'interrupteur principal — les sous-catégories ci-dessous et les cases à cocher par trait affinent la sortie."
+    includeCampaignTraitsFullText:
+      name: "Inclure le texte complet des traits de campagne"
+      label: "Si activé, la description TTS inclura le texte complet de chaque trait de campagne. Sinon, seul le nom du trait sera affiché."
+    includeCampaignSkillSets:
+      name: "Inclure les Compétences de campagne"
+      label: "Si activé, les traits de campagne de la catégorie Compétences (p. ex. Suppressor, Prowler) sont inclus dans la description du modèle."
+    includeCampaignTraitsCategory:
+      name: "Inclure les Traits de campagne"
+      label: "Si activé, les traits de campagne de la catégorie Traits (p. ex. Agile, Resilient) sont inclus dans la description du modèle."
+    includeCampaignInjuries:
+      name: "Inclure les Blessures de campagne"
+      label: "Si activé, les blessures de campagne (p. ex. Blinded Eye, Chest Wound) sont incluses dans la description du modèle."
+    includeCampaignTalents:
+      name: "Inclure les Talents de campagne"
+      label: "Si activé, les talents de campagne (p. ex. Natural Talent) sont inclus dans la description du modèle."
+    includeCampaignXp:
+      name: "Inclure l'XP de campagne dans la description du modèle"
+      label: "Si activé, la description TTS se termine par l'XP de campagne actuelle du modèle. Les modèles avec 0 XP n'ont aucune ligne ajoutée."
   colours:
     quality:
       name: "Couleur de la qualité du modèle"
@@ -98,6 +126,9 @@ outputOptions:
     tough:
       name: "Couleur de la valeur Tough du modèle"
       label: "Code HEX pour la valeur Tough du modèle, le cas échéant, dans la sortie TTS."
+    campaign:
+      name: "Couleur des éléments de campagne"
+      label: "Code HEX pour les traits de campagne et l'XP de campagne du modèle dans la sortie TTS."
   saveLoad:
     header: "Enregistrer et charger les configurations TTS"
     description: "Enregistrez toute la configuration ci-dessus dans le stockage local de votre navigateur en cliquant sur le bouton ci-dessous. Vous pourrez ensuite rapidement charger différentes configurations."

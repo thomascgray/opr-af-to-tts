@@ -140,3 +140,24 @@ export interface IUpgradeDependency {
   count: number;
   type: UpgradeType;
 }
+
+export interface ICommonRule {
+  id: number;
+  name: string;
+  description: string;
+  hasRating: boolean;
+}
+
+// Campaign-mode traits from /api/rules/common/<n> → `traits` array.
+// Response carries many null-heavy fields (aliasedRuleId, archived, category, coreType,
+// costFormula, defaultRating, enabledGameSystems, generation, hasRating, params,
+// rangedWoundFormula, ratingValues, replaceWith, ruleGenEnabled, ruleType, tags, targetType,
+// variants, weaponWeight, weight, woundFormula) — ignored here, add as optional if ever needed.
+export interface ICommonRuleTrait {
+  id: string;
+  name: string;
+  description: string;
+  type: number; // 1=Injury, 2=Talent, 3=Skill Set, else=Trait (catch-all)
+  skillSet?: string | null;
+  campaign: boolean;
+}

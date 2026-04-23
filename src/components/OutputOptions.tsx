@@ -203,6 +203,141 @@ export const OutputOptions = () => {
           </div>
         </label>
         <hr />
+
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignTraits}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignTraits =
+                !stateView.ttsOutputConfig.includeCampaignTraits;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignTraits.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignTraits.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignTraitsFullText}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignTraitsFullText =
+                !stateView.ttsOutputConfig.includeCampaignTraitsFullText;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignTraitsFullText.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignTraitsFullText.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignSkillSets}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignSkillSets =
+                !stateView.ttsOutputConfig.includeCampaignSkillSets;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignSkillSets.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignSkillSets.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignTraitsCategory}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignTraitsCategory =
+                !stateView.ttsOutputConfig.includeCampaignTraitsCategory;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignTraitsCategory.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignTraitsCategory.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignInjuries}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignInjuries =
+                !stateView.ttsOutputConfig.includeCampaignInjuries;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignInjuries.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignInjuries.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignTalents}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignTalents =
+                !stateView.ttsOutputConfig.includeCampaignTalents;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignTalents.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignTalents.label")}
+            </p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <input
+            checked={stateView.ttsOutputConfig.includeCampaignXp}
+            className="w-5 h-5"
+            type="checkbox"
+            onChange={() => {
+              state.ttsOutputConfig.includeCampaignXp =
+                !stateView.ttsOutputConfig.includeCampaignXp;
+            }}
+          />
+          <div className="w-11/12">
+            <p className="font-bold">
+              {t("outputOptions.rules.includeCampaignXp.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.rules.includeCampaignXp.label")}
+            </p>
+          </div>
+        </label>
+        <hr />
         <label className="flex flex-row items-center space-x-4">
           <span
             style={{
@@ -321,6 +456,31 @@ export const OutputOptions = () => {
           <div>
             <p className="font-bold">{t("outputOptions.colours.tough.name")}</p>
             <p className="text-xs">{t("outputOptions.colours.tough.label")}</p>
+          </div>
+        </label>
+        <label className="flex flex-row items-center space-x-4">
+          <span
+            style={{
+              backgroundColor:
+                stateView.ttsOutputConfig.modelCampaignStuffOutputColour,
+            }}
+            className="block h-5 w-5 rounded-full border border-stone-600"
+          ></span>
+          <input
+            className="border border-stone-500 px-2 py-1 w-20 dark:text-black"
+            value={stateView.ttsOutputConfig.modelCampaignStuffOutputColour}
+            onChange={(e) => {
+              state.ttsOutputConfig.modelCampaignStuffOutputColour =
+                e.currentTarget.value;
+            }}
+          />
+          <div>
+            <p className="font-bold">
+              {t("outputOptions.colours.campaign.name")}
+            </p>
+            <p className="text-xs">
+              {t("outputOptions.colours.campaign.label")}
+            </p>
           </div>
         </label>
         <hr className="my-2" />

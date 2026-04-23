@@ -15,9 +15,13 @@ export const initialTtsOutputConfig = {
   swapCustomNameBracketingForUnitsWithMultipleModels: true,
   completelyReplaceNameWithCustomName: false,
   disableSmallText: false,
-  includeCampaignXp: false,
-  includeCampaignTraits: false,
-  includeCampaignTraitsFullText: false,
+  includeCampaignXp: true,
+  includeCampaignTraits: true,
+  includeCampaignTraitsFullText: true,
+  includeCampaignSkillSets: true,
+  includeCampaignTraitsCategory: true,
+  includeCampaignInjuries: true,
+  includeCampaignTalents: true,
   modelWeaponOutputColour: "#fde047",
   modelSpecialRulesOutputColour: "#f472b6",
   modelQuaOutputColour: "#ef4444",
@@ -34,6 +38,7 @@ export const state = proxy<iAppState>({
   armySpecialRulesDict: [],
   coreSpecialRulesDict: [],
   armySpecialRulesDictNames: [],
+  campaignTraitsDict: [],
   unitProfiles: [],
   ttsOutputConfig: {
     ...initialTtsOutputConfig,
@@ -99,11 +104,34 @@ export const duplicateModel = (upId: string, mId: string) => {
   if (unit) {
     const model = unit.models.find((m) => m.id === mId);
     if (model) {
+      const cloned = _.cloneDeep(model);
+      cloned.campaignTraits = cloned.campaignTraits.map((t) => ({
+        ...t,
+        id: nanoid(),
+      }));
       unit.models.push({
-        ..._.cloneDeep(model),
+        ...cloned,
         isGenerated: false,
         id: nanoid(),
       });
+    }
+  }
+};
+
+export const updateCampaignTraitIncludeInOutput = (
+  upId: string,
+  mId: string,
+  traitId: string,
+  include: boolean
+) => {
+  const unit = state.unitProfiles.find((up) => up.id === upId);
+  if (unit) {
+    const model = unit.models.find((m) => m.id === mId);
+    if (model) {
+      const trait = model.campaignTraits.find((t) => t.id === traitId);
+      if (trait) {
+        trait.includeInOutput = include;
+      }
     }
   }
 };
