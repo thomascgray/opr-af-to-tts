@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.tabletopsimulator.com)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

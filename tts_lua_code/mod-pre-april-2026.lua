@@ -15,8 +15,6 @@ local unitIdToAssign = nil;
 local originalToughValueToAssign = nil;
 local originalCasterValueToAssign = nil;
 local armyNameToAssign = nil;
-local unitColorToAssign = nil;
-local unitColorAssignments = {}  -- Maps unitId -> color for consistent unit coloring
 
 -- Global Font Scaling Constants
 local GLOBAL_FONT_SCALING = {
@@ -26,48 +24,79 @@ local GLOBAL_FONT_SCALING = {
     loadout_decrease = 2
 }
 
--- Unit Color Palette for visual distinction (20 colors)
-local UNIT_COLORS = {
-    {0, 0, 255},        -- Blue
-    {255, 0, 0},        -- Red
-    {0, 255, 0},        -- Green
-    {255, 255, 0},      -- Yellow
-    {255, 0, 255},      -- Magenta
-    {0, 255, 255},      -- Cyan
-    {255, 128, 0},      -- Orange
-    {128, 0, 255},      -- Purple
-    {0, 128, 0},        -- Dark Green
-    {128, 128, 0},      -- Olive
-    {255, 192, 204},    -- Pink
-    {0, 0, 128},        -- Navy
-    {128, 64, 0},       -- Brown
-    {192, 192, 192},    -- Silver
-    {255, 215, 0},      -- Gold
-    {0, 128, 128},      -- Teal
-    {128, 0, 0},        -- Maroon
-    {128, 128, 255},    -- Light Blue
-    {255, 128, 128},    -- Salmon
-    {128, 255, 128},    -- Light Green
-}
-local unitColorIndexCounter = 0  -- Track which color to assign next
-
 -- When saving, remove the --lua
 -- local perModelCode = [[
 local perModelCode = [[
+    function distributeObjects(numObjects, spacing)
+        if numObjects <= 0 then
+            return {} -- Return an empty table for an invalid input
+        elseif numObjects == 1 then
+            return {0} -- Center position for a single object
+        end
+    
+        local positions = {}
+        local totalWidth = (numObjects - 1) * spacing
+    
+        for i = 1, numObjects do
+            local position = (i - 1) * spacing - totalWidth / 2
+            table.insert(positions, position)
+        end
+    
+        return positions
+    end
+
     function tablelength(T)
         local c = 0
-        for _ in pairs(T) do c = c + 1 end
+        for _ in pairs(T) do
+            c = c + 1
+        end
         return c
     end
 
-    function numOrMin(a, b) return (a < b) and b or a end
-    function numOrMax(a, b) return (a > b) and b or a end
+    function largestWithMax(a, b, c)
+        return (a > b) and (b > c and c or b) or (a > c and c or a)
+    end
 
-    function mergeTables(t1, t2)
-        local out = {}
-        for k, v in pairs(t1) do out[k] = v end
-        for k, v in pairs(t2) do out[k] = v end
-        return out
+    function smallestWithMin(a, b, c)
+        return (a < b) and (b < c and b or c) or (a < c and a or c)
+    end
+
+    function numOrMin(a, b)
+        if (a < b) then
+            return b
+        else
+            return a
+        end
+    end
+
+    function numOrMax(a, b)
+        if (a > b) then
+            return b
+        else
+            return a
+        end
+    end
+
+    function mergeTables(table1, table2)
+        local mergedTable = {}
+    
+        for key, value in pairs(table1) do
+            mergedTable[key] = value
+        end
+    
+        for key, value in pairs(table2) do
+            mergedTable[key] = value
+        end
+    
+        return mergedTable
+    end
+
+    function roundToTwoDecimalPlaces(number)
+        return math.floor(number * 100 + 0.5) / 100
+    end
+
+    function __noop()
+        -- deliberately blank
     end
 
     -- Constants
@@ -77,6 +106,18 @@ local perModelCode = [[
         name_decrease = 4,
         loadout_base = 20,
         loadout_decrease = 2
+    }
+    local BUTTON_CONFIG = {
+        width = 100,
+        height = 100,
+        font_size = 340,
+        wound_spacing = 0.275,
+        row_spacing = 0.35
+    }
+    local COLORS = {
+        wound = {1, 0, 0},
+        spell = {0, 1, 1},
+        text = {1, 1, 1}
     }
 
     -- Game System Helper Functions
@@ -110,11 +151,28 @@ local perModelCode = [[
         end
     end
 
+    -- Button Creation Helper
+    function createStatusButton(position, color, opacity, modelSizeY, rowIndex, buttonRowsDistribution)
+        self.createButton({
+            click_function = "__noop",
+            function_owner = self,
+            label          = "",
+            position       = {position, modelSizeY, buttonRowsDistribution[rowIndex]},
+            rotation       = {0, 0, 0},
+            width          = BUTTON_CONFIG.width,
+            height         = BUTTON_CONFIG.height,
+            font_size      = BUTTON_CONFIG.font_size,
+            color          = {color[1], color[2], color[3], opacity},
+            font_color     = COLORS.text,
+        })
+    end
+
     function onLoad()
         local bounds = self.getBoundsNormalized();
         modelSizeX = bounds['size']['x'];
-        modelSizeY = bounds['size']['y'];
         local decodedMemo = JSON.decode(self.memo)
+    
+        isShowWoundsAndSpellTokens = true;
 
         measuringCircle = {
             color             = {255, 255, 255, 0.9}, --RGB color of the circle
@@ -123,7 +181,7 @@ local perModelCode = [[
             thickness         = 0.05,         --thickness of the circle line
             vertical_position = 0.5,         --vertical height of the circle relative to the object
         }
-
+    
         isActivatedCircle = {
             color             = {46 / 255, 204 / 255, 113 / 255, 1}, --RGB color of the circle
             radius            = 0,           --radius of the circle around the object
@@ -148,22 +206,61 @@ local perModelCode = [[
         rebuildContext();
         rebuildStatusEffectThings();
         rebuildName();
-        rebuildActionPanelXml();
+        rebuildXml();
     end
 
-    -- Adjust a numeric memo field by delta, announce, and refresh name + panel.
-    function adjustStat(field, delta, verb)
+    function hpUp(player_color)
         local decodedMemo = JSON.decode(self.memo)
-        printToAll("'" .. decodedMemo['unitName'] .. "' " .. verb)
-        updateMemo({ [field] = decodedMemo[field] + delta })
-        rebuildName()
-        rebuildActionPanelXml()
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Wound.");
+        
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentToughValue = decodedMemo['currentToughValue'] + 1,
+        }))
+        
+
+        self.call('rebuildName');
+        self.call('rebuildXml');
     end
 
-    function hpUp()            adjustStat('currentToughValue',   1, 'gained 1 Wound.') end
-    function hpDown()          adjustStat('currentToughValue',  -1, 'lost 1 Wound.') end
-    function spellTokensUp()   adjustStat('currentCasterValue',  1, 'gained 1 Spell Token.') end
-    function spellTokensDown() adjustStat('currentCasterValue', -1, 'lost 1 Spell Token.') end
+    function hpDown(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Wound.");
+        
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentToughValue = decodedMemo['currentToughValue'] - 1,
+        }))
+        
+        self.call('rebuildName');
+        self.call('rebuildXml');
+    end
+
+    function spellTokensUp(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+        
+        printToAll("'" .. decodedMemo['unitName'] .. "' gained 1 Spell Token.");
+        
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentCasterValue = decodedMemo['currentCasterValue'] + 1,
+        }))
+
+        self.call('rebuildName');
+        self.call('rebuildXml');
+    end
+
+    function spellTokensDown(player_color)
+        local decodedMemo = JSON.decode(self.memo)
+        
+        printToAll("'" .. decodedMemo['unitName'] .. "' lost 1 Spell Token.");
+        
+        self.memo = JSON.encode(mergeTables(decodedMemo, {
+            currentCasterValue = decodedMemo['currentCasterValue'] - 1,
+        }))
+
+        self.call('rebuildName');
+        self.call('rebuildXml');
+    end
 
     function toggleActivated(player_color)
         toggleUnitStatus('isActivated', 'activation')
@@ -175,66 +272,6 @@ local perModelCode = [[
 
     function toggleShaken(player_color)
         toggleUnitStatus('isShaken', 'Shaken')
-    end
-
-    -- Unit-wide toggle for UI flags. Unlike toggleUnitStatus, this rebuilds the
-    -- action panel on every mate so the UI change is reflected immediately.
-    -- Missing flags (pre-upgrade models) are treated as true.
-    function toggleUnitUiFlag(flagField)
-        local decodedMemo = JSON.decode(self.memo)
-        local current = decodedMemo[flagField]
-        if current == nil then current = true end
-        local newValue = not current
-
-        local unitMates = getAllUnitMates()
-        for _, unitMate in ipairs(unitMates) do
-            local mateMemo = JSON.decode(unitMate.memo)
-            unitMate.memo = JSON.encode(mergeTables(mateMemo, {
-                [flagField] = newValue
-            }))
-            unitMate.call('rebuildActionPanelXml')
-        end
-    end
-
-    function toggleHpBar(player_color)
-        toggleUnitUiFlag('showHpBar')
-    end
-
-    function toggleSpBar(player_color)
-        toggleUnitUiFlag('showSpBar')
-    end
-
-    function toggleMeasuringBar(player_color)
-        toggleUnitUiFlag('showMeasuringBar')
-    end
-
-    -- Preset ring colours. Ordered so the row renders left-to-right in this
-    -- order; each entry has the button id, display hex, and {r,g,b} 0-1 triple.
-    RING_COLORS = {
-        {id = 'ring-color-white',  hex = '#ffffff', rgb = {1, 1, 1}},
-        {id = 'ring-color-red',    hex = '#e74c3c', rgb = {231/255, 76/255, 60/255}},
-        {id = 'ring-color-orange', hex = '#e67e22', rgb = {230/255, 126/255, 34/255}},
-        {id = 'ring-color-yellow', hex = '#f1c40f', rgb = {241/255, 196/255, 15/255}},
-        {id = 'ring-color-green',  hex = '#2ecc71', rgb = {46/255, 204/255, 113/255}},
-        {id = 'ring-color-blue',   hex = '#3498db', rgb = {52/255, 152/255, 219/255}},
-        {id = 'ring-color-purple', hex = '#9b59b6', rgb = {155/255, 89/255, 182/255}},
-        {id = 'ring-color-pink',   hex = '#e84393', rgb = {232/255, 67/255, 147/255}},
-    }
-
-    -- Button onClick handler. Reads the colour preset from the element id.
-    function setRingColor(player, value, id)
-        local color
-        for _, c in ipairs(RING_COLORS) do
-            if c.id == id then color = c.rgb; break end
-        end
-        if not color then return end
-
-        for _, unitMate in ipairs(getAllUnitMates()) do
-            local mateMemo = JSON.decode(unitMate.memo)
-            unitMate.memo = JSON.encode(mergeTables(mateMemo, { measuringRingColor = color }))
-            unitMate.call('rebuildStatusEffectThings')
-            unitMate.call('rebuildActionPanelXml')  -- so the measuring-bar text recolours too
-        end
     end
 
     function getAllUnitMates()
@@ -249,17 +286,11 @@ local perModelCode = [[
         return armyObjects
     end
 
-    function selectAllUnit(playerOrColor)
-        -- Context-menu callbacks pass a color string; Object UI Button onClick
-        -- passes a Player object. Normalize to a color string.
-        local color = playerOrColor
-        if type(color) ~= 'string' then
-            color = playerOrColor.color
-        end
-
-        local unitMates = getAllUnitMates()
+    function selectAllUnit(player_color)
+        local unitMates = getAllUnitMates();
+        
         for _, unitMate in ipairs(unitMates) do
-            unitMate.addToPlayerSelection(color)
+            unitMate.addToPlayerSelection(player_color);
         end
     end
 
@@ -291,13 +322,13 @@ local perModelCode = [[
 
         for _, armyMate in ipairs(armyMates) do
             local armyMateMemo = JSON.decode(armyMate.memo);
-
+            
             armyMate.memo = JSON.encode(mergeTables(armyMateMemo, {
                 currentCasterValue = numOrMax(armyMateMemo['currentCasterValue'] + armyMateMemo['originalCasterValue'], 6),
             }))
             armyMate.call('rebuildContext');
             armyMate.call('rebuildName');
-            armyMate.call('rebuildActionPanelXml');
+            armyMate.call('rebuildXml');
             armyMate.call('rebuildStatusEffectThings');
         end
     end
@@ -354,25 +385,20 @@ local perModelCode = [[
         else
             printToAll("'" .. decodedMemo['unitName'] .. "' model measuring aura set to " .. measuringCircle.radius .. "''")
         end
-
+    
         rebuildStatusEffectThings();
-        rebuildActionPanelXml();
     end
 
-    -- Legacy function kept for backward compatibility with old models
     function cycleShowHideWoundsAndSpellTokens()
-        -- HP/SP display is now handled by XML-based stat bars (always visible)
+        isShowWoundsAndSpellTokens = not isShowWoundsAndSpellTokens;
+        self.call('rebuildXml');
     end
 
     function rebuildStatusEffectThings()
         local decodedMemo = JSON.decode(self.memo)
-
-        -- Sync measuring ring colour from memo (unit-wide; missing defaults to white)
-        local ringColor = decodedMemo['measuringRingColor'] or {1, 1, 1}
-        measuringCircle.color = {ringColor[1], ringColor[2], ringColor[3], 0.9}
-
+           
         local vectorPointsTable = {}
-
+        
         local scale = self.getScale();
         local heightForCircles = 0.4 / scale['y'];
 
@@ -414,10 +440,70 @@ local perModelCode = [[
         self.setVectorLines(vectorPointsTable)
     end
 
-    -- Legacy function kept for backward compatibility with old models
-    -- HP/SP display is now handled by XML-based stat bars in rebuildActionPanelXml()
     function rebuildXml()
+        if (isShowWoundsAndSpellTokens == false) then
+            self.clearButtons();
+            return;
+        end
+
+        local decodedMemo = JSON.decode(self.memo)
+
+        local bounds = self.getVisualBoundsNormalized();
+        local modelSizeY = (bounds['size']['y'] + (bounds['size']['y'] / 2)) / self.getScale()['y'];    
+
+        local rowCount = 1;
+        if (decodedMemo['originalCasterValue'] ~= 0) then
+            rowCount = rowCount + 1;
+        end
+
+        local buttonRowsDistribution = distributeObjects(rowCount, BUTTON_CONFIG.row_spacing);
+
         self.clearButtons();
+
+        if isTraditionalSystem(decodedMemo['gameSystem']) then
+            local woundsDistribution = distributeObjects(decodedMemo['originalToughValue'], BUTTON_CONFIG.wound_spacing);
+            
+            -- do wounds for non skirmish games
+            for key, value in pairs(woundsDistribution) do
+                if (decodedMemo['currentToughValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                createStatusButton(value, COLORS.wound, opacity, modelSizeY, 1, buttonRowsDistribution)
+            end
+        end
+
+        if isSkirmishSystem(decodedMemo['gameSystem']) then
+            local woundsDistribution = distributeObjects(decodedMemo['originalToughValue'] + 5, BUTTON_CONFIG.wound_spacing);
+            
+            -- do wounds for skirmish games
+                -- basically, they have as many wounds as they have tough plus 5
+            for key, value in pairs(woundsDistribution) do
+                if (decodedMemo['currentToughValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                createStatusButton(value, COLORS.wound, opacity, modelSizeY, 1, buttonRowsDistribution)
+            end
+        end
+
+        -- do spell tokens
+        -- spell tokens are always the same regardless of game system
+
+        if (decodedMemo['originalCasterValue'] > 0) then
+            local spellTokensDistribution = distributeObjects(6, BUTTON_CONFIG.wound_spacing);
+            local opacity = 1;
+            for key, value in pairs(spellTokensDistribution) do
+                if (decodedMemo['currentCasterValue'] < key) then
+                    opacity = 0.6;
+                else
+                    opacity = 1;
+                end
+                createStatusButton(value, COLORS.spell, opacity, modelSizeY, 2, buttonRowsDistribution)
+            end
+        end
     end
 
     function rebuildName()
@@ -461,7 +547,6 @@ local perModelCode = [[
         measuringCircle.radius = 0;
         printToAll("'" .. decodedMemo['unitName'] .. "' Measuring Off")
         rebuildStatusEffectThings();
-        rebuildActionPanelXml();
     end
 
     function measuringOffArmy()
@@ -477,248 +562,62 @@ local perModelCode = [[
 
     end
     
-    -- Menu position/rotation adjustment functions
-    function adjustMenuOffset(field, delta)
-        local decodedMemo = JSON.decode(self.memo)
-        updateMemo({ [field] = (decodedMemo[field] or 0) + delta })
-        rebuildActionPanelXml()
-    end
-
-    function moveMenuUp()      adjustMenuOffset('menuHeightOffset',    20) end
-    function moveMenuDown()    adjustMenuOffset('menuHeightOffset',   -20) end
-    function rotateMenuLeft()  adjustMenuOffset('menuRotationOffset', -15) end
-    function rotateMenuRight() adjustMenuOffset('menuRotationOffset',  15) end
-
     function rebuildContext()
+        local decodedMemo = JSON.decode(self.memo)
+        
         self.clearContextMenu()
-        local decodedMemo = JSON.decode(self.memo)
-        local gameSystem = decodedMemo['gameSystem']
 
-        self.addContextMenuItem("Toggle Menu", toggleActionPanel, false)
-        self.addContextMenuItem("Activated", toggleActivated, false)
-        if isTraditionalSystem(gameSystem) then
-            self.addContextMenuItem("Shaken", toggleShaken, false)
+        self.addContextMenuItem("▼ Model", __noop, true)
+
+        if (decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(decodedMemo['gameSystem'])) then
+            self.addContextMenuItem("Wounds +", hpUp, true)
+            self.addContextMenuItem("Wounds -", hpDown, true)
         end
-        if isSkirmishSystem(gameSystem) then
-            self.addContextMenuItem("Stunned", toggleStunned, false)
+
+        if (decodedMemo['originalCasterValue'] ~= 0) then
+            self.addContextMenuItem("Spell Tokens +", spellTokensUp, true)
+            self.addContextMenuItem("Spell Tokens -", spellTokensDown, true)
         end
+
+        if (decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(decodedMemo['gameSystem']) or decodedMemo['originalCasterValue'] ~= 0) then
+            self.addContextMenuItem("Toggle W/SP Count", cycleShowHideWoundsAndSpellTokens, false)
+        end
+
         self.addContextMenuItem("Measuring", cycleMeasuringRadius, true)
-    end
+        self.addContextMenuItem("Measuring Off", measuringOff, true) 
 
-    -- Action Panel UI State
-    isActionPanelOpen = false
+        self.addContextMenuItem("▼ Unit", __noop, true)
 
-    function closeActionPanel()
-        if not isActionPanelOpen then return end
-        self.UI.hide('action-panel')
-        isActionPanelOpen = false
-    end
-    -- Alias: called by army mates when another menu opens.
-    closeMenuFromExternal = closeActionPanel
-
-    function toggleActionPanel(player, value, id)
-        if isActionPanelOpen then
-            self.UI.hide('action-panel')
-            isActionPanelOpen = false
+        if (decodedMemo['isActivated']) then
+            self.addContextMenuItem("☑ Activated", toggleActivated, false)
         else
-            -- Close all other menus in the same army before opening this one
-            local armyMates = getAllArmyMates()
-            for _, armyMate in ipairs(armyMates) do
-                if armyMate ~= self then
-                    armyMate.call('closeMenuFromExternal')
-                end
+            self.addContextMenuItem("☐ Activated", toggleActivated, false)
+        end
+
+        if isSkirmishSystem(decodedMemo['gameSystem']) then
+            if (decodedMemo['isStunned']) then
+                self.addContextMenuItem("☑ Stunned", toggleStunned, false)
+            else
+                self.addContextMenuItem("☐ Stunned", toggleStunned, false)
             end
-
-            self.UI.show('action-panel')
-            isActionPanelOpen = true
         end
-    end
 
-    function buildActionPanelXml()
-        local decodedMemo = JSON.decode(self.memo)
-        local gameSystem  = decodedMemo['gameSystem']
-        local hasTough    = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
-        local hasCaster   = decodedMemo['originalCasterValue'] ~= 0
-
-        -- UI visibility flags. Missing (pre-upgrade models) defaults to true; any
-        -- stored value other than `false` (i.e. nil or true) means visible.
-        local showHpBar        = decodedMemo['showHpBar']        ~= false
-        local showSpBar        = decodedMemo['showSpBar']        ~= false
-        local showMeasuringBar = decodedMemo['showMeasuringBar'] ~= false
-
-        local currentTough  = decodedMemo['currentToughValue']  or 0
-        local originalTough = decodedMemo['originalToughValue'] or 0
-        local currentCaster = decodedMemo['currentCasterValue'] or 0
-
-        local ringColor = decodedMemo['measuringRingColor'] or {1, 1, 1}
-        local ringColorHex = string.format("#%02x%02x%02x",
-            math.floor(ringColor[1] * 255), math.floor(ringColor[2] * 255), math.floor(ringColor[3] * 255))
-
-        local btnColors    = 'colors="rgba(255,255,255,0.9)|rgba(255,255,255,1)|rgba(200,200,200,1)|rgba(128,128,128,0.5)"'
-        local barBtnColors = 'colors="rgba(0,0,0,0.4)|rgba(0,0,0,0.7)|rgba(0,0,0,0.9)|rgba(0,0,0,0.2)"'
-
-        -- XML builder helpers. All close over btnColors / barBtnColors.
-        local function btn(onClick, label, fontSize)
-            return '<Button onClick="' .. onClick .. '" fontSize="' .. (fontSize or 14) .. '" ' .. btnColors .. '>' .. label .. '</Button>'
-        end
-        local function section(title, innerXml)
-            return '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
-                '<VerticalLayout spacing="5" childForceExpandHeight="false">' ..
-                    '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. title .. '</Text>' ..
-                    innerXml ..
-                '</VerticalLayout>' ..
-            '</Panel>'
-        end
-        local function column(title, buttons)
-            return '<VerticalLayout spacing="5" minWidth="110" preferredWidth="110">' ..
-                '<Text fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. title .. '</Text>' ..
-                buttons ..
-            '</VerticalLayout>'
-        end
-        -- Progress-bar style: outer Panel's colour is the border frame. Inside,
-        -- a HorizontalLayout with padding=2 exposes 2px of that colour around a
-        -- row of two Panels — fill (in `color`) sized to current/max, and empty
-        -- (dark) filling the remainder. A second HorizontalLayout sibling holds
-        -- the interactive buttons + text on top.
-        local function statBar(color, label, onDown, onUp, current, max)
-            local innerW = 172   -- bar is 176 wide; 2px padding each side
-            local fillW = 0
-            if max > 0 then
-                fillW = math.max(0, math.min(innerW, math.floor(innerW * current / max)))
+        if isTraditionalSystem(decodedMemo['gameSystem']) then
+            if (decodedMemo['isShaken']) then
+                self.addContextMenuItem("☑ Shaken", toggleShaken, false)
+            else
+                self.addContextMenuItem("☐ Shaken", toggleShaken, false)
             end
-            local emptyW = innerW - fillW
-            return '<Panel color="' .. color .. '" minHeight="24" preferredHeight="24">' ..
-                '<HorizontalLayout spacing="0" padding="2" childForceExpandWidth="false" childForceExpandHeight="true">' ..
-                    '<Panel color="' .. color .. '" minWidth="' .. fillW .. '" preferredWidth="' .. fillW .. '" />' ..
-                    '<Panel color="rgba(0,0,0,0.7)" minWidth="' .. emptyW .. '" preferredWidth="' .. emptyW .. '" />' ..
-                '</HorizontalLayout>' ..
-                '<HorizontalLayout spacing="0" padding="0" childForceExpandWidth="false" childAlignment="MiddleCenter">' ..
-                    '<Button minWidth="24" preferredWidth="24" height="24" onClick="' .. onDown .. '" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>-</Button>' ..
-                    '<Text minWidth="80" preferredWidth="80" fontSize="16" fontStyle="Bold" color="#FFFFFF">' .. label .. '</Text>' ..
-                    '<Button minWidth="24" preferredWidth="24" height="24" onClick="' .. onUp .. '" fontSize="18" fontStyle="Bold" textColor="#FFFFFF" ' .. barBtnColors .. '>+</Button>' ..
-                '</HorizontalLayout>' ..
-            '</Panel>'
         end
+    
+        self.addContextMenuItem("Select All", selectAllUnit)
+        self.addContextMenuItem("Count", countUnit)
 
-        -- Model column (conditional on stats)
-        local modelButtons = ""
-        if hasTough  then modelButtons = modelButtons .. btn('hpUp', 'HP +') .. btn('hpDown', 'HP -') end
-        if hasCaster then modelButtons = modelButtons .. btn('spellTokensUp', 'SP +') .. btn('spellTokensDown', 'SP -') end
-        modelButtons = modelButtons .. btn('cycleMeasuringRadius', 'Measuring') .. btn('measuringOff', 'Measuring Off', 12)
-
-        -- Unit column (conditional on game system)
-        local unitButtons = btn('toggleActivated', 'Activated')
-        if isSkirmishSystem(gameSystem)    then unitButtons = unitButtons .. btn('toggleStunned', 'Stunned') end
-        if isTraditionalSystem(gameSystem) then unitButtons = unitButtons .. btn('toggleShaken',  'Shaken')  end
-        unitButtons = unitButtons .. btn('selectAllUnit', 'Select All') .. btn('countUnit', 'Count')
-
-        -- Army column
-        local armyButtons = btn('measuringOffArmy', 'Measuring Off', 12) ..
-            btn('deactivateArmy', 'Deactivate') ..
-            btn('armyRefreshSpellTokens', 'Refresh Spells', 12)
-
-        -- Positions + rotations. See CLAUDE/tts-lua-api-learnings.md for the axis
-        -- rules (negative Z = up for position; yaw is Z on the outer wrapper to
-        -- compose cleanly with the X=90/Y=180 billboard).
-        local actualHeight   = self.getBounds()['size']['y']
-        local heightOffset   = decodedMemo['menuHeightOffset']   or 0
-        local rotationOffset = decodedMemo['menuRotationOffset'] or 0
-        local statBarsZ      = -((actualHeight * 100) + 130 + heightOffset)
-        local actionPanelZ   = -((actualHeight * 100) + 430 + heightOffset)
-        local menuRotation   = "90 180 0"
-        local yawRotation    = "0 0 " .. rotationOffset
-
-        -- Stat bars: HP/SP gated on unit stat + user toggle; measuring only when
-        -- radius > 0 AND its toggle is on.
-        local showHp        = hasTough and showHpBar
-        local showSp        = hasCaster and showSpBar
-        local showMeasuring = (measuringCircle.radius > 0) and showMeasuringBar
-        local statBarsXml = ""
-        if showHp or showSp or showMeasuring then
-            local barContents = ""
-            if showHp then
-                -- Skirmish: max = tough + 5. Traditional: max = original tough.
-                local maxWounds = isSkirmishSystem(gameSystem) and (originalTough + 5) or originalTough
-                barContents = barContents .. statBar('#e74c3c', 'HP: ' .. currentTough .. '/' .. maxWounds, 'hpDown', 'hpUp', currentTough, maxWounds)
-            end
-            if showSp then
-                barContents = barContents .. statBar('#3498db', 'SP: ' .. currentCaster .. '/6', 'spellTokensDown', 'spellTokensUp', currentCaster, 6)
-            end
-            if showMeasuring then
-                -- Transparent background, ring-coloured text.
-                barContents = barContents .. '<Panel color="rgba(0,0,0,0)" minHeight="24" preferredHeight="24">' ..
-                    '<Text fontSize="16" fontStyle="Bold" color="' .. ringColorHex .. '">Measuring ' .. measuringCircle.radius .. "''" .. '</Text>' ..
-                '</Panel>'
-            end
-
-            local barCount = (showHp and 1 or 0) + (showSp and 1 or 0) + (showMeasuring and 1 or 0)
-            local panelHeight = (barCount * 26) + ((barCount - 1) * 4) + 4  -- 26 per bar + spacing + padding
-
-            -- Same outer-yaw / inner-billboard split as the action panel.
-            statBarsXml = '<Panel id="stat-bars-panel" position="0 0 ' .. statBarsZ .. '" rotation="' .. yawRotation .. '" width="180" height="' .. panelHeight .. '">' ..
-                '<Panel rotation="' .. menuRotation .. '" width="180" height="' .. panelHeight .. '">' ..
-                    '<VerticalLayout spacing="4" padding="2" childAlignment="MiddleCenter" childForceExpandHeight="false">' ..
-                        barContents ..
-                    '</VerticalLayout>' ..
-                '</Panel>' ..
-            '</Panel>'
-        end
-
-        -- UI Toggles: HP/SP gated on unit stat; measuring-bar toggle for everyone.
-        local uiToggleButtons = ""
-        if hasTough  then uiToggleButtons = uiToggleButtons .. btn('toggleHpBar', 'HP Bar') end
-        if hasCaster then uiToggleButtons = uiToggleButtons .. btn('toggleSpBar', 'SP Bar') end
-        uiToggleButtons = uiToggleButtons .. btn('toggleMeasuringBar', 'Measuring Bar')
-        local uiTogglesXml = section('UI Toggles',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' .. uiToggleButtons .. '</HorizontalLayout>')
-
-        -- Measuring Ring Colour row, driven by RING_COLORS.
-        local colorBtns = ""
-        for _, c in ipairs(RING_COLORS) do
-            colorBtns = colorBtns .. '<Button id="' .. c.id .. '" onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="' .. c.hex .. '"></Button>'
-        end
-        local ringColourXml = section('Measuring Ring Colour',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="false" childAlignment="MiddleCenter">' .. colorBtns .. '</HorizontalLayout>')
-
-        -- UI Config row - menu position + rotation.
-        local uiConfigXml = section('UI Config',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
-                btn('moveMenuUp', 'Menu ▲') .. btn('moveMenuDown', 'Menu ▼') ..
-                btn('rotateMenuLeft', 'Menu ↺') .. btn('rotateMenuRight', 'Menu ↻') ..
-            '</HorizontalLayout>')
-
-        return '<Defaults><Button fontSize="14" fontStyle="Bold" /></Defaults>' ..
-            statBarsXml ..
-            '<Panel id="action-panel" position="0 0 ' .. actionPanelZ .. '" rotation="' .. yawRotation .. '" active="false" width="380" height="560">' ..
-                '<Panel rotation="' .. menuRotation .. '" width="380" height="560">' ..
-                    '<VerticalLayout spacing="5" padding="10" childForceExpandHeight="false" childForceExpandWidth="false">' ..
-                        '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
-                            '<HorizontalLayout spacing="10" childForceExpandWidth="false">' ..
-                                column('Model', modelButtons) ..
-                                column('Unit',  unitButtons) ..
-                                column('Army',  armyButtons) ..
-                            '</HorizontalLayout>' ..
-                        '</Panel>' ..
-                        ringColourXml .. uiTogglesXml .. uiConfigXml ..
-                    '</VerticalLayout>' ..
-                    '<Button onClick="closeActionPanel" width="28" height="28" fontSize="14" fontStyle="Bold" textColor="#FFFFFF" color="#e74c3c" rectAlignment="UpperRight" offsetXY="-15 -15">X</Button>' ..
-                '</Panel>' ..
-            '</Panel>'
-    end
-
-    function rebuildActionPanelXml()
-        local wasOpen = isActionPanelOpen
-        local xml = buildActionPanelXml()
-        self.UI.setXml(xml)
-        isActionPanelOpen = false
-
-        -- Restore open state if panel was open before rebuild
-        if wasOpen then
-            Wait.frames(function()
-                self.UI.show('action-panel')
-                isActionPanelOpen = true
-            end, 1)
-        end
+        self.addContextMenuItem("▼ Army", __noop, true)
+        
+        self.addContextMenuItem("Army Measuring Off", measuringOffArmy)
+        self.addContextMenuItem("Deactivate", deactivateArmy)
+        self.addContextMenuItem("Refresh Spell Tokens", armyRefreshSpellTokens)
     end
 ]]
 
@@ -789,7 +688,6 @@ function cancelCurrentAssigning()
     unitIdToAssign = nil;
     originalToughValueToAssign = nil;
     originalCasterValueToAssign = nil;
-    unitColorToAssign = nil;
 end
 
 -- insane that this isn't in the Lua standard library???
@@ -828,6 +726,15 @@ function noop()
 end
 
 function onLoad(save_state)
+    local object = spawnObject({
+    type = "rpg_BEAR",
+    position = {0, 3, 0},
+    scale = {2, 2, 2},
+    sound = false,
+    callback_function = function(spawned_object)
+        log(spawned_object.getBounds())
+    end
+})
 end
 
 function onSubmit()
@@ -837,11 +744,6 @@ end
 
 function onCloseInput()
     UI.hide("main-panel")
-end
-
-function sendRequest(data)
-    -- Perform the request
-    WebRequest.get(oprAfToTtsLink, handleResponse)
 end
 
 function beginAssignment(player, _, id)
@@ -855,14 +757,6 @@ function beginAssignment(player, _, id)
     unitIdToAssign = army[unitIndex]['unitId']
     originalToughValueToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['originalToughValue']
     originalCasterValueToAssign = army[unitIndex]['modelDefinitions'][modelIndex]['originalCasterValue']
-
-    -- Assign a consistent color for this unit (same color for all models in the unit)
-    if unitColorAssignments[unitIdToAssign] == nil then
-        unitColorIndexCounter = unitColorIndexCounter + 1
-        local colorIndex = ((unitColorIndexCounter - 1) % #UNIT_COLORS) + 1
-        unitColorAssignments[unitIdToAssign] = UNIT_COLORS[colorIndex]
-    end
-    unitColorToAssign = unitColorAssignments[unitIdToAssign]
 
     broadcastToAll("Assigning '" .. nameOfModelAssigning .. "'")
 end
@@ -890,14 +784,6 @@ function assignNameAndDescriptionToObjects( object )
         target.addTag('OPRAFTTS_unit_id_' .. unitIdToAssign)
         target.addTag('OPRAFTTS_army_id_' .. armyId)
 
-        -- Calculate starting HP based on game system
-        -- For skirmish systems: max HP = tough + 5
-        -- For traditional systems: max HP = originalToughValue
-        local startingHP = originalToughValueToAssign
-        if gameSystemToAssign == 'aofs' or gameSystemToAssign == 'gff' then
-            startingHP = originalToughValueToAssign + 5
-        end
-
         target.memo = JSON.encode({
             isActivated = false,
             isShaken = false,
@@ -910,17 +796,12 @@ function assignNameAndDescriptionToObjects( object )
             nameToAssign = nameToAssign,
             originalToughValue = originalToughValueToAssign,
             originalCasterValue = originalCasterValueToAssign,
-            currentToughValue = startingHP,
-            currentCasterValue = originalCasterValueToAssign,
+            currentToughValue = 0,
+            currentCasterValue = 0,
             armyNameToAssign = armyNameToAssign,
-            unitColor = unitColorToAssign,
-            showHpBar = true,
-            showSpBar = true,
-            showMeasuringBar = true,
-            measuringRingColor = {1, 1, 1},
         })
         target.setRotation({0, 180, 0});
-        target.reload();  -- Reload to trigger onLoad() which sets up the action panel UI
+        -- target.reload();
     end
 
     broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to " .. tablelength(selectedObjects) .. " objects!", {0, 1, 0})
@@ -945,12 +826,6 @@ function onScriptingButtonDown(index, player_color)
         cancelCurrentAssigning();
     end
 end
-
-function click_func()
-
-end
-
-
 
 function onObjectPickUp(player_color, picked_up_object)
     if nameToAssign == nil then
