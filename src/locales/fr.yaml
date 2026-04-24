@@ -82,7 +82,7 @@ outputOptions:
       label: 'Si activé, la sortie "nom" TTS inclura une liste des règles spéciales séparée par des virgules et colorée sous le nom de la figurine.'
     swapCustomName:
       name: "Inverser l'ordre du nom personnalisé et du nom d'origine pour les unités à plusieurs figurines"
-      label: "Si activé, une unité avec un nom personnalisé dont la taille d'origine est supérieur à 1 affichera le nom personnalisé entre parenthèses au lieu du nom d'origine. C'est souvent plus lisible et plus logique."
+      label: "Si activé, une unité avec un nom personnalisé et disposant à l'origine de plusieurs figurine affichera le nom personnalisé entre parenthèses au lieu du nom d'origine. C'est souvent plus lisible et plus logique."
     replaceOriginalName:
       name: "Remplacer complètement le nom d'origine par le nom personnalisé"
       label: "Si activé, une unité avec un nom personnalisé verra ce nom remplacer entièrement l'original, sans référence au nom de la figurine de base."
