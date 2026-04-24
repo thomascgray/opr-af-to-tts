@@ -5,36 +5,36 @@ app:
   title: "🎲 Outil OPR Army Forge vers TTS de Tombola"
   bugReport:
     # <0> = lien vers la page des issues GitHub
-    text: "Si vous trouvez des bugs, merci de les signaler sur la <0>page des issues GitHub</0>. Merci !"
+    text: 'Si vous trouvez des bugs, merci de les signaler sur la <0>page "issues" du Github</0>. Merci !'
   armyShareLink:
     label: "Lien de partage Army Forge"
     # <0> = lien vers Army Forge, <1> = lien vers le mod TTS sur Steam
-    tldr: 'En bref : rendez-vous sur <0>Army Forge</0> → votre liste d''armée → menu en haut à droite → cliquez sur "Share as Link" → collez ce lien dans le champ ci-dessous → définissez les modèles → cliquez sur "Generate shareable link for TTS" en bas de la page → collez <em>cette</em> URL dans <1>ce mod</1>'
+    tldr: 'En bref : rendez-vous sur <0>Army Forge</0> → votre liste d''armée → menu en haut à droite → cliquez sur "Share as Link" → collez ce lien dans le champ ci-dessous → Vérifiez les définitions des figurines → cliquez sur "Generate shareable link for TTS" en bas de la page → collez <em>cet</em> URL dans <1>ce mod</1>'
     placeholder: "https://army-forge.onepagerules.com/share?id=XXX&name=XXX"
   importArmyButton: "Importer l'armée et générer les définitions"
   inlineOptions:
     legend: "Options rapides"
-    toggleAllLoadouts: "Cochez pour inclure TOUS les équipements dans le nom des modèles"
+    toggleAllLoadouts: "Cochez pour inclure TOUS les équipements avec le nom des figurines"
   unit:
-    modelCount_one: "{{count}} modèle"
-    modelCount_other: "{{count}} modèles"
+    modelCount_one: "{{count}} figurines"
+    modelCount_other: "{{count}} figurines"
     joinedTo: "rejoint à"
     combinedWith: "combiné avec"
     originalLoadoutLabel: "Équipement original de l'unité : {{loadout}}"
   model:
-    definitionLabel: "Définition du modèle {{n}}"
-    deleteTitle: "Supprimer cette définition de modèle"
-    quantityPerModelLabel: "Qté par modèle"
-    quantityPerModelTitle: "Quantité de cet objet par modèle"
-    includeInNameTitle: "Cochez pour inclure cet objet dans le nom du modèle"
-    duplicateButton: "Dupliquer cette définition de modèle"
+    definitionLabel: "Définition de la figurine {{n}}"
+    deleteTitle: "Supprimer cette définition de la figurine"
+    quantityPerModelLabel: "Qté par figurine"
+    quantityPerModelTitle: "Quantité de cet objet par figurine"
+    includeInNameTitle: "Cochez pour inclure cet objet dans le nom de la figurine"
+    duplicateButton: "Dupliquer cette définition de la figurine"
     campaignTraits:
       heading: "Traits de campagne"
       skillSets: "Compétences"
       traits: "Traits"
       injuries: "Blessures"
       talents: "Talents"
-      toggleTitle: "Inclure le trait de campagne > {{category}} > {{name}} dans la description du modèle"
+      toggleTitle: "Inclure le trait de campagne > {{category}} > {{name}} dans la description de la figurine"
   ttsPreview:
     label: "Aperçu de la sortie TTS (nom et description)"
   shareable:
@@ -48,87 +48,87 @@ tutorial:
     item2: 'Cliquez sur le menu en haut à droite et sélectionnez "Share as Link".'
     item3: "Collez ce lien dans le champ ci-dessus."
     item4: 'Cliquez sur "Importer l''armée et générer les définitions" ci-dessus.'
-    item5: "L'application va alors créer une définition de modèle pour chaque unité de votre armée."
-    item6: "À vous ensuite d'assigner les quantités d'équipements à chaque modèle, selon l'armée souhaitée :"
+    item5: "L'application va alors créer une définition de la figurine pour chaque unité de votre armée."
+    item6: "À vous ensuite d'assigner les quantités d'équipements à chaque figurine, selon l'armée souhaitée :"
     item6a: "Modifiez la quantité d'un équipement à l'aide des champs de gauche."
-    item6b: "Cochez la case à côté de la quantité d'un équipement pour que son nom apparaisse dans le nom TTS du modèle."
-    item6c: 'Dupliquez n''importe quelle définition de modèle via le bouton "Dupliquer cette définition de modèle".'
+    item6b: "Cochez la case à côté de la quantité d'un équipement pour que son nom apparaisse dans le nom TTS de la figurine."
+    item6c: 'Dupliquez n''importe quelle définition de la figurine via le bouton "Dupliquer cette définition de la figurine".'
     # <0> = lien vers le mod TTS
     item7: 'Une fois terminé, cliquez sur "Générer un lien partageable pour TTS" en bas de page, puis collez cette URL dans <0>le mod TTS</0>.'
   hint:
     label: "Astuce"
-    text: 'Utilisez les options de "TTS Output Configuration" ci-dessous pour ajuster ce qui apparaît dans les champs nom et description de chaque modèle dans TTS.'
+    text: 'Utilisez les options de "TTS Output Configuration" ci-dessous pour ajuster ce qui apparaît dans les champs nom et description de chaque figurine dans TTS.'
 
 outputOptions:
   header: "Configuration de la sortie TTS"
   rules:
     includeCoreSpecialRules:
-      name: 'Inclure les règles spéciales "Core" dans la description du modèle'
-      label: "Si activé, les descriptions TTS incluront les règles spéciales de base pertinentes pour le modèle."
+      name: "Inclure les règles spéciales de base dans la description de la figurine"
+      label: "Si activé, les descriptions TTS incluront les règles spéciales de base pertinentes pour chaque figurine."
     includeFullCoreSpecialRulesText:
       name: "Inclure le texte complet des règles spéciales de base"
       label: "Si activé, les descriptions TTS incluront le texte complet des règles spéciales de base. Sinon, seul le nom de la règle sera affiché."
     includeArmySpecialRules:
-      name: 'Inclure les règles spéciales "Army" dans la description du modèle'
-      label: "Si activé, les descriptions TTS incluront les règles de l'armée et de l'équipement du modèle."
+      name: "Inclure les règles spéciales d'armée dans la description de la figurine"
+      label: "Si activé, les descriptions TTS incluront les règles de l'armée et de l'équipement de la figurine."
     includeFullArmySpecialRulesText:
       name: "Inclure le texte complet des règles spéciales d'armée"
       label: "Si activé, les descriptions TTS incluront le texte complet des règles spéciales d'armée. Sinon, seul le nom de la règle sera affiché."
     includeWeaponsListInName:
-      name: "Inclure la liste des équipements dans le nom du modèle"
-      label: 'Si activé, la sortie "nom" TTS inclura une liste d''équipements séparée par des virgules et colorée sous le nom du modèle.'
+      name: "Inclure la liste des équipements dans le nom de la figurine"
+      label: 'Si activé, la sortie "nom" TTS inclura une liste d''équipements séparée par des virgules et colorée sous le nom de la figurine.'
     includeSpecialRulesListInName:
-      name: "Inclure la liste des règles spéciales dans le nom du modèle"
-      label: 'Si activé, la sortie "nom" TTS inclura une liste des règles spéciales séparée par des virgules et colorée sous le nom du modèle.'
+      name: "Inclure la liste des règles spéciales dans le nom de la figurine"
+      label: 'Si activé, la sortie "nom" TTS inclura une liste des règles spéciales séparée par des virgules et colorée sous le nom de la figurine.'
     swapCustomName:
-      name: "Inverser l'ordre du nom personnalisé et du nom d'origine pour les unités à plusieurs modèles"
-      label: "Si activé, une unité avec un nom personnalisé et plus d'un modèle d'origine affichera le nom personnalisé entre parenthèses au lieu du nom d'origine. C'est souvent plus lisible et plus logique."
+      name: "Inverser l'ordre du nom personnalisé et du nom d'origine pour les unités à plusieurs figurines"
+      label: "Si activé, une unité avec un nom personnalisé dont la taille d'origine est supérieur à 1 affichera le nom personnalisé entre parenthèses au lieu du nom d'origine. C'est souvent plus lisible et plus logique."
     replaceOriginalName:
       name: "Remplacer complètement le nom d'origine par le nom personnalisé"
-      label: "Si activé, une unité avec un nom personnalisé verra ce nom remplacer entièrement l'original, sans parenthèses ni ailleurs dans le modèle."
+      label: "Si activé, une unité avec un nom personnalisé verra ce nom remplacer entièrement l'original, sans référence au nom de la figurine de base."
     disableSmallText:
       name: "Désactiver le texte en petit"
       label: "Si activé, aucun texte du nom ou de la description ne sera en petit. Activez cette option si vous avez du mal à lire le petit texte dans TTS."
     includeCampaignTraits:
-      name: "Inclure les traits de campagne dans la description du modèle"
-      label: "Si activé, la description TTS inclura chacun des traits de campagne du modèle (Compétences, Traits, Blessures, Talents). C'est l'interrupteur principal — les sous-catégories ci-dessous et les cases à cocher par trait affinent la sortie."
+      name: "Inclure les traits de campagne dans la description de la figurine"
+      label: "Si activé, la description TTS inclura chacun des traits de campagne de la figurine (Compétences, Traits, Blessures, Talents). C'est l'option principale — les sous-catégories ci-dessous et les cases à cocher par trait affineront la sortie."
     includeCampaignTraitsFullText:
       name: "Inclure le texte complet des traits de campagne"
       label: "Si activé, la description TTS inclura le texte complet de chaque trait de campagne. Sinon, seul le nom du trait sera affiché."
     includeCampaignSkillSets:
       name: "Inclure les Compétences de campagne"
-      label: "Si activé, les traits de campagne de la catégorie Compétences (p. ex. Suppressor, Prowler) sont inclus dans la description du modèle."
+      label: "Si activé, les traits de campagne de la catégorie Compétences (p. ex. Suppressor, Prowler) seront inclus dans la description de la figurine."
     includeCampaignTraitsCategory:
       name: "Inclure les Traits de campagne"
-      label: "Si activé, les traits de campagne de la catégorie Traits (p. ex. Agile, Resilient) sont inclus dans la description du modèle."
+      label: "Si activé, les traits de campagne de la catégorie Traits (p. ex. Agile, Resilient) seront inclus dans la description de la figurine."
     includeCampaignInjuries:
       name: "Inclure les Blessures de campagne"
-      label: "Si activé, les blessures de campagne (p. ex. Blinded Eye, Chest Wound) sont incluses dans la description du modèle."
+      label: "Si activé, les blessures de campagne (p. ex. Blinded Eye, Chest Wound) seront incluses dans la description de la figurine."
     includeCampaignTalents:
       name: "Inclure les Talents de campagne"
-      label: "Si activé, les talents de campagne (p. ex. Natural Talent) sont inclus dans la description du modèle."
+      label: "Si activé, les talents de campagne (p. ex. Natural Talent) seront inclus dans la description de la figurine."
     includeCampaignXp:
-      name: "Inclure l'XP de campagne dans la description du modèle"
-      label: "Si activé, la description TTS se termine par l'XP de campagne actuelle du modèle. Les modèles avec 0 XP n'ont aucune ligne ajoutée."
+      name: "Inclure l'XP de campagne dans la description de la figurine"
+      label: "Si activé, la description TTS se terminera par l'XP de campagne actuelle de la figurine. Les figurines avec 0 XP n'auront aucune ligne ajoutée."
   colours:
     quality:
-      name: "Couleur de la qualité du modèle"
-      label: "Code HEX pour la valeur de qualité du modèle dans la sortie TTS."
+      name: "Couleur de la Qualité de la figurine"
+      label: "Code HEX pour la valeur de Qualité de la figurine dans la sortie TTS."
     defense:
-      name: "Couleur de la défense du modèle"
-      label: "Code HEX pour la valeur de défense du modèle dans la sortie TTS."
+      name: "Couleur de la Défense de la figurine"
+      label: "Code HEX pour la valeur de Défense de la figurine dans la sortie TTS."
     loadout:
-      name: "Couleur de l'équipement du modèle"
-      label: "Code HEX pour les détails d'équipement du modèle dans la sortie TTS."
+      name: "Couleur de l'équipement de la figurine"
+      label: "Code HEX pour les détails d'équipement de la figurine dans la sortie TTS."
     specialRules:
-      name: "Couleur des règles spéciales du modèle"
-      label: "Code HEX pour les détails des règles spéciales du modèle dans la sortie TTS."
+      name: "Couleur des règles spéciales de la figurine"
+      label: "Code HEX pour les détails des règles spéciales de la figurine dans la sortie TTS."
     tough:
-      name: "Couleur de la valeur Tough du modèle"
-      label: "Code HEX pour la valeur Tough du modèle, le cas échéant, dans la sortie TTS."
+      name: "Couleur de la valeur Tough de la figurine"
+      label: "Code HEX pour la valeur Tough de la figurine, le cas échéant, dans la sortie TTS."
     campaign:
       name: "Couleur des éléments de campagne"
-      label: "Code HEX pour les traits de campagne et l'XP de campagne du modèle dans la sortie TTS."
+      label: "Code HEX pour les traits de campagne et l'XP de campagne de la figurine dans la sortie TTS."
   saveLoad:
     header: "Enregistrer et charger les configurations TTS"
     description: "Enregistrez toute la configuration ci-dessus dans le stockage local de votre navigateur en cliquant sur le bouton ci-dessous. Vous pourrez ensuite rapidement charger différentes configurations."
@@ -144,7 +144,7 @@ outputFaq:
 
 maintenance:
   heading: "OPR Army Forge vers TTS est en maintenance !"
-  body: "Le site est en cours de travaux, merci de revenir bientôt !"
+  body: "Le site est en cours de travaux, merci de revenir prochainement !"
 
 errors:
   noArmyId: "Impossible de trouver l'identifiant d'armée Army Forge. Veuillez vérifier votre lien de partage Army Forge et réessayer."
