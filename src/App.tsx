@@ -19,6 +19,7 @@ import {
 import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
+import { InGameEnhancements } from "./components/InGameEnhancements";
 import {
   generateUnitOutput,
   getUnitNameForLegend,
@@ -140,6 +141,7 @@ function App() {
       <div className="text-sm mt-6 space-y-2">
         <Tutorial />
         <OutputOptions />
+        <InGameEnhancements />
       </div>
 
       {stateView.unitProfiles.length >= 1 && (

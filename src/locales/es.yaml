@@ -142,6 +142,86 @@ outputFaq:
   header: "Notas sobre la salida TTS"
   unitUpgradesNote: 'Las mejoras que se aplican a unidades completas (como las mejoras "Musician" en Age of Fantasy) se listan aquí como objetos de equipamiento individuales. No es técnicamente perfecto, pero es el mejor compromiso y ofrece la máxima flexibilidad.'
 
+inGameEnhancements:
+  header: "Mejoras dentro del juego"
+  intro: "Una vez que hayas importado tu enlace compartible al mod de TTS y asignado una definición de modelo a un objeto de TTS, ese objeto gana un montón de funciones extra dentro del juego para llevar el control de los PV, las fichas de hechizo, los efectos de estado, medir distancias y agrupar visualmente a los compañeros de unidad. Esto es todo lo que se desbloquea."
+  statBars:
+    heading: "Barras de estado flotantes"
+    body: "Cada modelo asignado obtiene un pequeño panel que flota encima mostrando su estado actual. Cada barra tiene botones [-] y [+] integrados a ambos lados del texto para ajustes rápidos sin abrir el menú completo."
+    item1: "Barra de PV (roja) — muestra heridas actuales/máximas. El máximo es el valor Tough del modelo (o Tough + 5 en sistemas Skirmish)."
+    item2: "Barra de SP (azul) — muestra fichas de hechizo actuales/6, solo en modelos lanzadores."
+    item3: "Indicador de medición — aparece cuando hay un anillo de medición activo, mostrando el radio actual en pulgadas. Coloreado a juego con el anillo."
+  contextMenu:
+    heading: "Menú contextual (clic derecho)"
+    body: "Haz clic derecho en cualquier modelo asignado para acceder a estas entradas:"
+    toggleMenu:
+      name: "Toggle Menu"
+      desc: "Abre o cierra el panel de acciones flotante encima del modelo. Solo puede haber un menú abierto por ejército a la vez — abrir uno cierra cualquier otro."
+    activated:
+      name: "Activated"
+      desc: "Alterna el estado de activación de la unidad. Afecta a todos los modelos de la unidad (aparece un anillo verde alrededor de cada uno)."
+    shakenStunned:
+      name: "Shaken / Stunned"
+      desc: "Alternador de estado a nivel de unidad. \"Shaken\" aparece en ejércitos de Grimdark Future / Age of Fantasy / Age of Fantasy Regiments (pentágono amarillo); \"Stunned\" aparece en ejércitos de Grimdark Future Firefight / Age of Fantasy Skirmish (hexágono rojo)."
+    measuring:
+      name: "Measuring"
+      desc: "Recorre un anillo de medición blanco alrededor del modelo entre 3″, 6″, 9″, 12″, 18″, 24″, 30″ y apagado."
+  hotkeys:
+    heading: "Atajos al pasar el cursor (Scripting Keys)"
+    body: "Mientras pasas el cursor sobre un modelo asignado, las teclas numéricas de scripting de TTS 1–6 actúan sobre ese modelo. No hace falta cogerlo ni hacer clic derecho — solo pasa el ratón y pulsa."
+    col:
+      key: "Tecla"
+      action: "Acción"
+      notes: "Notas"
+    row1:
+      action: "Alternar el panel de acciones"
+      notes: "Equivale a la entrada \"Toggle Menu\" del clic derecho."
+    row2:
+      action: "PV −1"
+      notes: "Solo en modelos con Tough (o cualquier modelo de un sistema Skirmish)."
+    row3:
+      action: "PV +1"
+      notes: "Solo en modelos con Tough (o cualquier modelo de un sistema Skirmish)."
+    row4:
+      action: "SP −1"
+      notes: "Solo en modelos lanzadores."
+    row5:
+      action: "SP +1"
+      notes: "Solo en modelos lanzadores."
+    row6:
+      action: "Recorrer el radio de medición"
+      notes: "Mismo ciclo que la entrada \"Measuring\" del clic derecho."
+    libraryNote: "Estos atajos viven en el propio modelo, así que siguen funcionando incluso si guardas el modelo asignado en tu biblioteca personal de objetos de TTS y lo cargas en otro mapa que no tenga el mod."
+  actionPanel:
+    heading: "Panel de acciones flotante"
+    body: "Abrir el menú revela un panel de botones encima del modelo con todo lo de abajo. Pulsa la X roja de la esquina superior derecha para cerrarlo — ningún botón de acción cierra el panel por sí mismo, así que puedes encadenar operaciones sin problema."
+    columns:
+      heading: "Tres columnas de acciones:"
+      model:
+        name: "Modelo"
+        desc: "PV +/−, SP +/−, recorrer el radio de medición, desactivar la medición."
+      unit:
+        name: "Unidad"
+        desc: "Activated, Shaken o Stunned, Select All (selecciona todos los modelos de la unidad), Count (anuncia cuántos modelos quedan)."
+      army:
+        name: "Ejército"
+        desc: "Measuring Off (borra todos los anillos de medición del ejército), Deactivate (limpia la activación de todo el ejército), Refresh Spells (cada lanzador recupera sus fichas por turno, con tope de 6)."
+    extras:
+      heading: "Más cuatro secciones adicionales bajo las columnas:"
+      ringColour:
+        name: "Color del anillo de medición"
+        desc: "Dos filas de ocho muestras de color (variantes clara y oscura). Recolorea el anillo de medición de la unidad y el indicador correspondiente en las barras de estado flotantes. Se aplica a todos los modelos de la unidad."
+      highlight:
+        name: "Resaltado de unidad"
+        desc: "Misma paleta, pero aplica un resaltado de objeto de TTS persistente (un brillo alrededor de la peana) a todos los modelos de la unidad. Útil para distinguir qué unidad es cuál en una mesa abarrotada. \"Clear Highlight\" lo retira."
+      uiVisibility:
+        name: "Visibilidad de la UI flotante"
+        desc: "Interruptores por modelo y por unidad para la barra de PV, la barra de SP y el indicador de distancia de medición. Oculta los valores que no estás siguiendo para mantener la mesa limpia."
+      uiPosition:
+        name: "Posición de la UI flotante del modelo"
+        desc: "Up / Down desplazan la UI flotante en vertical (útil para modelos altos o peanas grandes). Left / Right la rotan sobre el eje vertical para que siempre te dé la cara."
+    closeNote: "Truco: solo puede haber un panel de acciones abierto por ejército a la vez. Abrir el menú de otro modelo cierra automáticamente el anterior."
+
 maintenance:
   heading: "¡OPR Army Forge a TTS está en mantenimiento!"
   body: "El sitio está en obras, ¡vuelve pronto!"

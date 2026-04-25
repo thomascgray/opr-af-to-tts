@@ -81,7 +81,10 @@ assignNameAndDescriptionToObjects() → Inject perModelCode → Tag & Configure
   menuHeightOffset = 0,          -- Per-model UI height adjustment
   menuRotationOffset = 0,        -- Per-model UI Y-rotation adjustment (legacy; not currently user-exposed)
   showHpBar = true,              -- Unit-wide: show the floating HP stat bar (2026-04)
-  showSpBar = true               -- Unit-wide: show the floating SP stat bar (2026-04)
+  showSpBar = true,              -- Unit-wide: show the floating SP stat bar (2026-04)
+  measuringRingColor = {r, g, b}, -- Unit-wide: colour for the measuring ring (defaults to white)
+  unitHighlightColor = false     -- Unit-wide: {r,g,b} table when a highlight is active, or `false` when cleared.
+                                 -- Nil for pre-upgrade models — treat as `false`.
 }
 ```
 
@@ -97,13 +100,13 @@ The most sophisticated aspect is the `perModelCode` string (lines 21-619), a com
 
 - Wounds = Tough value
 - Status: Activated, Shaken
-- Name format: "Name\nWounds: X/Y\nSpell Tokens: X/6"
+- Name format: just the model name. HP and spell tokens are shown by the floating stat bars (2026-04), not the tooltip.
 
 **Grimdark Future Firefight (GFF) / Age of Fantasy Skirmish (AOFS):**
 
 - Wounds = Tough + 5
 - Status: Activated, Stunned
-- Name format includes Tough rating display
+- Name format: model name + static "Tough: X" line when the model has a Tough rating. HP shown by the floating stat bar.
 
 ### Interactive Features
 
@@ -173,14 +176,37 @@ Model Cards (Button with VerticalLayout)
 
 ### Trigger Methods
 
-**Method 1: Scripting Hotkeys**
+**Method 1: Scripting Hotkeys (modal)**
 
-- Key 1: `onScriptingButtonDown(1)` → Assign to selected objects
-- Key 2: `onScriptingButtonDown(2)` → Cancel assignment
+- When an assignment is in flight (`nameOfModelAssigning ~= nil`):
+  - Key 1 → Assign to selected objects
+  - Key 2 → Cancel assignment
 
 **Method 2: Pickup Detection**
 
 - `onObjectPickUp()` → Auto-assign to picked up object
+
+### Hover Hotkeys (2026-04)
+
+Scripting keys 1–6 act on whichever assigned OPRAFTTS model the player's pointer is currently hovering over.
+
+| Key | Action | Gated on |
+| --- | --- | --- |
+| 1 | Toggle action panel | — |
+| 2 | HP -1 (`hpDown`) | model has Tough (or is a skirmish system) |
+| 3 | HP +1 (`hpUp`) | model has Tough (or is a skirmish system) |
+| 4 | SP -1 (`spellTokensDown`) | `originalCasterValue ~= 0` |
+| 5 | SP +1 (`spellTokensUp`) | `originalCasterValue ~= 0` |
+| 6 | Cycle measuring radius | — |
+
+**Critical: `onScriptingButtonDown` lives in `perModelCode`, not Global.** Users routinely save assigned models to their personal library and load them into maps that don't have the mod's Global script. Only the per-model script travels with the saved object, so the hotkey dispatcher must be per-model.
+
+Consequences:
+- TTS fires `onScriptingButtonDown` on **every** object whose script defines it — not just the hovered one. Every assigned model receives the event; the handler gates on `Player[player_color].getHoverObject() == self` so only the hovered model acts.
+- Assignment-mode keys 1/2 (confirm / cancel) live in Global and still take priority in the mod's host map. The per-model handler calls `Global.call('isAssigning')` to defer while an assignment is pending. In a new map without the mod, `Global.call` returns nil (function missing = falsy), so hotkeys degrade gracefully to unconditional dispatch.
+- `isAssigning()` must remain exposed on Global (reads `nameOfModelAssigning ~= nil`).
+
+Non-OPRAFTTS objects don't define the handler, so they ignore the keys automatically — no tag check needed.
 
 ### Assignment Process
 
@@ -385,7 +411,7 @@ A floating 3D action panel floats above each model with stat bars plus a toggle-
 - HP bar: Red (#e74c3c), shows "HP: X/Y"
 - SP bar: Blue (#3498db), shows "SP: X/6"
 - Each bar has inline `[-]` / `[+]` buttons on either side of its text for quick wound/token adjustment without opening the full menu (2026-04).
-- Individually togglable via the UI Toggles section in the action panel. Visibility stored in `showHpBar` / `showSpBar` memo fields, unit-wide.
+- Individually togglable via the Floating UI Visibility section in the action panel. Visibility stored in `showHpBar` / `showSpBar` memo fields, unit-wide.
 - Uses VerticalLayout (HP on top, SP below). Panel is hidden entirely if neither bar is visible.
 
 **2. Action Panel** - 3-column button panel + bottom rows (hidden by default)
@@ -393,8 +419,10 @@ A floating 3D action panel floats above each model with stat bars plus a toggle-
 - **Model column**: HP +/-, SP +/-, Measuring controls, Measuring Off.
 - **Unit column**: Activated, Stunned/Shaken, Select All, Count.
 - **Army column**: Measuring Off, Deactivate, Refresh Spells.
-- **UI Toggles row** (2026-04): `Toggle HP Bar` / `Toggle SP Bar` — conditional on the unit having that stat. Unit-wide.
-- **UI Config row** (2026-04): `Menu ▲` / `Menu ▼` — shunts the entire floating UI up/down by 20 units per click (mirrors the existing right-click `Menu Up` / `Menu Down`).
+- **Measuring Ring Colour row** (2026-04): two rows of eight 32x32 colour swatches — light variants on top, dark variants below. Sets `measuringRingColor` unit-wide. Shares the `PALETTE` table with Unit Highlight.
+- **Unit Highlight row** (2026-04): two rows of eight colour swatches (same palette) plus a full-width **Clear Highlight** button. Clicking a swatch calls `Object.highlightOn(color)` on every model in the unit; Clear calls `highlightOff`. Persisted in `unitHighlightColor` memo and re-applied via `applyHighlightFromMemo` on `onLoad`, since TTS does not persist object highlights across save/reload.
+- **Floating UI Visibility row** (2026-04): `Toggle HP Bar` / `Toggle SP Bar` — conditional on the unit having that stat. Unit-wide.
+- **Model Floating UI Position row** (2026-04): `Up` / `Down` shunt the floating UI by ±20 Z units per click (mirrors the right-click `Menu Up` / `Menu Down`); `Rotate Right` / `Rotate Left` spin it by ±15° around the vertical axis.
 - Red X close button in top-right corner (only close action in the panel).
 
 ### Key Functions
@@ -407,6 +435,10 @@ closeActionPanel()         -- Internal close
 closeMenuFromExternal()    -- Called by army mates to close this menu
 toggleHpBar / toggleSpBar  -- Unit-wide visibility toggles (2026-04)
 toggleUnitUiFlag(flag)     -- Shared helper for unit-wide UI toggles; calls rebuildActionPanelXml on each mate
+paletteLookup(id, prefix)  -- Shared id->rgb resolver for Ring Colour and Highlight pickers (2026-04)
+setRingColor / setHighlightColor -- Unit-wide fan-out picker handlers (2026-04)
+applyHighlightFromMemo     -- Per-model: applies highlightOn/Off based on unitHighlightColor memo (2026-04)
+clearUnitHighlight         -- Unit-wide: clears highlight + wipes the memo field (2026-04)
 ```
 
 ### Cross-Object Communication
@@ -428,7 +460,7 @@ end
 - Activated, Stunned, Shaken toggles → panel stays open
 - Army Deactivate → stays open
 - HP/SP buttons (both the Model column ones and the inline stat-bar ones) → stay open
-- UI Toggles / UI Config actions → stay open
+- Floating UI Visibility / Model Floating UI Position actions → stay open
 - Only the red X closes the panel
 
 ### Context Menu
@@ -437,7 +469,7 @@ Right-click a model to get:
 - `Toggle Menu` — opens/closes the action panel. **Closes the right-click menu after click** (2026-04).
 - `Menu Up` / `Menu Down` — adjusts `menuHeightOffset` (±20 units). Keeps the right-click menu open so you can nudge repeatedly.
 
-The same Menu Up/Down actions are also available inside the action panel's UI Config row (2026-04).
+The same Menu Up/Down actions are also available inside the action panel's Model Floating UI Position row (2026-04), along with Rotate Left/Right.
 
 ### State Preservation
 

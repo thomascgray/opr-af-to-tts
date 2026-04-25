@@ -146,6 +146,86 @@ outputFaq:
   header: "TTS Output Notes"
   unitUpgradesNote: 'Special upgrades that apply specifically to entire units (such as Age of Fantasy "Musician" upgrades) are listed as individual loadout items here. While this isn''t technically perfect, it''s the best compromise, and still allows the most flexibility.'
 
+inGameEnhancements:
+  header: "In-Game Enhancements"
+  intro: "Once you've imported your shareable link into the TTS mod and assigned a model definition to a TTS object, that object gains a bunch of extra in-game features for tracking HP, spell tokens, status effects, measuring distances, and visually grouping unit mates. Here's everything that becomes available."
+  statBars:
+    heading: "Floating Stat Bars"
+    body: "Each assigned model gets a small panel that floats above it showing its current state. Each bar has inline [-] and [+] buttons either side of the text for quick adjustments without opening the full menu."
+    item1: "HP bar (red) — shows current/max wounds. Max is the model's Tough value (or Tough + 5 in skirmish systems)."
+    item2: "SP bar (blue) — shows current/6 spell tokens, only for caster models."
+    item3: "Measuring readout — appears when a measuring ring is active, showing the current radius in inches. Coloured to match the ring."
+  contextMenu:
+    heading: "Right-Click Context Menu"
+    body: "Right-click any assigned model for these entries:"
+    toggleMenu:
+      name: "Toggle Menu"
+      desc: "Opens or closes the floating action panel above the model. Only one menu in a given army can be open at a time — opening one closes any other."
+    activated:
+      name: "Activated"
+      desc: "Toggles the unit's activation state. Affects every model in the unit (a green ring appears around each)."
+    shakenStunned:
+      name: "Shaken / Stunned"
+      desc: "Unit-wide status toggle. \"Shaken\" appears for Grimdark Future / Age of Fantasy / Age of Fantasy Regiments armies (yellow pentagon); \"Stunned\" appears for Grimdark Future Firefight / Age of Fantasy Skirmish armies (red hexagon)."
+    measuring:
+      name: "Measuring"
+      desc: "Cycles a white measuring ring around the model through 3″, 6″, 9″, 12″, 18″, 24″, 30″ and off."
+  hotkeys:
+    heading: "Hover Hotkeys (Scripting Keys)"
+    body: "While hovering your cursor over an assigned model, the TTS scripting number keys 1–6 act on that model. No need to pick it up or right-click — just hover and tap."
+    col:
+      key: "Key"
+      action: "Action"
+      notes: "Notes"
+    row1:
+      action: "Toggle action panel"
+      notes: "Same as the right-click \"Toggle Menu\" entry."
+    row2:
+      action: "HP −1"
+      notes: "Only on models with Tough (or any model in a skirmish system)."
+    row3:
+      action: "HP +1"
+      notes: "Only on models with Tough (or any model in a skirmish system)."
+    row4:
+      action: "SP −1"
+      notes: "Only on caster models."
+    row5:
+      action: "SP +1"
+      notes: "Only on caster models."
+    row6:
+      action: "Cycle measuring radius"
+      notes: "Same cycle as the right-click \"Measuring\" entry."
+    libraryNote: "These hotkeys live on the model itself, so they keep working even if you save the assigned model into your personal TTS object library and load it into a different map that doesn't have the mod."
+  actionPanel:
+    heading: "Floating Action Panel"
+    body: "Opening the menu reveals a button panel above the model with everything below. Click the red X in the top-right to close it — none of the action buttons themselves close the panel, so you can chain operations freely."
+    columns:
+      heading: "Three columns of actions:"
+      model:
+        name: "Model"
+        desc: "HP +/−, SP +/−, cycle Measuring radius, turn Measuring off."
+      unit:
+        name: "Unit"
+        desc: "Activated, Shaken or Stunned, Select All (selects every model in the unit), Count (announces how many models remain)."
+      army:
+        name: "Army"
+        desc: "Measuring Off (clears every measuring ring across the army), Deactivate (clears activation across the army), Refresh Spells (each caster gains its per-turn token allowance, capped at 6)."
+    extras:
+      heading: "Plus four further sections beneath the columns:"
+      ringColour:
+        name: "Measuring Ring Colour"
+        desc: "Two rows of eight colour swatches (light + dark variants). Recolours the unit's measuring ring and the matching readout in the floating stat bars. Applies to every model in the unit."
+      highlight:
+        name: "Unit Highlight"
+        desc: "Same palette, but applies a persistent TTS object highlight (a glow around the base) to every model in the unit. Use it to keep track of which unit is which on a busy table. \"Clear Highlight\" removes it."
+      uiVisibility:
+        name: "Floating UI Visibility"
+        desc: "Per-Model and per-Unit toggles for the HP bar, SP bar, and Measure Distance Indicator. Hide stats you aren't tracking to keep the table tidy."
+      uiPosition:
+        name: "Model Floating UI Position"
+        desc: "Up / Down nudge the floating UI vertically (handy for tall models or large bases). Left / Right rotate it around the vertical axis so it always faces you."
+    closeNote: "Tip: only one action panel per army can be open at a time. Opening another model's menu automatically closes the previous one."
+
 maintenance:
   heading: "OPR Army Forge to TTS is under maintenance!"
   body: "Site is currently under construction, please check back soon!"
