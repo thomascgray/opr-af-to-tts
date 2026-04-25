@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import { useSnapshot } from "valtio";
 import { Trans, useTranslation } from "react-i18next";
 import {
+  eCampaignTraitCategory,
   eNetworkRequestState,
   iAppState,
   iUnitProfile,
@@ -13,10 +14,12 @@ import {
   updateWeaponIncludeInName,
   duplicateModel,
   deleteModel,
+  updateCampaignTraitIncludeInOutput,
 } from "./state";
 import classnames from "classnames";
 import { OutputOptions } from "./components/OutputOptions";
 import { Tutorial } from "./components/Tutorial";
+import { InGameEnhancements } from "./components/InGameEnhancements";
 import {
   generateUnitOutput,
   getUnitNameForLegend,
@@ -138,6 +141,7 @@ function App() {
       <div className="text-sm mt-6 space-y-2">
         <Tutorial />
         <OutputOptions />
+        <InGameEnhancements />
       </div>
 
       {stateView.unitProfiles.length >= 1 && (
@@ -342,6 +346,73 @@ function App() {
                                   );
                                 })}
                               </div>
+
+                              {model.campaignTraits.length > 0 && (
+                                <div className="space-y-1 bg-stone-100 dark:bg-slate-600 dark:text-white p-2">
+                                  <p className="font-bold">
+                                    {t("app.model.campaignTraits.heading")}
+                                  </p>
+                                  {[
+                                    {
+                                      category:
+                                        eCampaignTraitCategory.SKILL_SET,
+                                      labelKey: "app.model.campaignTraits.skillSets",
+                                    },
+                                    {
+                                      category: eCampaignTraitCategory.TRAIT,
+                                      labelKey: "app.model.campaignTraits.traits",
+                                    },
+                                    {
+                                      category: eCampaignTraitCategory.INJURY,
+                                      labelKey: "app.model.campaignTraits.injuries",
+                                    },
+                                    {
+                                      category: eCampaignTraitCategory.TALENT,
+                                      labelKey: "app.model.campaignTraits.talents",
+                                    },
+                                  ].map(({ category, labelKey }) => {
+                                    const inCategory = model.campaignTraits.filter(
+                                      (tr) => tr.category === category
+                                    );
+                                    if (inCategory.length === 0) return null;
+                                    return (
+                                      <div key={category} className="space-y-1">
+                                        <p className="italic text-stone-600 dark:text-slate-200">
+                                          {t(labelKey)}
+                                        </p>
+                                        {inCategory.map((trait) => (
+                                          <label
+                                            key={trait.id}
+                                            title={t(
+                                              "app.model.campaignTraits.toggleTitle",
+                                              {
+                                                category: t(labelKey),
+                                                name: trait.name,
+                                              }
+                                            )}
+                                            className="flex flex-row items-center space-x-2 cursor-pointer"
+                                          >
+                                            <input
+                                              className="h-4 w-4 cursor-pointer outline-none border-none"
+                                              checked={trait.includeInOutput}
+                                              onChange={() =>
+                                                updateCampaignTraitIncludeInOutput(
+                                                  unit.id,
+                                                  model.id,
+                                                  trait.id,
+                                                  !trait.includeInOutput
+                                                )
+                                              }
+                                              type="checkbox"
+                                            />
+                                            <span>{trait.name}</span>
+                                          </label>
+                                        ))}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
 
                               <button
                                 onClick={() =>

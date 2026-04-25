@@ -149,19 +149,56 @@ local perModelCode = [[
         rebuildStatusEffectThings();
         rebuildName();
         rebuildActionPanelXml();
+        applyHighlightFromMemo();  -- TTS doesn't persist highlights across save/reload
     end
 
-    -- Adjust a numeric memo field by delta, announce, and refresh name + panel.
+    -- Hover hotkeys — live on the model itself so they travel with the object
+    -- when a user saves it to their library and loads it into a new map
+    -- without the mod's Global script. TTS fires this event on every object's
+    -- script (not just the hovered one), so each instance gates on
+    -- `getHoverObject() == self` and only the hovered model acts.
+    function onScriptingButtonDown(index, player_color)
+        local player = Player[player_color]
+        if player == nil then return end
+        if player.getHoverObject() ~= self then return end
+
+        -- In the mod's host map, keys 1/2 drive the assignment flow; defer to
+        -- Global for those while an assignment is pending. In a new map where
+        -- the mod isn't loaded, Global.call returns nil (function missing) so
+        -- this short-circuits to false and hotkeys run unconditionally.
+        if Global.call('isAssigning') then return end
+
+        local decodedMemo = JSON.decode(self.memo)
+        local gameSystem = decodedMemo['gameSystem']
+        local hasTough = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
+        local hasCaster = decodedMemo['originalCasterValue'] ~= 0
+
+        if index == 1 then
+            toggleActionPanel()
+        elseif index == 2 and hasTough then
+            hpDown()
+        elseif index == 3 and hasTough then
+            hpUp()
+        elseif index == 4 and hasCaster then
+            spellTokensDown()
+        elseif index == 5 and hasCaster then
+            spellTokensUp()
+        elseif index == 6 then
+            cycleMeasuringRadius()
+        end
+    end
+
+    -- Adjust a numeric memo field by delta, announce, and refresh the panel.
+    -- No name rebuild — HP/SP are shown by the floating stat bars, not the name.
     function adjustStat(field, delta, verb)
         local decodedMemo = JSON.decode(self.memo)
         printToAll("'" .. decodedMemo['unitName'] .. "' " .. verb)
         updateMemo({ [field] = decodedMemo[field] + delta })
-        rebuildName()
         rebuildActionPanelXml()
     end
 
-    function hpUp()            adjustStat('currentToughValue',   1, 'gained 1 Wound.') end
-    function hpDown()          adjustStat('currentToughValue',  -1, 'lost 1 Wound.') end
+    function hpUp()            adjustStat('currentToughValue',   1, 'gained 1 HP.') end
+    function hpDown()          adjustStat('currentToughValue',  -1, 'lost 1 HP.') end
     function spellTokensUp()   adjustStat('currentCasterValue',  1, 'gained 1 Spell Token.') end
     function spellTokensDown() adjustStat('currentCasterValue', -1, 'lost 1 Spell Token.') end
 
@@ -219,25 +256,36 @@ local perModelCode = [[
     function toggleSpBarModel(player_color)        toggleModelUiFlag('showSpBar')        end
     function toggleMeasuringBarModel(player_color) toggleModelUiFlag('showMeasuringBar') end
 
-    -- Preset ring colours. Ordered so the row renders left-to-right in this
-    -- order; each entry has the button id, display hex, and {r,g,b} 0-1 triple.
-    RING_COLORS = {
-        {id = 'ring-color-white',  hex = '#ffffff', rgb = {1, 1, 1}},
-        {id = 'ring-color-red',    hex = '#e74c3c', rgb = {231/255, 76/255, 60/255}},
-        {id = 'ring-color-orange', hex = '#e67e22', rgb = {230/255, 126/255, 34/255}},
-        {id = 'ring-color-yellow', hex = '#f1c40f', rgb = {241/255, 196/255, 15/255}},
-        {id = 'ring-color-green',  hex = '#2ecc71', rgb = {46/255, 204/255, 113/255}},
-        {id = 'ring-color-blue',   hex = '#3498db', rgb = {52/255, 152/255, 219/255}},
-        {id = 'ring-color-purple', hex = '#9b59b6', rgb = {155/255, 89/255, 182/255}},
-        {id = 'ring-color-pink',   hex = '#e84393', rgb = {232/255, 67/255, 147/255}},
+    -- Shared palette for the Measuring Ring Colour and Unit Highlight pickers.
+    -- Each named colour has a light (full-saturation UI palette hex) and dark
+    -- (~0.6 luminance) variant, rendered as two rows in each picker.
+    PALETTE = {
+        {name = 'white',  light = {hex = '#ffffff', rgb = {1, 1, 1}},                              dark = {hex = '#999999', rgb = {153/255, 153/255, 153/255}}},
+        {name = 'red',    light = {hex = '#e74c3c', rgb = {231/255, 76/255, 60/255}},              dark = {hex = '#962d22', rgb = {150/255, 45/255, 34/255}}},
+        {name = 'orange', light = {hex = '#e67e22', rgb = {230/255, 126/255, 34/255}},             dark = {hex = '#8a4b14', rgb = {138/255, 75/255, 20/255}}},
+        {name = 'yellow', light = {hex = '#f1c40f', rgb = {241/255, 196/255, 15/255}},             dark = {hex = '#907509', rgb = {144/255, 117/255, 9/255}}},
+        {name = 'green',  light = {hex = '#2ecc71', rgb = {46/255, 204/255, 113/255}},             dark = {hex = '#1b7a43', rgb = {27/255, 122/255, 67/255}}},
+        {name = 'blue',   light = {hex = '#3498db', rgb = {52/255, 152/255, 219/255}},             dark = {hex = '#1f5b83', rgb = {31/255, 91/255, 131/255}}},
+        {name = 'purple', light = {hex = '#9b59b6', rgb = {155/255, 89/255, 182/255}},             dark = {hex = '#5d356d', rgb = {93/255, 53/255, 109/255}}},
+        {name = 'pink',   light = {hex = '#e84393', rgb = {232/255, 67/255, 147/255}},             dark = {hex = '#8b2858', rgb = {139/255, 40/255, 88/255}}},
     }
+
+    -- Look up an {r,g,b} triple from a button id like 'ring-color-red-light'
+    -- or 'highlight-color-blue-dark'. Returns nil if the id doesn't match.
+    function paletteLookup(id, prefix)
+        local name, variant = id:match('^' .. prefix .. '%-(.-)%-(.+)$')
+        if not name then return nil end
+        for _, p in ipairs(PALETTE) do
+            if p.name == name then
+                return (variant == 'dark') and p.dark.rgb or p.light.rgb
+            end
+        end
+        return nil
+    end
 
     -- Button onClick handler. Reads the colour preset from the element id.
     function setRingColor(player, value, id)
-        local color
-        for _, c in ipairs(RING_COLORS) do
-            if c.id == id then color = c.rgb; break end
-        end
+        local color = paletteLookup(id, 'ring%-color')
         if not color then return end
 
         for _, unitMate in ipairs(getAllUnitMates()) do
@@ -245,6 +293,51 @@ local perModelCode = [[
             unitMate.memo = JSON.encode(mergeTables(mateMemo, { measuringRingColor = color }))
             unitMate.call('rebuildStatusEffectThings')
             unitMate.call('rebuildActionPanelXml')  -- so the measuring-bar text recolours too
+        end
+    end
+
+    -- Unit Highlight: applies a persistent TTS Object highlight to every model
+    -- in the unit. Click a colour to set; Clear Highlight to remove. The chosen
+    -- colour is stored in each mate's memo so we can re-apply on onLoad.
+    --
+    -- `previouslyAppliedHighlight` is a script-local (not memo-persisted)
+    -- cache of the colour currently drawn by TTS, so we can pass it back to
+    -- `highlightOff` when switching colours.
+    previouslyAppliedHighlight = nil
+
+    function applyHighlightFromMemo()
+        local decodedMemo = JSON.decode(self.memo)
+        local newColor = decodedMemo['unitHighlightColor']
+
+        if previouslyAppliedHighlight then
+            self.highlightOff(previouslyAppliedHighlight)
+            previouslyAppliedHighlight = nil
+        end
+
+        if newColor then
+            self.highlightOn(newColor)
+            previouslyAppliedHighlight = newColor
+        end
+    end
+
+    function setHighlightColor(player, value, id)
+        local color = paletteLookup(id, 'highlight%-color')
+        if not color then return end
+
+        for _, unitMate in ipairs(getAllUnitMates()) do
+            local mateMemo = JSON.decode(unitMate.memo)
+            unitMate.memo = JSON.encode(mergeTables(mateMemo, { unitHighlightColor = color }))
+            unitMate.call('applyHighlightFromMemo')
+        end
+    end
+
+    function clearUnitHighlight()
+        for _, unitMate in ipairs(getAllUnitMates()) do
+            local mateMemo = JSON.decode(unitMate.memo)
+            -- `false` rather than nil: mergeTables only iterates non-nil keys,
+            -- so nil wouldn't actually clear the field from the encoded memo.
+            unitMate.memo = JSON.encode(mergeTables(mateMemo, { unitHighlightColor = false }))
+            unitMate.call('applyHighlightFromMemo')
         end
     end
 
@@ -306,10 +399,7 @@ local perModelCode = [[
             armyMate.memo = JSON.encode(mergeTables(armyMateMemo, {
                 currentCasterValue = numOrMax(armyMateMemo['currentCasterValue'] + armyMateMemo['originalCasterValue'], 6),
             }))
-            armyMate.call('rebuildContext');
-            armyMate.call('rebuildName');
             armyMate.call('rebuildActionPanelXml');
-            armyMate.call('rebuildStatusEffectThings');
         end
     end
 
@@ -431,40 +521,19 @@ local perModelCode = [[
         self.clearButtons();
     end
 
+    -- Sets the tooltip name. HP and spell tokens are now shown by the floating
+    -- stat bars, so only static info lives here — the base name for every
+    -- system, plus the Tough rating for skirmish models that have one (it's a
+    -- unit rating, not a current-state value, so it belongs in the name).
     function rebuildName()
         local decodedMemo = JSON.decode(self.memo)
-
-        local gameSystem = decodedMemo['gameSystem']
         local nameToAssign = decodedMemo['nameToAssign']
-        local currentTough = decodedMemo['currentToughValue']
-        local currentCaster = decodedMemo['currentCasterValue']
-        local originalTough = decodedMemo['originalToughValue']
-        local originalCaster = decodedMemo['originalCasterValue']
 
-        if isTraditionalSystem(decodedMemo['gameSystem']) then
-            if (originalTough ~= 0 and originalCaster ~= 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Wounds: ".. currentTough .. "/" .. originalTough .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
-            elseif (originalTough ~= 0 and originalCaster == 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Wounds:" .. currentTough .. '/' .. originalTough)
-            elseif (originalTough == 0 and originalCaster ~= 0) then
-                self.setName(nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6')
-            else
-                self.setName(nameToAssign)
-            end
+        if isSkirmishSystem(decodedMemo['gameSystem']) and decodedMemo['originalToughValue'] ~= 0 then
+            nameToAssign = nameToAssign .. "\r\nTough: " .. decodedMemo['originalToughValue']
         end
 
-        if isSkirmishSystem(decodedMemo['gameSystem']) then
-            if (originalTough ~= 0) then
-                nameToAssign = nameToAssign .. "\r\nTough: " .. originalTough;
-            end
-
-            nameToAssign = nameToAssign .. "\r\nWounds: " .. currentTough;
-            
-            if (originalCaster ~= 0) then
-                nameToAssign = nameToAssign .. "\r\n" .. "Spell Tokens: " .. currentCaster .. '/6';
-            end
-            self.setName(nameToAssign)
-        end
+        self.setName(nameToAssign)
     end
 
     function measuringOff()
@@ -636,7 +705,7 @@ local perModelCode = [[
         local heightOffset   = decodedMemo['menuHeightOffset']   or 0
         local rotationOffset = decodedMemo['menuRotationOffset'] or 0
         local statBarsZ      = -((actualHeight * 100) + 130 + heightOffset)
-        local actionPanelZ   = -((actualHeight * 100) + 430 + heightOffset)
+        local actionPanelZ   = -((actualHeight * 100) + 530 + heightOffset)
         local menuRotation   = "90 180 0"
         local yawRotation    = "0 0 " .. rotationOffset
 
@@ -692,31 +761,48 @@ local perModelCode = [[
         modelToggleBtns = modelToggleBtns .. btn('toggleMeasuringBarModel', 'Measure Distance Indicator', 12)
         unitToggleBtns  = unitToggleBtns  .. btn('toggleMeasuringBar',      'Measure Distance Indicator', 12)
 
-        local uiTogglesXml = section('UI Toggles',
+        local uiTogglesXml = section('Floating UI Visibility',
             '<HorizontalLayout spacing="10" childForceExpandWidth="false">' ..
                 column('Model', modelToggleBtns, 170) ..
                 column('Unit',  unitToggleBtns,  170) ..
             '</HorizontalLayout>')
 
-        -- Measuring Ring Colour row, driven by RING_COLORS.
-        local colorBtns = ""
-        for _, c in ipairs(RING_COLORS) do
-            colorBtns = colorBtns .. '<Button id="' .. c.id .. '" onClick="setRingColor" minWidth="32" preferredWidth="32" height="32" color="' .. c.hex .. '"></Button>'
+        -- Colour picker row: one HorizontalLayout of 32x32 buttons, one per
+        -- palette entry's named variant. `idPrefix` is prepended to build ids
+        -- like `ring-color-red-light` / `highlight-color-blue-dark`, which the
+        -- onClick handlers parse back via paletteLookup.
+        local function colorPickerRow(idPrefix, onClick, variantKey)
+            local btns = ""
+            for _, p in ipairs(PALETTE) do
+                local v = (variantKey == 'dark') and p.dark or p.light
+                btns = btns .. '<Button id="' .. idPrefix .. '-' .. p.name .. '-' .. variantKey .. '" onClick="' .. onClick .. '" minWidth="32" preferredWidth="32" height="32" color="' .. v.hex .. '"></Button>'
+            end
+            return '<HorizontalLayout spacing="10" childForceExpandWidth="false" childAlignment="MiddleCenter">' .. btns .. '</HorizontalLayout>'
         end
-        local ringColourXml = section('Measuring Ring Colour',
-            '<HorizontalLayout spacing="10" childForceExpandWidth="false" childAlignment="MiddleCenter">' .. colorBtns .. '</HorizontalLayout>')
 
-        -- UI Config row - menu position + rotation.
-        local uiConfigXml = section('UI Config',
+        local ringColourXml = section('Measuring Ring Colour',
+            colorPickerRow('ring-color', 'setRingColor', 'light') ..
+            colorPickerRow('ring-color', 'setRingColor', 'dark'))
+
+        -- Unit Highlight: same palette, plus a Clear Highlight button.
+        local highlightXml = section('Unit Highlight',
+            colorPickerRow('highlight-color', 'setHighlightColor', 'light') ..
+            colorPickerRow('highlight-color', 'setHighlightColor', 'dark') ..
             '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
-                btn('moveMenuUp', 'Menu ▲') .. btn('moveMenuDown', 'Menu ▼') ..
-                btn('rotateMenuLeft', 'Menu ↺') .. btn('rotateMenuRight', 'Menu ↻') ..
+                btn('clearUnitHighlight', 'Clear Highlight') ..
+            '</HorizontalLayout>')
+
+        -- Floating-UI position row — shunts / rotates the whole billboard stack.
+        local uiConfigXml = section('Model Floating UI Position',
+            '<HorizontalLayout spacing="10" childForceExpandWidth="true">' ..
+                btn('moveMenuUp', '▲ Up') .. btn('moveMenuDown', '▼ Down') ..
+                btn('rotateMenuLeft', '↺ Left') .. btn('rotateMenuRight', '↻ Right') ..
             '</HorizontalLayout>')
 
         return '<Defaults><Button fontSize="14" fontStyle="Bold" /></Defaults>' ..
             statBarsXml ..
-            '<Panel id="action-panel" position="0 0 ' .. actionPanelZ .. '" rotation="' .. yawRotation .. '" active="false" width="380" height="560">' ..
-                '<Panel rotation="' .. menuRotation .. '" width="380" height="560">' ..
+            '<Panel id="action-panel" position="0 0 ' .. actionPanelZ .. '" rotation="' .. yawRotation .. '" active="false" width="380" height="760">' ..
+                '<Panel rotation="' .. menuRotation .. '" width="380" height="760">' ..
                     '<VerticalLayout spacing="5" padding="10" childForceExpandHeight="false" childForceExpandWidth="false">' ..
                         '<Panel color="rgba(0,0,0,0.85)" padding="10">' ..
                             '<HorizontalLayout spacing="10" childForceExpandWidth="false">' ..
@@ -725,7 +811,7 @@ local perModelCode = [[
                                 column('Army',  armyButtons) ..
                             '</HorizontalLayout>' ..
                         '</Panel>' ..
-                        ringColourXml .. uiTogglesXml .. uiConfigXml ..
+                        ringColourXml .. highlightXml .. uiTogglesXml .. uiConfigXml ..
                     '</VerticalLayout>' ..
                     '<Button onClick="closeActionPanel" width="28" height="28" fontSize="14" fontStyle="Bold" textColor="#FFFFFF" color="#e74c3c" rectAlignment="UpperRight" offsetXY="-15 -15">X</Button>' ..
                 '</Panel>' ..
@@ -944,12 +1030,21 @@ function assignNameAndDescriptionToObjects( object )
             showSpBar = true,
             showMeasuringBar = true,
             measuringRingColor = {1, 1, 1},
+            unitHighlightColor = false,
         })
         target.setRotation({0, 180, 0});
         target.reload();  -- Reload to trigger onLoad() which sets up the action panel UI
     end
 
     broadcastToAll("Assigned '" .. nameOfModelAssigning .. "' to " .. tablelength(selectedObjects) .. " objects!", {0, 1, 0})
+end
+
+-- Exposed for per-model `onScriptingButtonDown` handlers to defer their hover
+-- hotkeys while assignment-mode keys 1/2 are active. `Global.call('isAssigning')`
+-- returns nil in a map where the mod isn't loaded (function missing = falsy),
+-- so library-saved models degrade to unconditional hotkey dispatch cleanly.
+function isAssigning()
+    return nameOfModelAssigning ~= nil
 end
 
 function onScriptingButtonDown(index, player_color)

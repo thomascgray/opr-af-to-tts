@@ -28,6 +28,13 @@ app:
     quantityPerModelTitle: "Anzahl dieses Gegenstands pro Modell"
     includeInNameTitle: "Ankreuzen, um diesen Gegenstand in den Modellnamen aufzunehmen"
     duplicateButton: "Diese Modelldefinition duplizieren"
+    campaignTraits:
+      heading: "Kampagnen-Merkmale"
+      skillSets: "Fertigkeiten"
+      traits: "Merkmale"
+      injuries: "Verletzungen"
+      talents: "Talente"
+      toggleTitle: "Kampagnen-Merkmal > {{category}} > {{name}} in Modellbeschreibung einschließen"
   ttsPreview:
     label: "TTS-Ausgabevorschau (Name und Beschreibung)"
   shareable:
@@ -82,6 +89,27 @@ outputOptions:
     disableSmallText:
       name: "Kleinen Text deaktivieren"
       label: "Wenn aktiviert, wird kein Text in Name oder Beschreibung klein dargestellt. Aktiviere dies, wenn du den kleinen Text in TTS schwer lesen kannst."
+    includeCampaignTraits:
+      name: "Kampagnen-Merkmale in Modellbeschreibung einschließen"
+      label: "Wenn aktiviert, enthält die TTS-Beschreibung alle Kampagnen-Merkmale des Modells (Fertigkeiten, Merkmale, Verletzungen, Talente). Dies ist der Hauptschalter — die Unterkategorien unten und die Checkboxen pro Merkmal verfeinern die Ausgabe weiter."
+    includeCampaignTraitsFullText:
+      name: "Vollständigen Text der Kampagnen-Merkmale einschließen"
+      label: "Wenn aktiviert, enthält die TTS-Beschreibung den vollständigen Regeltext jedes Kampagnen-Merkmals. Andernfalls wird nur der Name angezeigt."
+    includeCampaignSkillSets:
+      name: "Kampagnen-Fertigkeiten einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Merkmale der Kategorie Fertigkeiten (z. B. Suppressor, Prowler) in die Modellbeschreibung aufgenommen."
+    includeCampaignTraitsCategory:
+      name: "Kampagnen-Merkmale einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Merkmale der Kategorie Merkmale (z. B. Agile, Resilient) in die Modellbeschreibung aufgenommen."
+    includeCampaignInjuries:
+      name: "Kampagnen-Verletzungen einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Verletzungen (z. B. Blinded Eye, Chest Wound) in die Modellbeschreibung aufgenommen."
+    includeCampaignTalents:
+      name: "Kampagnen-Talente einschließen"
+      label: "Wenn aktiviert, werden Kampagnen-Talente (z. B. Natural Talent) in die Modellbeschreibung aufgenommen."
+    includeCampaignXp:
+      name: "Kampagnen-XP in Modellbeschreibung einschließen"
+      label: "Wenn aktiviert, endet die TTS-Beschreibung mit den aktuellen Kampagnen-XP des Modells. Modelle mit 0 XP erhalten keinen zusätzlichen Eintrag."
   colours:
     quality:
       name: "Ausgabefarbe für Modellqualität"
@@ -98,6 +126,9 @@ outputOptions:
     tough:
       name: "Ausgabefarbe für Tough-Wert des Modells"
       label: "HEX-Code für den Tough-Wert des Modells, falls vorhanden, in der TTS-Ausgabe."
+    campaign:
+      name: "Ausgabefarbe für Kampagnen-Elemente"
+      label: "HEX-Code für die Kampagnen-Merkmale und Kampagnen-XP des Modells in der TTS-Ausgabe."
   saveLoad:
     header: "TTS-Ausgabekonfigurationen speichern & laden"
     description: "Speichere die gesamte obige Konfiguration im lokalen Speicher deines Browsers, indem du auf den Button unten klickst. Du kannst dann schnell verschiedene Konfigurationen laden."
@@ -110,6 +141,86 @@ outputOptions:
 outputFaq:
   header: "Hinweise zur TTS-Ausgabe"
   unitUpgradesNote: 'Spezielle Upgrades, die sich auf ganze Einheiten beziehen (wie z. B. "Musician"-Upgrades in Age of Fantasy), werden hier als einzelne Ausrüstungsgegenstände aufgeführt. Das ist technisch nicht perfekt, aber der beste Kompromiss und bietet maximale Flexibilität.'
+
+inGameEnhancements:
+  header: "Erweiterungen im Spiel"
+  intro: "Sobald du deinen freigegebenen Link in den TTS-Mod importiert und einem TTS-Objekt eine Modelldefinition zugewiesen hast, erhält dieses Objekt zahlreiche zusätzliche Spielfunktionen zum Verfolgen von HP, Zaubermarkern, Statuseffekten, zum Messen von Distanzen und zur visuellen Gruppierung von Einheitskollegen. Hier ist alles, was verfügbar wird."
+  statBars:
+    heading: "Schwebende Statusleisten"
+    body: "Jedes zugewiesene Modell erhält ein kleines Panel, das über ihm schwebt und seinen aktuellen Zustand anzeigt. Jede Leiste hat zu beiden Seiten des Textes [-] und [+] Buttons für schnelle Anpassungen, ohne das vollständige Menü zu öffnen."
+    item1: "HP-Leiste (rot) — zeigt aktuelle/maximale Wunden. Maximum ist der Tough-Wert des Modells (oder Tough + 5 in Skirmish-Systemen)."
+    item2: "SP-Leiste (blau) — zeigt aktuelle/6 Zaubermarker, nur für Zauberer-Modelle."
+    item3: "Mess-Anzeige — erscheint, wenn ein Messring aktiv ist, und zeigt den aktuellen Radius in Zoll. Farbig passend zum Ring."
+  contextMenu:
+    heading: "Rechtsklick-Kontextmenü"
+    body: "Rechtsklick auf ein zugewiesenes Modell für diese Einträge:"
+    toggleMenu:
+      name: "Toggle Menu"
+      desc: "Öffnet oder schließt das schwebende Aktionspanel über dem Modell. Pro Armee kann immer nur ein Menü gleichzeitig offen sein — ein neues zu öffnen schließt jedes andere."
+    activated:
+      name: "Activated"
+      desc: "Schaltet den Aktivierungsstatus der Einheit um. Wirkt sich auf jedes Modell der Einheit aus (ein grüner Ring erscheint um jedes herum)."
+    shakenStunned:
+      name: "Shaken / Stunned"
+      desc: "Einheitsweiter Status-Toggle. \"Shaken\" erscheint für Grimdark Future / Age of Fantasy / Age of Fantasy Regiments-Armeen (gelbes Pentagon); \"Stunned\" erscheint für Grimdark Future Firefight / Age of Fantasy Skirmish-Armeen (rotes Hexagon)."
+    measuring:
+      name: "Measuring"
+      desc: "Wechselt einen weißen Messring um das Modell durch 3″, 6″, 9″, 12″, 18″, 24″, 30″ und aus."
+  hotkeys:
+    heading: "Hover-Hotkeys (Scripting Keys)"
+    body: "Wenn du mit dem Mauszeiger über einem zugewiesenen Modell schwebst, wirken die TTS-Skripttasten 1–6 auf dieses Modell. Kein Aufnehmen oder Rechtsklick nötig — einfach hovern und drücken."
+    col:
+      key: "Taste"
+      action: "Aktion"
+      notes: "Hinweise"
+    row1:
+      action: "Aktionspanel umschalten"
+      notes: "Identisch mit dem Rechtsklick-Eintrag \"Toggle Menu\"."
+    row2:
+      action: "HP −1"
+      notes: "Nur bei Modellen mit Tough (oder jedem Modell in einem Skirmish-System)."
+    row3:
+      action: "HP +1"
+      notes: "Nur bei Modellen mit Tough (oder jedem Modell in einem Skirmish-System)."
+    row4:
+      action: "SP −1"
+      notes: "Nur bei Zauberer-Modellen."
+    row5:
+      action: "SP +1"
+      notes: "Nur bei Zauberer-Modellen."
+    row6:
+      action: "Messradius wechseln"
+      notes: "Gleicher Zyklus wie der Rechtsklick-Eintrag \"Measuring\"."
+    libraryNote: "Diese Hotkeys leben am Modell selbst, sie funktionieren also auch dann weiter, wenn du das zugewiesene Modell in deine persönliche TTS-Objektbibliothek speicherst und in einer anderen Map ohne den Mod lädst."
+  actionPanel:
+    heading: "Schwebendes Aktionspanel"
+    body: "Das Öffnen des Menüs zeigt ein Button-Panel über dem Modell mit allem, was unten steht. Klicke das rote X oben rechts an, um es zu schließen — keiner der Aktions-Buttons schließt das Panel selbst, du kannst Aktionen also frei aneinanderreihen."
+    columns:
+      heading: "Drei Spalten mit Aktionen:"
+      model:
+        name: "Modell"
+        desc: "HP +/−, SP +/−, Messradius wechseln, Messung deaktivieren."
+      unit:
+        name: "Einheit"
+        desc: "Activated, Shaken oder Stunned, Select All (wählt jedes Modell der Einheit aus), Count (gibt die verbleibende Modellzahl aus)."
+      army:
+        name: "Armee"
+        desc: "Measuring Off (entfernt jeden Messring der Armee), Deactivate (setzt die Aktivierung der Armee zurück), Refresh Spells (jeder Zauberer erhält seine Marker pro Runde, gedeckelt bei 6)."
+    extras:
+      heading: "Plus vier weitere Bereiche unter den Spalten:"
+      ringColour:
+        name: "Messring-Farbe"
+        desc: "Zwei Reihen mit acht Farbfeldern (helle und dunkle Varianten). Färbt den Messring der Einheit und die zugehörige Anzeige in den schwebenden Statusleisten ein. Gilt für jedes Modell der Einheit."
+      highlight:
+        name: "Einheits-Hervorhebung"
+        desc: "Gleiche Palette, aber legt eine dauerhafte TTS-Objekthervorhebung (ein Leuchten um die Base) auf jedes Modell der Einheit. Nützlich, um auf einem vollen Tisch im Blick zu behalten, welche Einheit welche ist. \"Clear Highlight\" entfernt sie."
+      uiVisibility:
+        name: "Sichtbarkeit der schwebenden UI"
+        desc: "Modell- und einheitsweite Schalter für HP-Leiste, SP-Leiste und Mess-Distanz-Anzeige. Blende Werte aus, die du nicht verfolgst, um den Tisch übersichtlich zu halten."
+      uiPosition:
+        name: "Position der schwebenden Modell-UI"
+        desc: "Up / Down verschieben die schwebende UI vertikal (praktisch für hohe Modelle oder große Basen). Left / Right rotieren sie um die vertikale Achse, sodass sie immer zu dir zeigt."
+    closeNote: "Tipp: Pro Armee kann immer nur ein Aktionspanel gleichzeitig offen sein. Das Öffnen eines anderen Modell-Menüs schließt das vorherige automatisch."
 
 maintenance:
   heading: "OPR Army Forge zu TTS wird gewartet!"

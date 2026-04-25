@@ -5,8 +5,10 @@ import pluralize from "pluralize";
 import { nanoid } from "nanoid";
 import * as ArmyForgeTypes from "./army-forge-types";
 import {
+  eCampaignTraitCategory,
   eNetworkRequestState,
   iAppState,
+  iCampaignTraitOnModel,
   iTotalShareableOutput,
   iUnitProfile,
   iUnitProfileModel,
@@ -20,12 +22,21 @@ import i18n from "./i18n";
 // import commonRulesSkirmish from "./data/common-rules-skirmish.json";
 // import commonRulesRegiments from "./data/common-rules-regiments.json";
 
-interface iCommonRule {
-  id: number;
-  name: string;
-  description: string;
-  hasRating: boolean;
-}
+export const getCampaignTraitCategory = (
+  trait: ArmyForgeTypes.ICommonRuleTrait | undefined
+): eCampaignTraitCategory => {
+  if (!trait) return eCampaignTraitCategory.TRAIT;
+  switch (trait.type) {
+    case 1:
+      return eCampaignTraitCategory.INJURY;
+    case 2:
+      return eCampaignTraitCategory.TALENT;
+    case 3:
+      return eCampaignTraitCategory.SKILL_SET;
+    default:
+      return eCampaignTraitCategory.TRAIT;
+  }
+};
 export const getUrlSlugForGameSystem = (
   gameSystemInitials: eGameSystemInitials
 ) => {
@@ -133,7 +144,7 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
   state.unitProfiles = [];
   const [id, isBeta] = extractIdFromUrl(stateView.armyListShareLink);
   let data: ArmyForgeTypes.ListState | undefined = undefined;
-  let relevantCoreSpecialRules: iCommonRule[];
+  let relevantCoreSpecialRules: ArmyForgeTypes.ICommonRule[];
   if (!id) {
     alert(i18n.t("errors.noArmyId"));
     state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.IDLE;
@@ -174,10 +185,14 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
 
     state.listName = data.name;
 
-    relevantCoreSpecialRules = [...commonRulesData.rules] as iCommonRule[];
+    relevantCoreSpecialRules = [
+      ...commonRulesData.rules,
+    ] as ArmyForgeTypes.ICommonRule[];
 
     state.gameSystem = data.gameSystem;
     state.coreSpecialRulesDict = relevantCoreSpecialRules;
+    state.campaignTraitsDict = (commonRulesData.traits ||
+      []) as ArmyForgeTypes.ICommonRuleTrait[];
     // @ts-ignore
     if (data && data.error) {
       state.networkState.fetchArmyFromArmyForge = eNetworkRequestState.ERROR;
@@ -221,7 +236,24 @@ export const onGenerateDefinitions = async (stateView: Readonly<iAppState>) => {
             id: nanoid(),
             isGenerated: true,
             xp: unit.xp || 0,
-            traits: unit.traits || [],
+            campaignTraits: (unit.traits || []).map(
+              (traitName): iCampaignTraitOnModel => {
+                const dictEntry = state.campaignTraitsDict.find(
+                  (t) => t.name.toLowerCase() === traitName.toLowerCase()
+                );
+                return {
+                  id: nanoid(),
+                  name: traitName,
+                  category: getCampaignTraitCategory(dictEntry),
+                  skillSet: dictEntry?.skillSet ?? undefined,
+                  description:
+                    dictEntry?.description ||
+                    "[[Campaign trait description missing in Army Forge data!]]",
+                  includeInOutput: true,
+                  originalTrait: dictEntry,
+                };
+              }
+            ),
             name: pluralize.singular(
               removeQuantityStringFromStartOfString(unit.name).trim()
             ),
@@ -752,9 +784,68 @@ export const generateUnitOutput = (
       : "",
   ].filter((x) => x !== "");
 
+  // Campaign traits block: 4 categories in fixed order. Per-category master toggles
+  // AND per-trait includeInOutput flags must both be on. Global includeCampaignTraits
+  // suppresses the entire block.
+  const campaignTraitsBBCode = (() => {
+    if (!stateView.ttsOutputConfig.includeCampaignTraits) return "";
+    const traits = model.campaignTraits || [];
+    if (traits.length === 0) return "";
+
+    const categoryOrder: {
+      category: eCampaignTraitCategory;
+      configFlag: keyof iAppState["ttsOutputConfig"];
+    }[] = [
+      {
+        category: eCampaignTraitCategory.SKILL_SET,
+        configFlag: "includeCampaignSkillSets",
+      },
+      {
+        category: eCampaignTraitCategory.TRAIT,
+        configFlag: "includeCampaignTraitsCategory",
+      },
+      {
+        category: eCampaignTraitCategory.INJURY,
+        configFlag: "includeCampaignInjuries",
+      },
+      {
+        category: eCampaignTraitCategory.TALENT,
+        configFlag: "includeCampaignTalents",
+      },
+    ];
+
+    return categoryOrder
+      .map(({ category, configFlag }) => {
+        if (!stateView.ttsOutputConfig[configFlag]) return "";
+        const inCategory = traits.filter(
+          (t) => t.category === category && t.includeInOutput
+        );
+        if (inCategory.length === 0) return "";
+        return inCategory
+          .map((t) => {
+            const header = `[${TTS_CAMPAIGN_COLOUR}]Campaign Trait - ${t.name}[-]`;
+            if (!stateView.ttsOutputConfig.includeCampaignTraitsFullText) {
+              return header;
+            }
+            return `${header}
+[sup]${insertLineBreaksIntoString(t.description)}[/sup]`;
+          })
+          .join("\r\n");
+      })
+      .filter((x) => x !== "")
+      .join("\r\n");
+  })();
+
+  const campaignXpBBCode =
+    stateView.ttsOutputConfig.includeCampaignXp && (model.xp || 0) > 0
+      ? `[${TTS_CAMPAIGN_COLOUR}]Campaign XP: ${model.xp}[-]`
+      : "";
+
   let descriptionFieldLines: string[] = [
     `${activeWeaponsList}`,
     `${allApplicableSpecialRulesBBCode}`,
+    `${campaignTraitsBBCode}`,
+    `${campaignXpBBCode}`,
   ];
 
   // loop through everything and remove all the small text

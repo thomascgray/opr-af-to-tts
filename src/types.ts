@@ -27,6 +27,23 @@ export interface iUnitProfileModelTTSOutput {
   originalCasterValue?: number;
 }
 
+export enum eCampaignTraitCategory {
+  SKILL_SET = "SKILL_SET",
+  TRAIT = "TRAIT",
+  INJURY = "INJURY",
+  TALENT = "TALENT",
+}
+
+export interface iCampaignTraitOnModel {
+  id: string;
+  name: string;
+  category: eCampaignTraitCategory;
+  skillSet?: string;
+  description: string;
+  includeInOutput: boolean;
+  originalTrait?: ArmyForgeTypes.ICommonRuleTrait;
+}
+
 export interface iUnitProfileModel {
   id: string;
   name: string;
@@ -36,7 +53,7 @@ export interface iUnitProfileModel {
   isGenerated: boolean;
   originalSpecialRules: any[];
   xp: number;
-  traits: string[];
+  campaignTraits: iCampaignTraitOnModel[];
   loadout: {
     id: string;
     name: string;
@@ -75,6 +92,7 @@ export interface iAppState {
     description: string;
   }[];
   armySpecialRulesDictNames: string[];
+  campaignTraitsDict: ArmyForgeTypes.ICommonRuleTrait[];
   unitProfiles: iUnitProfile[];
   ttsOutputConfig: {
     includeCoreSpecialRules: boolean;
@@ -91,6 +109,10 @@ export interface iAppState {
     includeCampaignXp: boolean;
     includeCampaignTraits: boolean;
     includeCampaignTraitsFullText: boolean;
+    includeCampaignSkillSets: boolean;
+    includeCampaignTraitsCategory: boolean;
+    includeCampaignInjuries: boolean;
+    includeCampaignTalents: boolean;
 
     modelWeaponOutputColour: string;
     modelSpecialRulesOutputColour: string;

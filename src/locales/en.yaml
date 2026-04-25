@@ -32,6 +32,13 @@ app:
     quantityPerModelTitle: "Quantity of this item per model"
     includeInNameTitle: "Check to include this item in the model name"
     duplicateButton: "Duplicate this model definition"
+    campaignTraits:
+      heading: "Campaign Traits"
+      skillSets: "Skill Sets"
+      traits: "Traits"
+      injuries: "Injuries"
+      talents: "Talents"
+      toggleTitle: "Include Campaign Trait > {{category}} > {{name}} in model description"
   ttsPreview:
     label: "TTS output preview (name and description)"
   shareable:
@@ -86,6 +93,27 @@ outputOptions:
     disableSmallText:
       name: "Disable small text"
       label: "If enabled, then none of the text in the name or description will be small. Enable this if you have trouble reading the small text in TTS."
+    includeCampaignTraits:
+      name: "Include campaign traits in model description"
+      label: 'If enabled, the TTS "description" output will include each of the model''s campaign traits (Skill Sets, Traits, Injuries, Talents). This is the master switch — the per-category toggles below, and the per-trait checkboxes in the editor, further refine what is shown.'
+    includeCampaignTraitsFullText:
+      name: "Include the full text for campaign traits"
+      label: 'If enabled, the TTS "description" output will include each campaign trait''s rule text in full. If disabled, only the trait''s name will be included.'
+    includeCampaignSkillSets:
+      name: "Include Campaign Skill Sets"
+      label: "If enabled, campaign traits in the Skill Sets category (e.g. Suppressor, Prowler) are included in the model description."
+    includeCampaignTraitsCategory:
+      name: "Include Campaign Traits"
+      label: "If enabled, campaign traits in the Traits category (e.g. Agile, Resilient) are included in the model description."
+    includeCampaignInjuries:
+      name: "Include Campaign Injuries"
+      label: "If enabled, campaign injuries (e.g. Blinded Eye, Chest Wound) are included in the model description."
+    includeCampaignTalents:
+      name: "Include Campaign Talents"
+      label: "If enabled, campaign talents (e.g. Natural Talent) are included in the model description."
+    includeCampaignXp:
+      name: "Include Campaign XP in model description"
+      label: 'If enabled, the TTS "description" output ends with the model''s current campaign XP. Models with 0 XP have nothing added.'
   colours:
     quality:
       name: "Model Quality Stat Output Colour"
@@ -102,6 +130,9 @@ outputOptions:
     tough:
       name: "Model Tough Special Rule Rating Output Colour"
       label: "HEX code for the model's Tough rating, if it has one, in the TTS output."
+    campaign:
+      name: "Model Campaign Stuff Output Colour"
+      label: "HEX code for the model's campaign traits and campaign XP line in the TTS output."
   saveLoad:
     header: "Save & Load TTS Output Configs"
     description: "Save all of the above configuration into the local storage of your browser by hitting the button below. You can then quickly load different configs by hitting the load buttons below."
@@ -114,6 +145,86 @@ outputOptions:
 outputFaq:
   header: "TTS Output Notes"
   unitUpgradesNote: 'Special upgrades that apply specifically to entire units (such as Age of Fantasy "Musician" upgrades) are listed as individual loadout items here. While this isn''t technically perfect, it''s the best compromise, and still allows the most flexibility.'
+
+inGameEnhancements:
+  header: "In-Game Enhancements"
+  intro: "Once you've imported your shareable link into the TTS mod and assigned a model definition to a TTS object, that object gains a bunch of extra in-game features for tracking HP, spell tokens, status effects, measuring distances, and visually grouping unit mates. Here's everything that becomes available."
+  statBars:
+    heading: "Floating Stat Bars"
+    body: "Each assigned model gets a small panel that floats above it showing its current state. Each bar has inline [-] and [+] buttons either side of the text for quick adjustments without opening the full menu."
+    item1: "HP bar (red) — shows current/max wounds. Max is the model's Tough value (or Tough + 5 in skirmish systems)."
+    item2: "SP bar (blue) — shows current/6 spell tokens, only for caster models."
+    item3: "Measuring readout — appears when a measuring ring is active, showing the current radius in inches. Coloured to match the ring."
+  contextMenu:
+    heading: "Right-Click Context Menu"
+    body: "Right-click any assigned model for these entries:"
+    toggleMenu:
+      name: "Toggle Menu"
+      desc: "Opens or closes the floating action panel above the model. Only one menu in a given army can be open at a time — opening one closes any other."
+    activated:
+      name: "Activated"
+      desc: "Toggles the unit's activation state. Affects every model in the unit (a green ring appears around each)."
+    shakenStunned:
+      name: "Shaken / Stunned"
+      desc: "Unit-wide status toggle. \"Shaken\" appears for Grimdark Future / Age of Fantasy / Age of Fantasy Regiments armies (yellow pentagon); \"Stunned\" appears for Grimdark Future Firefight / Age of Fantasy Skirmish armies (red hexagon)."
+    measuring:
+      name: "Measuring"
+      desc: "Cycles a white measuring ring around the model through 3″, 6″, 9″, 12″, 18″, 24″, 30″ and off."
+  hotkeys:
+    heading: "Hover Hotkeys (Scripting Keys)"
+    body: "While hovering your cursor over an assigned model, the TTS scripting number keys 1–6 act on that model. No need to pick it up or right-click — just hover and tap."
+    col:
+      key: "Key"
+      action: "Action"
+      notes: "Notes"
+    row1:
+      action: "Toggle action panel"
+      notes: "Same as the right-click \"Toggle Menu\" entry."
+    row2:
+      action: "HP −1"
+      notes: "Only on models with Tough (or any model in a skirmish system)."
+    row3:
+      action: "HP +1"
+      notes: "Only on models with Tough (or any model in a skirmish system)."
+    row4:
+      action: "SP −1"
+      notes: "Only on caster models."
+    row5:
+      action: "SP +1"
+      notes: "Only on caster models."
+    row6:
+      action: "Cycle measuring radius"
+      notes: "Same cycle as the right-click \"Measuring\" entry."
+    libraryNote: "These hotkeys live on the model itself, so they keep working even if you save the assigned model into your personal TTS object library and load it into a different map that doesn't have the mod."
+  actionPanel:
+    heading: "Floating Action Panel"
+    body: "Opening the menu reveals a button panel above the model with everything below. Click the red X in the top-right to close it — none of the action buttons themselves close the panel, so you can chain operations freely."
+    columns:
+      heading: "Three columns of actions:"
+      model:
+        name: "Model"
+        desc: "HP +/−, SP +/−, cycle Measuring radius, turn Measuring off."
+      unit:
+        name: "Unit"
+        desc: "Activated, Shaken or Stunned, Select All (selects every model in the unit), Count (announces how many models remain)."
+      army:
+        name: "Army"
+        desc: "Measuring Off (clears every measuring ring across the army), Deactivate (clears activation across the army), Refresh Spells (each caster gains its per-turn token allowance, capped at 6)."
+    extras:
+      heading: "Plus four further sections beneath the columns:"
+      ringColour:
+        name: "Measuring Ring Colour"
+        desc: "Two rows of eight colour swatches (light + dark variants). Recolours the unit's measuring ring and the matching readout in the floating stat bars. Applies to every model in the unit."
+      highlight:
+        name: "Unit Highlight"
+        desc: "Same palette, but applies a persistent TTS object highlight (a glow around the base) to every model in the unit. Use it to keep track of which unit is which on a busy table. \"Clear Highlight\" removes it."
+      uiVisibility:
+        name: "Floating UI Visibility"
+        desc: "Per-Model and per-Unit toggles for the HP bar, SP bar, and Measure Distance Indicator. Hide stats you aren't tracking to keep the table tidy."
+      uiPosition:
+        name: "Model Floating UI Position"
+        desc: "Up / Down nudge the floating UI vertically (handy for tall models or large bases). Left / Right rotate it around the vertical axis so it always faces you."
+    closeNote: "Tip: only one action panel per army can be open at a time. Opening another model's menu automatically closes the previous one."
 
 maintenance:
   heading: "OPR Army Forge to TTS is under maintenance!"

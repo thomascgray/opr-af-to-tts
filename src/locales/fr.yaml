@@ -28,6 +28,13 @@ app:
     quantityPerModelTitle: "Quantité de cet objet par modèle"
     includeInNameTitle: "Cochez pour inclure cet objet dans le nom du modèle"
     duplicateButton: "Dupliquer cette définition de modèle"
+    campaignTraits:
+      heading: "Traits de campagne"
+      skillSets: "Compétences"
+      traits: "Traits"
+      injuries: "Blessures"
+      talents: "Talents"
+      toggleTitle: "Inclure le trait de campagne > {{category}} > {{name}} dans la description du modèle"
   ttsPreview:
     label: "Aperçu de la sortie TTS (nom et description)"
   shareable:
@@ -82,6 +89,27 @@ outputOptions:
     disableSmallText:
       name: "Désactiver le texte en petit"
       label: "Si activé, aucun texte du nom ou de la description ne sera en petit. Activez cette option si vous avez du mal à lire le petit texte dans TTS."
+    includeCampaignTraits:
+      name: "Inclure les traits de campagne dans la description du modèle"
+      label: "Si activé, la description TTS inclura chacun des traits de campagne du modèle (Compétences, Traits, Blessures, Talents). C'est l'interrupteur principal — les sous-catégories ci-dessous et les cases à cocher par trait affinent la sortie."
+    includeCampaignTraitsFullText:
+      name: "Inclure le texte complet des traits de campagne"
+      label: "Si activé, la description TTS inclura le texte complet de chaque trait de campagne. Sinon, seul le nom du trait sera affiché."
+    includeCampaignSkillSets:
+      name: "Inclure les Compétences de campagne"
+      label: "Si activé, les traits de campagne de la catégorie Compétences (p. ex. Suppressor, Prowler) sont inclus dans la description du modèle."
+    includeCampaignTraitsCategory:
+      name: "Inclure les Traits de campagne"
+      label: "Si activé, les traits de campagne de la catégorie Traits (p. ex. Agile, Resilient) sont inclus dans la description du modèle."
+    includeCampaignInjuries:
+      name: "Inclure les Blessures de campagne"
+      label: "Si activé, les blessures de campagne (p. ex. Blinded Eye, Chest Wound) sont incluses dans la description du modèle."
+    includeCampaignTalents:
+      name: "Inclure les Talents de campagne"
+      label: "Si activé, les talents de campagne (p. ex. Natural Talent) sont inclus dans la description du modèle."
+    includeCampaignXp:
+      name: "Inclure l'XP de campagne dans la description du modèle"
+      label: "Si activé, la description TTS se termine par l'XP de campagne actuelle du modèle. Les modèles avec 0 XP n'ont aucune ligne ajoutée."
   colours:
     quality:
       name: "Couleur de la qualité du modèle"
@@ -98,6 +126,9 @@ outputOptions:
     tough:
       name: "Couleur de la valeur Tough du modèle"
       label: "Code HEX pour la valeur Tough du modèle, le cas échéant, dans la sortie TTS."
+    campaign:
+      name: "Couleur des éléments de campagne"
+      label: "Code HEX pour les traits de campagne et l'XP de campagne du modèle dans la sortie TTS."
   saveLoad:
     header: "Enregistrer et charger les configurations TTS"
     description: "Enregistrez toute la configuration ci-dessus dans le stockage local de votre navigateur en cliquant sur le bouton ci-dessous. Vous pourrez ensuite rapidement charger différentes configurations."
@@ -110,6 +141,86 @@ outputOptions:
 outputFaq:
   header: "Notes sur la sortie TTS"
   unitUpgradesNote: 'Les améliorations qui s''appliquent à des unités entières (comme les améliorations "Musician" dans Age of Fantasy) sont listées ici comme des équipements individuels. Ce n''est pas techniquement parfait, mais c''est le meilleur compromis et cela offre le plus de flexibilité.'
+
+inGameEnhancements:
+  header: "Améliorations en jeu"
+  intro: "Une fois que vous avez importé votre lien partageable dans le mod TTS et assigné une définition de modèle à un objet TTS, cet objet bénéficie de nombreuses fonctionnalités supplémentaires en jeu pour suivre les PV, les jetons de sort, les états, mesurer les distances et regrouper visuellement les modèles d'une même unité. Voici tout ce qui devient disponible."
+  statBars:
+    heading: "Barres d'état flottantes"
+    body: "Chaque modèle assigné reçoit un petit panneau flottant au-dessus de lui qui affiche son état actuel. Chaque barre dispose de boutons [-] et [+] de chaque côté du texte pour des ajustements rapides sans ouvrir le menu complet."
+    item1: "Barre de PV (rouge) — affiche les blessures actuelles/maximales. Le maximum est la valeur Tough du modèle (ou Tough + 5 dans les systèmes Skirmish)."
+    item2: "Barre de SP (bleue) — affiche les jetons de sort actuels/6, uniquement pour les modèles lanceurs de sorts."
+    item3: "Indicateur de mesure — apparaît lorsqu'un cercle de mesure est actif et affiche le rayon en pouces. Coloré pour correspondre au cercle."
+  contextMenu:
+    heading: "Menu contextuel (clic droit)"
+    body: "Faites un clic droit sur un modèle assigné pour accéder à ces entrées :"
+    toggleMenu:
+      name: "Toggle Menu"
+      desc: "Ouvre ou ferme le panneau d'actions flottant au-dessus du modèle. Un seul menu peut être ouvert par armée à la fois — en ouvrir un ferme automatiquement les autres."
+    activated:
+      name: "Activated"
+      desc: "Bascule l'état d'activation de l'unité. Affecte tous les modèles de l'unité (un anneau vert apparaît autour de chacun)."
+    shakenStunned:
+      name: "Shaken / Stunned"
+      desc: "Bascule de l'état d'unité. \"Shaken\" apparaît pour les armées Grimdark Future / Age of Fantasy / Age of Fantasy Regiments (pentagone jaune) ; \"Stunned\" apparaît pour les armées Grimdark Future Firefight / Age of Fantasy Skirmish (hexagone rouge)."
+    measuring:
+      name: "Measuring"
+      desc: "Fait défiler un anneau de mesure blanc autour du modèle aux distances 3″, 6″, 9″, 12″, 18″, 24″, 30″, puis le désactive."
+  hotkeys:
+    heading: "Raccourcis au survol (Scripting Keys)"
+    body: "Lorsque vous survolez un modèle assigné avec votre curseur, les touches de script TTS 1 à 6 agissent sur ce modèle. Pas besoin de le saisir ni de faire un clic droit — il suffit de survoler et d'appuyer."
+    col:
+      key: "Touche"
+      action: "Action"
+      notes: "Notes"
+    row1:
+      action: "Ouvrir/fermer le panneau d'actions"
+      notes: "Identique à l'entrée \"Toggle Menu\" du clic droit."
+    row2:
+      action: "PV −1"
+      notes: "Uniquement pour les modèles avec Tough (ou tout modèle d'un système Skirmish)."
+    row3:
+      action: "PV +1"
+      notes: "Uniquement pour les modèles avec Tough (ou tout modèle d'un système Skirmish)."
+    row4:
+      action: "SP −1"
+      notes: "Uniquement pour les modèles lanceurs de sorts."
+    row5:
+      action: "SP +1"
+      notes: "Uniquement pour les modèles lanceurs de sorts."
+    row6:
+      action: "Faire défiler le rayon de mesure"
+      notes: "Même cycle que l'entrée \"Measuring\" du clic droit."
+    libraryNote: "Ces raccourcis sont attachés au modèle lui-même, ils continuent donc de fonctionner même si vous sauvegardez le modèle dans votre bibliothèque d'objets TTS personnelle et le chargez dans une autre map qui n'a pas le mod."
+  actionPanel:
+    heading: "Panneau d'actions flottant"
+    body: "Ouvrir le menu fait apparaître un panneau de boutons au-dessus du modèle avec tout ce qui suit. Cliquez sur le X rouge en haut à droite pour le fermer — aucun bouton d'action ne ferme le panneau lui-même, vous pouvez donc enchaîner les opérations librement."
+    columns:
+      heading: "Trois colonnes d'actions :"
+      model:
+        name: "Modèle"
+        desc: "PV +/−, SP +/−, faire défiler le rayon de mesure, désactiver la mesure."
+      unit:
+        name: "Unité"
+        desc: "Activated, Shaken ou Stunned, Select All (sélectionne tous les modèles de l'unité), Count (annonce combien de modèles restent)."
+      army:
+        name: "Armée"
+        desc: "Measuring Off (efface tous les anneaux de mesure de l'armée), Deactivate (annule l'activation de toute l'armée), Refresh Spells (chaque lanceur de sorts récupère ses jetons par tour, plafonné à 6)."
+    extras:
+      heading: "Plus quatre sections supplémentaires sous les colonnes :"
+      ringColour:
+        name: "Couleur de l'anneau de mesure"
+        desc: "Deux rangées de huit échantillons de couleur (variantes claire et foncée). Recolore l'anneau de mesure de l'unité ainsi que l'indicateur correspondant dans les barres d'état flottantes. S'applique à tous les modèles de l'unité."
+      highlight:
+        name: "Surbrillance d'unité"
+        desc: "Même palette, mais applique une surbrillance d'objet TTS persistante (un halo autour du socle) à chaque modèle de l'unité. Utile pour distinguer les unités sur une table chargée. \"Clear Highlight\" la retire."
+      uiVisibility:
+        name: "Visibilité de l'UI flottante"
+        desc: "Bascules par modèle et par unité pour la barre de PV, la barre de SP et l'indicateur de distance de mesure. Masquez les statistiques que vous ne suivez pas pour aérer la table."
+      uiPosition:
+        name: "Position de l'UI flottante du modèle"
+        desc: "Up / Down déplacent l'UI flottante verticalement (pratique pour les grands modèles ou les grosses bases). Left / Right la font pivoter autour de l'axe vertical pour qu'elle vous fasse toujours face."
+    closeNote: "Astuce : un seul panneau d'actions par armée peut être ouvert à la fois. Ouvrir le menu d'un autre modèle ferme automatiquement le précédent."
 
 maintenance:
   heading: "OPR Army Forge vers TTS est en maintenance !"
