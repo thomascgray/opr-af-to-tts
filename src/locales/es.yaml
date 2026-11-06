@@ -6,6 +6,9 @@ app:
   bugReport:
     # <0> = enlace a la página de issues de GitHub
     text: "Si encuentras algún error, por favor repórtalo en la <0>página de issues de GitHub</0>. ¡Gracias!"
+  questExperimental:
+    # <0> = enlace al issue #74 de GitHub
+    text: "Las listas de Quest y Star Quest son experimentales y puede que no funcionen al 100 %. Por favor, informa de cualquier problema en <0>este issue de GitHub</0>."
   armyShareLink:
     label: "Enlace para compartir de Army Forge"
     # <0> = enlace a Army Forge, <1> = enlace al mod de TTS en Steam

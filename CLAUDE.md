@@ -10,7 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run preview` — Serve the production `dist/` locally.
 - `npm run lua:check` — Syntax-checks `tts_lua_code/mod.lua` and, separately, the `perModelCode` string inside it (luaparse, Lua 5.2). Parse errors only; behaviour still needs a hand test in TTS.
 
-`vitest` is installed but no test script is wired up and there are no test files in the tree — do not assume a test harness exists.
+- `npm test` — `vitest run` (node environment, setup in `vitest.setup.ts`). Tests are `src/utils.test.ts` (snapshots in `src/__snapshots__/`), `src/state.test.ts`, `netlify/functions/get-army/get-army.test.ts` and the contract test `src/__fixtures__/army-forge-contract.test.ts`, which checks the shape of every fixture in `src/__fixtures__/`. There are no component tests; check UI changes by hand.
+- `npm run fixtures:refresh` — Re-downloads every fixture from live Army Forge (`scripts/refresh-fixtures.mjs`). To add one, create an empty `tts-<id>.json` or `common-rules-<n>.json` and run it. It rewrites all fixtures, so revert any you didn't mean to update.
 
 ## Architecture
 
@@ -22,7 +23,7 @@ This is a Vite + React 18 + TypeScript SPA (Tailwind for styling) with two Netli
 2. `onGenerateDefinitions` (`src/utils.tsx`) extracts the army id + beta flag from the URL (`extractIdFromUrl`) and calls `/.netlify/functions/get-army?armyId=…&isBeta=…`.
 3. That function (`netlify/functions/get-army/get-army.ts`) proxies to either `army-forge.onepagerules.com/api/tts` or `army-forge-beta.onepagerules.com/api/tts` — it exists purely to sidestep CORS. The same endpoint also fetches core/common special rules when called with `commonRulesId` instead of `armyId`.
 4. The response is mapped into the app's own domain types (`iUnitProfile[]` in `src/types.ts`) and written to the valtio proxy `state` in `src/state.ts`. Each unit starts with one "generated" model; users duplicate/edit to produce distinct model definitions.
-5. `generateUnitOutput` (in `src/utils.tsx`) produces the BBCode name + description preview per model, using colours/toggles from `state.ttsOutputConfig`.
+5. `generateUnitOutput` (in `src/tts-output/generate-unit-output.ts`, re-exported from `src/utils.tsx`) produces the BBCode name + description preview per model, using colours/toggles from `state.ttsOutputConfig`.
 6. `onGenerateShareableId` POSTs the aggregated `iTotalShareableOutput` to `/.netlify/functions/save-list`, which stores it in Turso (libSQL). The `shareableLinkForTTS` points at the **GET** of the same function; the TTS Lua mod fetches it by id.
 
 ### State
@@ -40,12 +41,12 @@ The beta switch is derived from the URL string itself (`url.includes("army-forge
 
 ### TTS output (`generateUnitOutput`)
 
-This single function in `src/utils.tsx` is the bulk of the logic and is deliberately dense. It merges special rules from three sources (unit-level, loadout items' own rules, and nested `content[]` from `ArmyBookItem` upgrades), dedupes by `key || name`, sums Tough/Caster ratings, and emits `[colour]...[-]` BBCode using the colour hexes from `ttsOutputConfig`. The Army Forge type definitions lie about some shapes (items can have `content`, loadouts sometimes have no `id` or `key`) — the existing `@ts-ignore` comments and inline history comments (dated) explain *why* specific fallbacks exist. Preserve those fallbacks unless you've verified against live Army Forge data.
+This single function in `src/tts-output/generate-unit-output.ts` is the bulk of the logic and is deliberately dense. It merges special rules from three sources (unit-level, loadout items' own rules, and nested `content[]` from `ArmyBookItem` upgrades), dedupes by `key || name`, sums Tough/Caster ratings, and emits `[colour]...[-]` BBCode using the colour hexes from `ttsOutputConfig`. The Army Forge type definitions lie about some shapes (items can have `content`, loadouts sometimes have no `id` or `key`) — the existing `@ts-ignore` comments and inline history comments (dated) explain *why* specific fallbacks exist. Preserve those fallbacks unless you've verified against live Army Forge data.
 
 ### Environment variables
 
 - `VITE_IS_MAINTENANCE_MODE` (frontend, checked in `src/main.tsx`) — when `'true'`, renders `Maintenance.tsx` instead of the app.
-- `TURSO_DB_URL`, `TURSO_AUTH_STRING` (Netlify Function, `save-list`) — libSQL credentials; absence triggers the localStorage fallback described above.
+- `TURSO_DB_URL`, `TURSO_AUTH_STRING` (Netlify Function, `save-list`) — libSQL credentials; absence triggers the in-memory fallback described above.
 
 ### Deployment
 

@@ -1,0 +1,478 @@
+{
+  "id": "iY9ouC4u52M1",
+  "name": "Human Empire",
+  "isCloud": false,
+  "forceOrg": false,
+  "modified": "2026-11-06T18:17:10.171Z",
+  "gameSystem": "aofs",
+  "modelCount": 1,
+  "simpleMode": false,
+  "description": "",
+  "pointsLimit": 600,
+  "campaignMode": false,
+  "cloudModified": null,
+  "narrativeMode": false,
+  "activationCount": 1,
+  "includeVehicles": false,
+  "removeOvercosted": false,
+  "listPoints": 110,
+  "units": [
+    {
+      "id": "Vj0QX3_",
+      "cost": 105,
+      "name": "Battle Master",
+      "size": 1,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "T08VkBuVmNZ_",
+          "name": "Hero",
+          "label": "Hero"
+        },
+        {
+          "id": "a0YtInGiUDd6",
+          "name": "Tough",
+          "rating": 9,
+          "label": "Tough(9)"
+        },
+        {
+          "id": "Sdcb8VAeTxji",
+          "name": "Hold the Line",
+          "label": "Hold the Line"
+        }
+      ],
+      "valid": true,
+      "defense": 4,
+      "product": {
+        "imageUrls": [
+          "army-books/unitProduct/jZ02AVPLx_S48Mnb/O49BvhMivcW-GI6XgogXp.png",
+          "army-books/unitProduct/jZ02AVPLx_S48Mnb/nvmGuY5hNKs-VtZSl7QRS.png",
+          "army-books/unitProduct/jZ02AVPLx_S48Mnb/B8A_DJBUw3BvXlrd5QVei.png"
+        ],
+        "description": "",
+        "avatarImageUrl": "army-books/unitProduct/jZ02AVPLx_S48Mnb/WfVTr_VvAJAf40oUqlTqR.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-battle-master-captain-human-empire-293592",
+            "label": "Battle Master (Captain)"
+          }
+        ],
+        "storeLinksPhysical": []
+      },
+      "quality": 4,
+      "weapons": [
+        {
+          "id": "5ylu4A3L",
+          "name": "Dual Hand Weapons",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 8,
+          "weaponId": "9j26um1T",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Dual Hand Weapons (A8)",
+          "originalCount": 1
+        }
+      ],
+      "upgrades": [
+        "A1",
+        "ozQ0bUOC"
+      ],
+      "genericName": "Elite Infantry Leader",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "originalSize": 1,
+      "armyId": "jZ02AVPLx_S48Mnb",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "2IpW7",
+      "selectedUpgrades": [
+        {
+          "instanceId": "2NHIstH0t",
+          "upgrade": {
+            "id": "Rrlt9Ey",
+            "uid": "t_cGNkas",
+            "label": "Upgrade with one",
+            "isHeroUpgrade": true,
+            "parentPackageUid": "k_MFLY-c",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "upgrade",
+            "select": {
+              "type": "exactly",
+              "value": 1
+            }
+          },
+          "option": {
+            "uid": "XAms9iBv",
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "unitId": "Vj0QX3_",
+                "cost": 5,
+                "exactCost": 1.61,
+                "questCost": 5
+              }
+            ],
+            "gains": [
+              {
+                "type": "ArmyBookItem",
+                "name": "Great Empire Icon Bearer",
+                "content": [
+                  {
+                    "type": "ArmyBookRule",
+                    "id": "F117YMXeDcjZ",
+                    "name": "Enhanced Hold the Line Buff",
+                    "dependencies": []
+                  }
+                ],
+                "bases": null,
+                "label": "Great Empire Icon Bearer (Enhanced Hold the Line Buff)",
+                "count": 1,
+                "dependencies": []
+              }
+            ],
+            "label": "Great Empire Icon Bearer (Enhanced Hold the Line Buff)",
+            "parentSectionId": "t_cGNkas",
+            "parentPackageUid": "k_MFLY-c",
+            "id": "XAms9iBv"
+          }
+        }
+      ],
+      "loadout": [
+        {
+          "id": "5ylu4A3L",
+          "name": "Dual Hand Weapons",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 8,
+          "weaponId": "9j26um1T",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Dual Hand Weapons (A8)",
+          "originalCount": 1
+        },
+        {
+          "type": "ArmyBookItem",
+          "name": "Great Empire Icon Bearer",
+          "content": [
+            {
+              "type": "ArmyBookRule",
+              "id": "F117YMXeDcjZ",
+              "name": "Enhanced Hold the Line Buff",
+              "dependencies": [],
+              "count": 1
+            }
+          ],
+          "bases": null,
+          "label": "Great Empire Icon Bearer (Enhanced Hold the Line Buff)",
+          "count": 1,
+          "dependencies": []
+        }
+      ]
+    }
+  ],
+  "specialRules": [
+    {
+      "id": "Sdcb8VAeTxji",
+      "name": "Hold the Line",
+      "aliasedRuleId": "LbpquFUyGSZ7",
+      "description": "If most models in this unit have this rule, they get +1 to Morale Test rolls when shot/charged from over 9\"/6\" away.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Valiant"
+    },
+    {
+      "id": "C6MzEy1CnxTs",
+      "name": "Repel Ambushers",
+      "aliasedRuleId": null,
+      "description": "Enemy units using Ambush must be set up over 12\" away from this model's unit.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "r8OBuam8nRXP",
+      "name": "Vanguard",
+      "aliasedRuleId": null,
+      "description": "After this model is deployed, it may be placed anywhere fully within 9\" of its position, over 9\" away from non-Vanguard enemy units.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "FPlO2MymiMc0",
+      "name": "Coordinate",
+      "aliasedRuleId": null,
+      "description": "At the end of this unit's activation, another friendly unit within 12\" that hasn't activated yet may be activated immediately. May not be used if this unit was activated via Coordinate.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "eU6uz90H82Sw",
+      "name": "Extended Buff Range",
+      "aliasedRuleId": null,
+      "description": "If this unit is within 24\" of another friendly unit with this rule that is within 6\" of a friendly Hero, then that Hero may use special rules that allow it to pick friendly units within 12\" (except for spells) on this unit as if it was in range.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "8HWdOwMYcI0p",
+      "name": "Sergeant",
+      "aliasedRuleId": null,
+      "description": "This model gets AP(+1) when attacking.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "74RjQ1k41DoO",
+      "name": "Armor",
+      "aliasedRuleId": null,
+      "description": "Counts as having Defense X+.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "mETdyZ__yMVj",
+      "name": "Mend",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly model within 3\" with Tough, and remove D3 wounds from it.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "nLQCr5OiSlYz",
+      "name": "Caster Group",
+      "aliasedRuleId": null,
+      "description": "This model counts as having Caster(1).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "4NMqPbqMvE4C",
+      "name": "Enhanced Hold the Line",
+      "aliasedRuleId": "TbjUdR-OJZPw",
+      "description": "If most models in this unit have Hold the Line, they always get +1 to Morale Test rolls from Hold the Line (instead of only when shot/charged from over 9\"/6\" away).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Enhanced Valiant"
+    },
+    {
+      "id": "V3YzPPkZm8at",
+      "name": "Regeneration Aura",
+      "aliasedRuleId": null,
+      "description": "This model's unit and up to 2 friendly units picked before the start of the game get Regeneration. If this model is killed, picked models that are deployed lose the rule.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "h9JsgD38BRjI",
+      "name": "Bounding",
+      "aliasedRuleId": null,
+      "description": "When this unit is activated, you may move all models with this rule in it by up to D3+1\".",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "kQVze0GRY3R9",
+      "name": "Agile",
+      "aliasedRuleId": null,
+      "description": "Moves +1\" when using Advance, and +2\" when using Rush/Charge.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "FDI5sLTtr3gC",
+      "name": "Precision Shooter Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick up to 3 friendly units within 12\", which gets +1 to hit rolls when shooting once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "13WU-Xq3Pu8E",
+      "name": "Furious Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick up to 3 friendly units within 12\", which gets Furious once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "hdAYIH9rfgOk",
+      "name": "Precision Fighting Mark",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick up to 3 enemy units within 18\" in line of sight, which friendly units get +1 to hit rolls in melee against once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "JSnFcm3SCiMD",
+      "name": "Fracture",
+      "aliasedRuleId": null,
+      "description": "For each unmodified result of 6 to hit, those hits get AP(+2).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "QXyt-zV_bjpg",
+      "name": "Unstoppable",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration, and ignores all negative modifiers which are not from this model's special rules.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "efmjJPTe0Yzd",
+      "name": "Anti-Cover",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Cover.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "XWsun1sjt2ql",
+      "name": "Rapid Rush Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick up to 3 friendly units within 12\", which gets Rapid Rush once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "F117YMXeDcjZ",
+      "name": "Enhanced Hold the Line Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick up to 3 friendly units within 12\", which gets Enhanced Hold the Line once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "LbpquFUyGSZ7",
+      "name": "Valiant",
+      "aliasedRuleId": null,
+      "description": "If most models in this unit have this rule, they get +1 to Morale Test rolls when shot/charged from over 9\"/6\" away.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "TbjUdR-OJZPw",
+      "name": "Enhanced Valiant",
+      "aliasedRuleId": null,
+      "description": "If most models in this unit have Valiant, they always get +1 to Morale Test rolls from Valiant (instead of only when shot/charged from over 9\"/6\" away).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "6mJw5IdqSqNC",
+      "name": "Ambush",
+      "aliasedRuleId": null,
+      "description": "May be set aside before deployment. At the start of any round after the first, may be deployed anywhere over 9” away from enemy units. Players alternate in placing Ambush units, starting with the player that activates next. Units that deploy via Ambush can’t seize or contest objectives on the round they deploy.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "T08VkBuVmNZ_",
+      "name": "Hero",
+      "aliasedRuleId": null,
+      "description": "Units within 6” of friendly Heroes may use the Hero’s Quality for Morale Tests as long as the Hero isn’t Shaken.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "CQes0mDvF4bV",
+      "name": "AP",
+      "aliasedRuleId": null,
+      "description": "AP",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "s6MgSfmgylXU",
+      "name": "Defense",
+      "aliasedRuleId": null,
+      "description": "This model gets +X to Defense rolls.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "a0YtInGiUDd6",
+      "name": "Tough",
+      "aliasedRuleId": null,
+      "description": "Once a model has taken as many wounds as its Tough value, it is killed (remove from play).",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "47CAqf7ySlfc",
+      "name": "Caster",
+      "aliasedRuleId": null,
+      "description": "Gets X spell tokens at the start of each round, but can’t have more than 6 at once. Once per activation, before attacking, spend as many tokens as the spell’s value to try casting one or more spells (only one try per spell). Pick a target and roll one die, and on 4+ resolve the spell’s effect. Models within 18” of the Caster may spend any number of spell tokens at the same time before rolling to give the Caster +1/-1 to the roll per token.",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "8KujvrTG8k9p",
+      "name": "Regeneration",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. On a 5+ it is ignored.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "JoOCVPx1xT1G",
+      "name": "Furious",
+      "aliasedRuleId": null,
+      "description": "When charging, unmodified result of 6 to hit deal 1 extra hit (only the original hit counts as a 6 for special rules).",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "qsx__9Cz3au_",
+      "name": "Rapid Rush",
+      "aliasedRuleId": null,
+      "description": "This model moves +6\" when using Rush actions.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    }
+  ],
+  "forceOrgErrors": []
+}

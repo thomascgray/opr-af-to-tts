@@ -6,6 +6,9 @@ app:
   bugReport:
     # <0> = Link zur GitHub-Issues-Seite
     text: "Wenn du Fehler findest, melde sie bitte auf der <0>GitHub-Issues-Seite</0>. Danke!"
+  questExperimental:
+    # <0> = Link zu GitHub-Issue #74
+    text: "Quest- und Star-Quest-Listen sind experimentell und funktionieren eventuell nicht zu 100 %. Bitte melde Probleme in <0>diesem GitHub-Issue</0>."
   armyShareLink:
     label: "Army Forge Freigabelink"
     # <0> = Link zu Army Forge, <1> = Link zum TTS-Mod auf Steam

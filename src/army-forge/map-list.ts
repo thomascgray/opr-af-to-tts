@@ -234,8 +234,14 @@ export const mapArmyForgeListToUnitProfiles = (
     coreSpecialRulesDict,
     campaignTraitsDict,
     armySpecialRulesDict: [
-      ...coreSpecialRulesDict,
-      ...list.specialRules.map((sr) => ({ ...sr })),
+      ...coreSpecialRulesDict.map((sr) => ({
+        ...sr,
+        showWhenReferenced: sr.displayCoreRuleForSystem === false,
+      })),
+      ...list.specialRules.map((sr) => ({
+        ...sr,
+        showWhenReferenced: _.isNil(sr.coreType),
+      })),
     ],
     unitProfiles: _.sortBy(list.units, ["sortId"]).map((unit) =>
       mapUnit(unit, campaignTraitsDict)

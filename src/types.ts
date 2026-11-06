@@ -86,6 +86,8 @@ export interface iAppState {
   armySpecialRulesDict: {
     name: string;
     description: string;
+    // true when Army Forge prints this rule's text under any rule that names it
+    showWhenReferenced?: boolean;
   }[];
   gameSystem?: ArmyForgeTypes.eGameSystemInitials;
   coreSpecialRulesDict: {
