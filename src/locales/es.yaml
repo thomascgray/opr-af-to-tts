@@ -230,3 +230,6 @@ errors:
   noArmyId: "No se pudo encontrar el ID de ejército de Army Forge. Por favor, comprueba tu enlace de Army Forge e inténtalo de nuevo."
   armyForgeExportFailed: "¡Army Forge no pudo exportar la lista. Lo sentimos!"
   fetchCommonRulesFailed: "¡Error al cargar las reglas comunes. Lo sentimos!"
+  unsupportedGameSystem: "Esta lista usa un sistema de juego que la app aún no admite ({{gameSystem}})."
+  armyForgeBetaUnavailable: "La web beta de Army Forge no responde. No se pueden importar listas beta hasta que vuelva a funcionar."
+  armyForgeUnavailable: "Army Forge no responde en este momento. Inténtalo de nuevo en unos minutos."

@@ -6,26 +6,45 @@ export enum eGameSystemInitials {
   AOFR = "aofr",
 }
 
+// These types describe the /api/tts and /api/rules/common/<n> responses. There is no
+// published schema. The fields the app reads are checked against live data by
+// src/__fixtures__/army-forge-contract.test.ts; keep the two in step.
+
+// 3.6 sends ratings as numbers; older data sent numeric strings
+export type Rating = string | number;
+
 export interface ListState {
-  creationTime: string;
+  creationTime?: string;
   name: string;
   pointsLimit?: number;
   units: ISelectedUnit[];
+  specialRules: IArmySpecialRule[];
   undoUnitRemove?: ISelectedUnit[];
   selectedUnitId?: string;
-  points: number;
+  points?: number;
   unitPreview?: ISelectedUnit;
   campaignMode?: boolean;
   competitive?: boolean;
   id?: string;
   key?: string;
+  // a string outside eGameSystemInitials is possible: army books also list
+  // game systems 7 to 10 (Quest / Star Quest), which the app doesn't map
   gameSystem: eGameSystemInitials;
 }
 
-export interface ISpecialRule {
-  key: string;
+export interface IArmySpecialRule {
+  id?: string;
   name: string;
-  rating: string;
+  description: string;
+}
+
+export interface ISpecialRule {
+  id?: string;
+  key?: string; // gone from 3.6 data, present in older lists
+  name: string;
+  rating?: Rating | null;
+  label?: string;
+  type?: string; // rules inside a weapon's specialRules carry "ArmyBookRule"
   condition?: string;
   modify?: boolean;
 }
@@ -37,17 +56,17 @@ export interface IGroupedSpecialRule extends ISpecialRule {
 export interface IUnit {
   id: string;
   armyId: string;
-  sortId: number;
+  sortId?: number; // not in 3.6 data; the stable sort keeps list order
   category?: string;
   name: string;
   size: number;
   cost: number;
-  quality: string;
-  defense: string;
+  quality: number;
+  defense: number;
   rules?: ISpecialRule[];
   upgrades: string[];
   weapons: IUpgradeGains[]; // IUpgradeGainsWeapon[]; //IEquipment[];
-  disabledUpgradeSections: string[];
+  disabledUpgradeSections?: string[];
 }
 export interface IUnitSelectionData {
   selectionId: string;
@@ -59,10 +78,10 @@ export interface IUnitSelectionData {
   }[];
   loadout: IUpgradeGains[];
   combined: boolean;
-  joinToUnit?: string;
+  joinToUnit: string | null;
   xp: number;
-  traits: string[]; // Trait names only
-  notes: string;
+  traits?: string[]; // Trait names only
+  notes: string | null;
 }
 
 export interface ISelectedUnit extends IUnit, IUnitSelectionData {}
@@ -96,22 +115,34 @@ export interface IUpgradeOption {
   type: "ArmyBookUpgradeOption";
 }
 
+export type UpgradeGainsType =
+  | "ArmyBookRule"
+  | "ArmyBookWeapon"
+  | "ArmyBookItem"
+  | "ArmyBookDefense";
+
+// One shape for loadout entries, upgrade gains and the `content` of items, since
+// Army Forge nests them freely (an item's content holds weapons and rules)
 export interface IUpgradeGains {
   name: string;
   label: string;
   count: number;
-  originalCount: number;
-  type: "ArmyBookRule" | "ArmyBookWeapon" | "ArmyBookItem" | "ArmyBookDefense"; // TODO: Add these
+  originalCount?: number;
+  type: UpgradeGainsType;
   dependencies?: IUpgradeDependency[];
+  range?: number;
   attacks?: number;
-  specialRules?: IUpgradeGainsRule[];
+  rating?: Rating | null;
+  specialRules?: ISpecialRule[];
+  content?: IUpgradeGains[];
+  quantity?: number | null;
   isModel?: boolean;
-  // id: string;
   id?: string; // the fact this can be undefined is from my testing
   key?: string; // and the fact this is here at all is the same
 }
 
 export interface IUpgradeGainsItem extends IUpgradeGains {
+  type: "ArmyBookItem";
   content: IUpgradeGains[];
 }
 
@@ -119,15 +150,13 @@ export interface IUpgradeGainsWeapon extends IUpgradeGains {
   type: "ArmyBookWeapon";
   attacks: number;
   range: number;
-  specialRules: IUpgradeGainsRule[];
+  specialRules: ISpecialRule[];
 }
 
 export interface IUpgradeGainsRule extends IUpgradeGains {
   type: "ArmyBookRule" | "ArmyBookDefense";
-  key: string;
-  condition: string;
-  modify: boolean; // ?
-  rating: string;
+  condition?: string;
+  modify?: boolean;
 }
 export interface IUpgradePackage {
   hint: string;
@@ -142,10 +171,15 @@ export interface IUpgradeDependency {
 }
 
 export interface ICommonRule {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  hasRating: boolean;
+  hasRating?: boolean; // gone from 3.6 data
+}
+
+export interface ICommonRulesResponse {
+  rules: ICommonRule[];
+  traits?: ICommonRuleTrait[];
 }
 
 // Campaign-mode traits from /api/rules/common/<n> → `traits` array.
@@ -157,7 +191,7 @@ export interface ICommonRuleTrait {
   id: string;
   name: string;
   description: string;
-  type: number; // 1=Injury, 2=Talent, 3=Skill Set, else=Trait (catch-all)
+  type: 0 | 1 | 2 | 3; // 0=Trait, 1=Injury, 2=Talent, 3=Skill Set
   skillSet?: string | null;
   campaign: boolean;
 }

@@ -10,8 +10,6 @@ export const initialTtsOutputConfig = {
   includeArmySpecialRules: true,
   includeWeaponsListInName: false,
   includeSpecialRulesListInName: false,
-  useShorterVersionOfCoreSpecialRules: false,
-  includeToughSpecialRuleRatingInName: true,
   swapCustomNameBracketingForUnitsWithMultipleModels: true,
   completelyReplaceNameWithCustomName: false,
   disableSmallText: false,
@@ -30,14 +28,13 @@ export const initialTtsOutputConfig = {
   modelCampaignStuffOutputColour: "#a55eea",
 };
 
-export const state = proxy<iAppState>({
+const createInitialState = (): iAppState => ({
   armyListShareLink: "",
   shareableLinkForTTS: undefined,
   gameSystem: undefined,
   listName: undefined,
   armySpecialRulesDict: [],
   coreSpecialRulesDict: [],
-  armySpecialRulesDictNames: [],
   campaignTraitsDict: [],
   unitProfiles: [],
   ttsOutputConfig: {
@@ -48,6 +45,13 @@ export const state = proxy<iAppState>({
     saveArmyListAsBBToDB: eNetworkRequestState.IDLE,
   },
 });
+
+export const state = proxy<iAppState>(createInitialState());
+
+// test-only: the app never resets state, it overwrites fields on each import
+export const resetState = () => {
+  Object.assign(state, createInitialState());
+};
 
 export const updateWeaponQuantity = (
   upId: string,

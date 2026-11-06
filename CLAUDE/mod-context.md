@@ -41,6 +41,7 @@ assignNameAndDescriptionToObjects() → Inject perModelCode → Tag & Configure
   listId = "unique_id",
   gameSystem = "gf|gff|aof|aofs|aofr",
   listName = "Army Name",
+  rulesVersion = "3.6",  -- absent in lists saved before 2026-11
   units = {
     {
       name = "Unit Name",
@@ -68,16 +69,20 @@ assignNameAndDescriptionToObjects() → Inject perModelCode → Tag & Configure
   isShaken = false,  -- GF/AOF/AOFR only
   isStunned = false, -- GFF/AOFS only
   gameSystem = "system_code",
+  rulesVersion = "3.6",          -- From listJson.rulesVersion. Absent for lists saved before 2026-11 and
+                                 -- for models assigned by an older mod. Absent = legacy skirmish wounds.
   unitId = "unit_identifier",
   armyId = "army_identifier",
   unitName = "display_name",
   nameToAssign = "formatted_name",
   originalToughValue = number,
   originalCasterValue = number,  -- Tokens generated PER TURN, not starting value
-  currentToughValue = number,    -- Starting HP = originalTough (traditional) or originalTough+5 (skirmish)
+  currentToughValue = number,    -- Starting HP = originalTough, or originalTough+5 for legacy skirmish (no rulesVersion)
   currentCasterValue = number,   -- Starts at originalCasterValue (first round's worth)
   armyNameToAssign = "army_name",
   unitColor = {r, g, b},         -- RGB array for unit visual distinction
+  uiBaseHeight = number,         -- getBounds().size.y measured on first UI build, then reused so the floating UI
+                                 -- doesn't move when the model tilts. Nil on older models; measured lazily. (2026-11)
   menuHeightOffset = 0,          -- Per-model UI height adjustment
   menuRotationOffset = 0,        -- Per-model UI Y-rotation adjustment (legacy; not currently user-exposed)
   showHpBar = true,              -- Unit-wide: show the floating HP stat bar (2026-04)
@@ -104,7 +109,9 @@ The most sophisticated aspect is the `perModelCode` string (lines 21-619), a com
 
 **Grimdark Future Firefight (GFF) / Age of Fantasy Skirmish (AOFS):**
 
-- Wounds = Tough + 5
+- Wounds = Tough when the memo has a `rulesVersion` (lists saved by the app from 2026-11, OPR 3.6). HP bar and HP buttons only show when Tough is non-zero, same as traditional.
+- Wounds = Tough + 5 when the memo has no `rulesVersion` (lists saved before that, or models assigned by an older mod). HP bar and HP buttons always show.
+- `usesLegacySkirmishWounds(decodedMemo)` in `perModelCode` decides this; the assignment site in Global repeats the check inline with `rulesVersionToAssign`. Any non-nil `rulesVersion` counts as 3.6+, the string is not compared.
 - Status: Activated, Stunned
 - Name format: model name + static "Tough: X" line when the model has a Tough rating. HP shown by the floating stat bar.
 
@@ -193,8 +200,8 @@ Scripting keys 1–6 act on whichever assigned OPRAFTTS model the player's point
 | Key | Action | Gated on |
 | --- | --- | --- |
 | 1 | Toggle action panel | — |
-| 2 | HP -1 (`hpDown`) | model has Tough (or is a skirmish system) |
-| 3 | HP +1 (`hpUp`) | model has Tough (or is a skirmish system) |
+| 2 | HP -1 (`hpDown`) | model has Tough (or uses legacy skirmish wounds) |
+| 3 | HP +1 (`hpUp`) | model has Tough (or uses legacy skirmish wounds) |
 | 4 | SP -1 (`spellTokensDown`) | `originalCasterValue ~= 0` |
 | 5 | SP +1 (`spellTokensUp`) | `originalCasterValue ~= 0` |
 | 6 | Cycle measuring radius | — |
@@ -240,6 +247,7 @@ Non-OPRAFTTS objects don't define the handler, so they ignore the keys automatic
 - `army[]` - Parsed army data from API
 - `armyId` - Current army identifier
 - `gameSystemToAssign` - Game system code
+- `rulesVersionToAssign` - `listJson.rulesVersion`, nil for older lists. Set on every `handleResponse`, not cleared by `cancelCurrentAssigning` (that runs after each assignment)
 - `armyNameToAssign` - Army display name
 - `oprAfToTtsLink` - Input URL from user
 - `notecardGuid` - UI anchor object GUID ('e73b3a')
@@ -288,7 +296,7 @@ Non-OPRAFTTS objects don't define the handler, so they ignore the keys automatic
 ### Game System Support
 
 - **GF/AOF/AOFR:** Traditional wound system, Shaken status
-- **GFF/AOFS:** Skirmish wound system (Tough+5), Stunned status
+- **GFF/AOFS:** Skirmish wound system (Tough for 3.6 lists, Tough+5 for lists without `rulesVersion`), Stunned status
 - **Universal:** Spell tokens (max 6), measuring tools, activation tracking
 
 ## Development Considerations
@@ -492,7 +500,7 @@ end
 ### Assignment & Initialization
 
 **Assignment process now includes:**
-1. Calculate starting HP based on game system (skirmish: tough+5, traditional: tough)
+1. Calculate starting HP (legacy skirmish with no `rulesVersion`: tough+5, everything else: tough)
 2. Set `currentCasterValue = originalCasterValue` (first round's tokens)
 3. Include `unitColor` from assignment
 4. Call `target.reload()` - **required** for `onLoad()` to run and initialize UI

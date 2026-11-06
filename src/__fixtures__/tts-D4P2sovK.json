@@ -1,0 +1,1198 @@
+{
+  "id": "D4P2sovK",
+  "key": "duIjTWSsAW8rHrJwyCYBz",
+  "name": "Alien Hives",
+  "points": 750,
+  "gameSystem": "gf",
+  "competitive": false,
+  "pointsLimit": 750,
+  "unitPreview": null,
+  "campaignMode": false,
+  "creationTime": "1681901865432",
+  "selectedUnitId": "HRdsq",
+  "listPoints": 370,
+  "units": [
+    {
+      "id": "_LXFoO9",
+      "cost": 90,
+      "name": "Assault Grunts",
+      "size": 10,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "JSKVyurtWIyW",
+          "name": "Strider",
+          "label": "Strider"
+        },
+        {
+          "id": "cgCroTrOmiv-",
+          "name": "Hive Bond",
+          "label": "Hive Bond"
+        }
+      ],
+      "valid": true,
+      "defense": 5,
+      "product": {
+        "imageUrls": [
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/jfylvIddmE0_yF6NAx0C_.jpg"
+        ],
+        "description": "Assault Grunts have perhaps the shortest gestation period out of any Hiver, and as such make up a large portion of many Hive’s populations. Their species was refined throughout the violent First Contact War to give the Alien Hives the numbers necessary to face their numerous enemies in the Sirius Sector Assault Grunts fill many vital non-combat roles as well, assisting in every corner of the Hive.",
+        "avatarImageUrl": "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/avMB6FCv64_3jyMS-J9JM.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-assault-grunts-alien-hives-138235",
+            "label": "Assault Grunts"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1777804204/assault-grunts-alien-hives-5-models?ref=shop_home_active_5&logging_key=acba42ec2163296dd64c7ddf64b9e71b30c2aef4%3A1777804204",
+            "label": "Assault Grunts"
+          }
+        ]
+      },
+      "quality": 5,
+      "weapons": [
+        {
+          "id": "DfidZY7Z",
+          "name": "Toxin Claws",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "J3qUvmfz",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Naqc5mga9Uha",
+              "name": "Bane",
+              "label": "Bane"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Toxin Claws (A1, Bane)",
+          "originalCount": 10
+        }
+      ],
+      "upgrades": [
+        "F1",
+        "A_5PFYqd"
+      ],
+      "genericName": "Assault Grunts",
+      "sizeSkirmish": 3,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "w7qor7b2kuifcyvk",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "MXjUG",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "DfidZY7Z",
+          "name": "Toxin Claws",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "J3qUvmfz",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Naqc5mga9Uha",
+              "name": "Bane",
+              "label": "Bane"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Toxin Claws (A1, Bane)",
+          "originalCount": 10
+        }
+      ]
+    },
+    {
+      "id": "jJP5jiL",
+      "cost": 90,
+      "name": "Prime Warrior",
+      "size": 1,
+      "bases": {
+        "round": "60",
+        "square": "50"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "T08VkBuVmNZ_",
+          "name": "Hero",
+          "label": "Hero"
+        },
+        {
+          "id": "a0YtInGiUDd6",
+          "name": "Tough",
+          "rating": 6,
+          "label": "Tough(6)"
+        },
+        {
+          "id": "cgCroTrOmiv-",
+          "name": "Hive Bond",
+          "label": "Hive Bond"
+        }
+      ],
+      "valid": true,
+      "defense": 4,
+      "product": {
+        "imageUrls": [
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/4zXXg9du-rUDeaoXxJvE-.png",
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/lXprZSkTFfU0s34dOk4Rf.png",
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/9gXtKt_QdG6jg64jDUoZC.png",
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/qCjjfoSi5yGioACvVUmfy.png"
+        ],
+        "description": "Prime Warriors embody the strength and determination of the Hive, guiding their fellow Hivers at the forefront of work and warfare. They are most easily spotted by their horns, which serve to amplify their psychic sensitivity, allowing them to pick up distant signals and pass on orders from the Hive Lords, even when operating far away.",
+        "avatarImageUrl": "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/ggw2qtWUz3e938JKUDn9M.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-prime-warrior-assault-alien-hives-143650",
+            "label": "Prime Warrior (Assault)"
+          },
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-prime-warrior-gunner-alien-hives-138236",
+            "label": "Prime Warrior (Gunner)"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1792002055/prime-warrior-smashing-club-alien-hives?ref=shop_home_active_12&logging_key=7772e842d0442594dc8b4ef8749733e13ed90794%3A1792002055",
+            "label": "Prime Warrior (Smashing Club)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1792002131/prime-warrior-piercing-spike-alien-hives?ref=shop_home_active_9&logging_key=d4f3f82b0a1999cd1b859c356e5aef2e4e57402d%3A1792002131",
+            "label": "Prime Warrior (Piercing Spike)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1777803988/prime-warrior-razor-whip-alien-hives-1?ref=shop_home_active_14&logging_key=067b81536afa22a3c850d113dcc50c34b88f0c59%3A1777803988",
+            "label": "Prime Warrior (Razor Whip)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1777803870/prime-warrior-shredder-gun-alien-hives-1?ref=shop_home_active_17&logging_key=e9592b8d55f990e1b64f993db56cc19ff6cbd05f%3A1777803870",
+            "label": "Prime Warrior (Shredder Gun)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1792001905/prime-warrior-acid-launcher-alien-hives?ref=shop_home_active_13&logging_key=141a037bc18d2ff0c7b9ec81f846902108b4ec22%3A1792001905",
+            "label": "Prime Warrior (Acid Launcher)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1777803900/prime-warrior-spine-guns-alien-hives-1?ref=shop_home_active_16&logging_key=e4f8f1ad32fadfeadae59bfb6c38b781304770d0%3A1777803900",
+            "label": "Prime Warrior (Spine Guns)"
+          }
+        ]
+      },
+      "quality": 4,
+      "weapons": [
+        {
+          "id": "BCN4BQHg",
+          "name": "Claws",
+          "type": "ArmyBookWeapon",
+          "count": 2,
+          "range": 0,
+          "attacks": 3,
+          "weaponId": "VTPC5jNB",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "2x Claws (A3)",
+          "originalCount": 2
+        },
+        {
+          "id": "H6tzZ6sZ",
+          "name": "Stomp",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 2,
+          "weaponId": "3nCS5qqO",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 2,
+          "label": "Stomp (A2, AP(1))",
+          "originalCount": 1
+        }
+      ],
+      "upgrades": [
+        "B1",
+        "sxjOBkWZ"
+      ],
+      "genericName": "Warrior Leader||||",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [
+        "cRc_X"
+      ],
+      "hasBalanceInvalid": false,
+      "armyId": "w7qor7b2kuifcyvk",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "HRdsq",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "BCN4BQHg",
+          "name": "Claws",
+          "type": "ArmyBookWeapon",
+          "count": 2,
+          "range": 0,
+          "attacks": 3,
+          "weaponId": "VTPC5jNB",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "2x Claws (A3)",
+          "originalCount": 2
+        },
+        {
+          "id": "H6tzZ6sZ",
+          "name": "Stomp",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 2,
+          "weaponId": "3nCS5qqO",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 2,
+          "label": "Stomp (A2, AP(1))",
+          "originalCount": 1
+        }
+      ]
+    },
+    {
+      "id": "_LXFoO9",
+      "cost": 90,
+      "name": "Assault Grunts",
+      "size": 10,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "JSKVyurtWIyW",
+          "name": "Strider",
+          "label": "Strider"
+        },
+        {
+          "id": "cgCroTrOmiv-",
+          "name": "Hive Bond",
+          "label": "Hive Bond"
+        }
+      ],
+      "valid": true,
+      "defense": 5,
+      "product": {
+        "imageUrls": [
+          "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/jfylvIddmE0_yF6NAx0C_.jpg"
+        ],
+        "description": "Assault Grunts have perhaps the shortest gestation period out of any Hiver, and as such make up a large portion of many Hive’s populations. Their species was refined throughout the violent First Contact War to give the Alien Hives the numbers necessary to face their numerous enemies in the Sirius Sector Assault Grunts fill many vital non-combat roles as well, assisting in every corner of the Hive.",
+        "avatarImageUrl": "https://af-images.s3.eu-north-1.amazonaws.com/army-books/unitProduct/w7qor7b2kuifcyvk/avMB6FCv64_3jyMS-J9JM.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-assault-grunts-alien-hives-138235",
+            "label": "Assault Grunts"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1777804204/assault-grunts-alien-hives-5-models?ref=shop_home_active_5&logging_key=acba42ec2163296dd64c7ddf64b9e71b30c2aef4%3A1777804204",
+            "label": "Assault Grunts"
+          }
+        ]
+      },
+      "quality": 5,
+      "weapons": [
+        {
+          "id": "DfidZY7Z",
+          "name": "Toxin Claws",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "J3qUvmfz",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Naqc5mga9Uha",
+              "name": "Bane",
+              "label": "Bane"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Toxin Claws (A1, Bane)",
+          "originalCount": 10
+        }
+      ],
+      "upgrades": [
+        "F1",
+        "A_5PFYqd"
+      ],
+      "genericName": "Assault Grunts",
+      "sizeSkirmish": 3,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "w7qor7b2kuifcyvk",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "kfQjW",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "DfidZY7Z",
+          "name": "Toxin Claws",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "J3qUvmfz",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Naqc5mga9Uha",
+              "name": "Bane",
+              "label": "Bane"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Toxin Claws (A1, Bane)",
+          "originalCount": 10
+        }
+      ]
+    },
+    {
+      "id": "CMADHYi",
+      "cost": 75,
+      "name": "Shooter Grunts",
+      "size": 5,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "JSKVyurtWIyW",
+          "name": "Strider",
+          "label": "Strider"
+        },
+        {
+          "id": "cgCroTrOmiv-",
+          "name": "Hive Bond",
+          "label": "Hive Bond"
+        }
+      ],
+      "valid": true,
+      "defense": 5,
+      "product": {
+        "imageUrls": [
+          "army-books/unitProduct/w7qor7b2kuifcyvk/B7NkW_a2cj3BHqh3PHCUk.png"
+        ],
+        "description": "Hivers born with swollen sacs of volatile fluid fused into their bodies are known as Shooter Grunts. These sacs can be compressed and ruptured on command, projecting streams of acidic bile, corrosive plasma, or burning jets that can even melt steel plating.",
+        "avatarImageUrl": "army-books/unitProduct/w7qor7b2kuifcyvk/9zZX688kIVvGarPOb2Y4z.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-shooter-grunts-alien-hives-138237",
+            "label": "Shooter Grunts"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1792002347/shooter-grunts-alien-hives-5-models?ga_search_query=shooter&ref=shop_items_search_2&logging_key=7a9f51c73a1a8c4dac6ffd3961b8e10e1595d6b9%3A1792002347",
+            "label": "Shooter Grunts"
+          }
+        ]
+      },
+      "quality": 5,
+      "weapons": [
+        {
+          "id": "stwMEDcw",
+          "name": "Bio-Ravager",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 18,
+          "attacks": 2,
+          "weaponId": "gegVeoOl",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Bio-Ravager (18\", A2)",
+          "originalCount": 5,
+          "dependencies": [
+            {
+              "upgradeInstanceId": "Qhuus09iu",
+              "count": 1,
+              "variant": "replace"
+            },
+            {
+              "upgradeInstanceId": "tXCLSlNl-",
+              "count": 1,
+              "variant": "replace"
+            }
+          ]
+        },
+        {
+          "id": "TZguIAiG",
+          "name": "Claws",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "S652usl0",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Claws (A1)",
+          "originalCount": 5
+        }
+      ],
+      "upgrades": [
+        "E1",
+        "A_5PFYqd"
+      ],
+      "genericName": "Shooter Grunts",
+      "sizeSkirmish": 3,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "w7qor7b2kuifcyvk",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "reYPj",
+      "selectedUpgrades": [
+        {
+          "instanceId": "Qhuus09iu",
+          "upgrade": {
+            "id": "BOmbRLe",
+            "uid": "0yYhyhC",
+            "label": "Replace one Bio-Ravager",
+            "parentPackageUid": "E1",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "replace",
+            "affects": {
+              "type": "exactly",
+              "value": 1
+            },
+            "targets": [
+              "Bio-Ravager"
+            ]
+          },
+          "option": {
+            "uid": "ycL039j",
+            "cost": 5,
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 10,
+                "unitId": "CMADHYi",
+                "exactCost": 9.17,
+                "questCost": 30
+              }
+            ],
+            "gains": [
+              {
+                "id": "gj6zkera",
+                "name": "Bio-Flamer",
+                "type": "ArmyBookWeapon",
+                "count": 1,
+                "range": 12,
+                "attacks": 1,
+                "weaponId": "GBiXv_Ku",
+                "specialRules": [
+                  {
+                    "id": "w_vX0mi58KKt",
+                    "name": "Blast",
+                    "type": "ArmyBookRule",
+                    "rating": 3
+                  },
+                  {
+                    "id": "Zx4mWN0SbmK8",
+                    "name": "Reliable",
+                    "type": "ArmyBookRule"
+                  }
+                ],
+                "attacksMultiplier": 1,
+                "label": "Bio-Flamer (12\", A1, Blast(3), Reliable)",
+                "dependencies": []
+              }
+            ],
+            "label": "Bio-Flamer (12\", A1, Blast(3), Reliable)",
+            "parentPackageUid": "E1",
+            "parentSectionUid": "0yYhyhC",
+            "parentSectionId": "0yYhyhC",
+            "id": "ycL039j"
+          }
+        },
+        {
+          "instanceId": "tXCLSlNl-",
+          "upgrade": {
+            "id": "BOmbRLe",
+            "uid": "0yYhyhC",
+            "label": "Replace one Bio-Ravager",
+            "parentPackageUid": "E1",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "replace",
+            "affects": {
+              "type": "exactly",
+              "value": 1
+            },
+            "targets": [
+              "Bio-Ravager"
+            ]
+          },
+          "option": {
+            "uid": "mlcBa2f",
+            "cost": 5,
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 15,
+                "unitId": "CMADHYi",
+                "exactCost": 13.26,
+                "questCost": 40
+              }
+            ],
+            "gains": [
+              {
+                "id": "LNRxA0jU",
+                "name": "Bio-Shredder",
+                "type": "ArmyBookWeapon",
+                "count": 1,
+                "range": 18,
+                "attacks": 3,
+                "weaponId": "RpwFDmTT",
+                "specialRules": [
+                  {
+                    "id": "cavWDboL4ubs",
+                    "name": "Rending",
+                    "type": "ArmyBookRule"
+                  }
+                ],
+                "attacksMultiplier": 1,
+                "label": "Bio-Shredder (18\", A3, Rending)",
+                "dependencies": []
+              }
+            ],
+            "label": "Bio-Shredder (18\", A3, Rending)",
+            "parentPackageUid": "E1",
+            "parentSectionUid": "0yYhyhC",
+            "parentSectionId": "0yYhyhC",
+            "id": "mlcBa2f"
+          }
+        }
+      ],
+      "loadout": [
+        {
+          "id": "stwMEDcw",
+          "name": "Bio-Ravager",
+          "type": "ArmyBookWeapon",
+          "count": 3,
+          "range": 18,
+          "attacks": 2,
+          "weaponId": "gegVeoOl",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Bio-Ravager (18\", A2)",
+          "originalCount": 5,
+          "dependencies": [
+            {
+              "upgradeInstanceId": "Qhuus09iu",
+              "count": 1,
+              "variant": "replace"
+            },
+            {
+              "upgradeInstanceId": "tXCLSlNl-",
+              "count": 1,
+              "variant": "replace"
+            }
+          ]
+        },
+        {
+          "id": "TZguIAiG",
+          "name": "Claws",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "S652usl0",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Claws (A1)",
+          "originalCount": 5
+        },
+        {
+          "id": "gj6zkera",
+          "name": "Bio-Flamer",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 12,
+          "attacks": 1,
+          "weaponId": "GBiXv_Ku",
+          "specialRules": [
+            {
+              "id": "w_vX0mi58KKt",
+              "name": "Blast",
+              "type": "ArmyBookRule",
+              "rating": 3
+            },
+            {
+              "id": "Zx4mWN0SbmK8",
+              "name": "Reliable",
+              "type": "ArmyBookRule"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Bio-Flamer (12\", A1, Blast(3), Reliable)",
+          "dependencies": []
+        },
+        {
+          "id": "LNRxA0jU",
+          "name": "Bio-Shredder",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 18,
+          "attacks": 3,
+          "weaponId": "RpwFDmTT",
+          "specialRules": [
+            {
+              "id": "cavWDboL4ubs",
+              "name": "Rending",
+              "type": "ArmyBookRule"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Bio-Shredder (18\", A3, Rending)",
+          "dependencies": []
+        }
+      ]
+    }
+  ],
+  "specialRules": [
+    {
+      "id": "3sXTViTVdDhn",
+      "name": "Predator Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Predator.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "GgPKQ4tKFRIC",
+      "name": "Unwieldy",
+      "aliasedRuleId": null,
+      "description": "Strikes last when charging.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "BOqSaZoY3ewJ",
+      "name": "Imprecise",
+      "aliasedRuleId": null,
+      "description": "Gets -1 to hit when attacking.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "aiYEmCuDPUcM",
+      "name": "Predator",
+      "aliasedRuleId": null,
+      "description": "For each unmodified roll of 6 to hit when attacking, this model may roll +1 attack with that weapon. This rule doesn’t apply to newly generated attacks.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "99DXMN96LnI8",
+      "name": "Surprise Attack",
+      "aliasedRuleId": null,
+      "description": "Counts as having Infiltrate. The first time this unit is activated, pick one enemy unit within 6\" in line of sight, and roll X dice. For each 2+ it takes one hit with AP(1).",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "paOPFddMOffa",
+      "name": "Crossing Attack",
+      "aliasedRuleId": null,
+      "description": "Once per activation, when this model moves through enemy units, pick one of them and roll X dice. For each 6+ the target takes one wound.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "cgCroTrOmiv-",
+      "name": "Hive Bond",
+      "aliasedRuleId": "LbpquFUyGSZ7",
+      "description": "If most models in this unit have this rule, they get +1 to Morale Test rolls when shot/charged from over 9\"/6\" away.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Valiant"
+    },
+    {
+      "id": "DEeVIJcfNfS6",
+      "name": "Unpredictable Fighter",
+      "aliasedRuleId": null,
+      "description": "When in melee, roll one die and apply one effect to all models with this rule: on a 1-3 they get AP(+1), and on a 4-6 they get +1 to hit rolls instead.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "09SoiR1HuW7u",
+      "name": "Precise",
+      "aliasedRuleId": null,
+      "description": "Gets +1 to hit when attacking.",
+      "hasRating": null,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "vFppagDdH3Vl",
+      "name": "Regenerative Strength",
+      "aliasedRuleId": null,
+      "description": "Place one token on this model when it ignores a wound. Once per round, when it’s this model’s turn to strike in melee, roll as many dice as tokens on it before attacking, unless this unit is Fatigued. For each 4+ the target takes one wound.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "nLQCr5OiSlYz",
+      "name": "Caster Group",
+      "aliasedRuleId": null,
+      "description": "Pick one model with this rule in this unit to have Caster(X), where X is the total number of models with this rule in this unit. If the model is killed, pick another to be the new caster, and transfer all spell tokens to it. The caster loses all unspent spell tokens at the end of the round.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "zCjAFXut7Gsg",
+      "name": "Retaliate",
+      "aliasedRuleId": null,
+      "description": "When this model takes wounds in melee, the attacker takes X hits per wound taken.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "UlIf59PuvI53",
+      "name": "Rapid Charge",
+      "aliasedRuleId": null,
+      "description": "This model moves +4\" when using Charge actions.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "kiXI7plPE_mK",
+      "name": "Enhanced Hive Bond",
+      "aliasedRuleId": "TbjUdR-OJZPw",
+      "description": "If most models in this unit have Hive Bond, they always get +1 to Morale Test rolls from Hive Bond (instead of only when shot/charged from over 9\"/6\" away).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Enhanced Valiant"
+    },
+    {
+      "id": "1cykqbg4xn6o",
+      "name": "Rapid Charge Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit moves +4\" when using Charge actions.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "Yt2R4sh8SXM0",
+      "name": "Enhanced Hive Bond Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Enhanced Hive Bond.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "hnsVQyx3ylMf",
+      "name": "Ravage",
+      "aliasedRuleId": null,
+      "description": "Once per round, when it’s this model’s turn to strike in melee, roll X dice before attacking, unless this unit is Fatigued. For each 6+ the target takes one wound.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "QWzGAg9RpE2D",
+      "name": "Increased Shooting Range Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get +6\" range on its weapons when shooting.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "CK9TIa7vdehO",
+      "name": "Furious Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Furious.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "V3YzPPkZm8at",
+      "name": "Regeneration Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Regeneration.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "anyZ2FHtdAVO",
+      "name": "Hit & Run Fighter",
+      "aliasedRuleId": null,
+      "description": "Once per round, this model may move by up to 3\" after being in melee.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "cnKvLv8ErzIc",
+      "name": "Stealth Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly unit within 12\", which gets Stealth once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "13WU-Xq3Pu8E",
+      "name": "Furious Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly unit within 12\", which gets Furious once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "rqBYj1yANC3J",
+      "name": "Unique Hero",
+      "aliasedRuleId": null,
+      "description": "Counts as having Hero, and this model may only be taken once per army.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "WNMH1ZiQXSz-",
+      "name": "Spell Conduit",
+      "aliasedRuleId": null,
+      "description": "Casters within 12\" that are from other friendly units may cast spells as if they were in this model's position, and get +1 to casting rolls when doing so. Friendly casters may only use this rule if this unit isn't Shaken.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "O2Cd7OibBBA5",
+      "name": "No Retreat",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule fails a Morale Test that causes it to be Shaken or Routed, the test counts as passed instead. Then, roll as many dice as the number of wounds it would take to fully destroy it, and for each result of 1-3 the unit takes one wound, which can't be ignored.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "ZHykLbU6nUWl",
+      "name": "Spawn",
+      "aliasedRuleId": null,
+      "description": "Once per game, when this model is activated, you may place a new unit of X fully within 6\" of it. Units placed via Spawn can’t seize or contest objectives on the round they are placed.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "eyMkgYDVrP7C",
+      "name": "Takedown Strike",
+      "aliasedRuleId": null,
+      "description": "Once per game, when it's this model's turn to strike in melee, it may make X attacks at Quality 2+ with AP(2), Deadly(3), and Takedown.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "0TfnG5G4JEv0",
+      "name": "Anti-Regen",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration.",
+      "hasRating": null,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "Hdm9ry6kJvzb",
+      "name": "Crossing Strike",
+      "aliasedRuleId": null,
+      "description": "Once per activation, when this model moves through enemy units, pick one of them and attack it with this weapon as if it was shooting. This weapon may only be used in this way.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "s4lagBUlnsUE",
+      "name": "Piercing Growth",
+      "aliasedRuleId": null,
+      "description": "Place one token on this unit at the beginning of each round if it's on the table and isn't Shaken, up to a max. of four tokens. For every two tokens, models with this rule in this unit get AP(+1) on their weapons.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "QXyt-zV_bjpg",
+      "name": "Unstoppable",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration, and ignores all negative modifiers which are not from this model's special rules.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "RHkw66BqDjUp",
+      "name": "Fragment",
+      "aliasedRuleId": null,
+      "description": "When attacking units where most models have Defense 4+ to Defense 6+, the target must re-roll successful unmodified Defense results of 4-6.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "djJahpu0Ciut",
+      "name": "Infiltrate",
+      "aliasedRuleId": null,
+      "description": "Counts as having Ambush, but may be deployed anywhere over 3\" away from enemy unit.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "1elLRhGK7ETb",
+      "name": "Precision Debuff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one enemy unit within 18\" in line of sight, which gets -1 to hit rolls when attacking once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "efmjJPTe0Yzd",
+      "name": "Anti-Cover",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Cover.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "F_1wfmpAyYwT",
+      "name": "Self-Destruct",
+      "aliasedRuleId": null,
+      "description": "If this model is killed in melee, the attacking unit takes X hits. If this model survives melee, after both sides have finished attacking, it is immediately killed, and the enemy unit takes X hits.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "h-Cj1XrX00JE",
+      "name": "Spell Resistance",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. If the wound was from a spell, then it is ignored on a 2+. If the wound was not from a spell, then it is ignored on a 6+ instead.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "n8Uql4fyd5AX",
+      "name": "Cumbersome",
+      "aliasedRuleId": null,
+      "description": "May only use Hold or Advance actions, but can’t shoot when moving.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "HMiVg3VVLQv3",
+      "name": "Piercing Target",
+      "aliasedRuleId": null,
+      "description": "Once per game, during this model's activation, before attacking, pick X enemy units within 18\" and in line of sight of it, and place one token on them. Friendly units get AP(+1) on their weapons when attacking them.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "Ajazu0ij2v5q",
+      "name": "Unpredictable Fighter Mark",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one enemy unit within 18\" in line of sight, which friendly units gets Unpredictable Fighter against once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "LbpquFUyGSZ7",
+      "name": "Valiant",
+      "aliasedRuleId": null,
+      "description": "If most models in this unit have this rule, they get +1 to Morale Test rolls when shot/charged from over 9\"/6\" away.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "TbjUdR-OJZPw",
+      "name": "Enhanced Valiant",
+      "aliasedRuleId": null,
+      "description": "If most models in this unit have Valiant, they always get +1 to Morale Test rolls from Valiant (instead of only when shot/charged from over 9\"/6\" away).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "CQes0mDvF4bV",
+      "name": "AP",
+      "aliasedRuleId": null,
+      "description": "AP",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "47CAqf7ySlfc",
+      "name": "Caster",
+      "aliasedRuleId": null,
+      "description": "Gets X spell tokens at the start of each round, but can’t have more than 6 at once. Once per activation, before attacking, spend as many tokens as the spell’s value to try casting one or more spells (only one try per spell). Pick a target and roll one die, and on 4+ resolve the spell’s effect. Models within 18” of the Caster may spend any number of spell tokens at the same time before rolling to give the Caster +1/-1 to the roll per token.",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "JoOCVPx1xT1G",
+      "name": "Furious",
+      "aliasedRuleId": null,
+      "description": "When charging, unmodified result of 6 to hit deal 1 extra hit (only the original hit counts as a 6 for special rules).",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "8KujvrTG8k9p",
+      "name": "Regeneration",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. On a 5+ it is ignored.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "9jyvRoBODD-O",
+      "name": "Stealth",
+      "aliasedRuleId": null,
+      "description": "When units where most models have this rule are shot from over 9\" away, enemy units get -1 to hit rolls.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "T08VkBuVmNZ_",
+      "name": "Hero",
+      "aliasedRuleId": null,
+      "description": "Heroes with up to Tough(6) may deploy as part of one multi-model unit without another Hero, but must use the unit’s Defense until all other models have been killed. The Hero’s unit, and units within 6” of friendly Heroes with Tough(9) or higher, may use the Hero’s Quality for Morale Tests as long as the Hero isn’t Shaken.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "8Hjy54TYtwb7",
+      "name": "Takedown",
+      "aliasedRuleId": null,
+      "description": "This model may pick any model in the target unit as its individual target for this weapon's attacks, which is resolved as if it was a unit of [1]. Takedown attacks must be resolved before other weapons.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "_mrPya5SXSqW",
+      "name": "Deadly",
+      "aliasedRuleId": null,
+      "description": "Assign each wound to one model, and multiply it by X. Hits from Deadly must be resolved first, and these wounds don’t carry over to other models if the original target is killed.",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "s6MgSfmgylXU",
+      "name": "Defense",
+      "aliasedRuleId": null,
+      "description": "This model gets +X to Defense rolls.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "6mJw5IdqSqNC",
+      "name": "Ambush",
+      "aliasedRuleId": null,
+      "description": "May be set aside before deployment. At the start of any round after the first, may be deployed anywhere over 9” away from enemy units. Players alternate in placing Ambush units, starting with the player that activates next. Units that deploy via Ambush can’t seize or contest objectives on the round they deploy.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "i40cKJoXJ7zm",
+      "name": "Unpredictable",
+      "aliasedRuleId": null,
+      "description": "When attacking, roll one die and apply one effect to all models with this rule: on a 1-3 they get AP(+1), and on a 4-6 they get +1 to hit rolls instead.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    }
+  ],
+  "forceOrgErrors": [
+    "Max 1 unit per full 200pts (combined units count as just 1 unit).",
+    "Cannot have more than 1 copies of a particular unit (Assault Grunts)."
+  ]
+}
