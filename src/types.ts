@@ -10,6 +10,8 @@ export enum eNetworkRequestState {
 export interface iTotalShareableOutput {
   gameSystem: ArmyForgeTypes.eGameSystemInitials;
   listName: string;
+  // the TTS mod drops the skirmish +5 HP for lists that carry this
+  rulesVersion: string;
   units: {
     name: string;
     modelDefinitions: iUnitProfileModelTTSOutput[];
@@ -51,7 +53,7 @@ export interface iUnitProfileModel {
   qua: number;
   def: number;
   isGenerated: boolean;
-  originalSpecialRules: any[];
+  originalSpecialRules: ArmyForgeTypes.ISpecialRule[];
   xp: number;
   campaignTraits: iCampaignTraitOnModel[];
   loadout: {
@@ -72,7 +74,7 @@ export interface iUnitProfile {
   originalUnit: ArmyForgeTypes.ISelectedUnit;
   originalModelCountInUnit: number;
   originalSelectionId: string;
-  originalJoinToUnit?: string;
+  originalJoinToUnit?: string | null;
   originalLoadoutCsvHelperString: string;
   models: iUnitProfileModel[];
 }
@@ -84,27 +86,23 @@ export interface iAppState {
   armySpecialRulesDict: {
     name: string;
     description: string;
-    shortDescription?: string;
   }[];
   gameSystem?: ArmyForgeTypes.eGameSystemInitials;
   coreSpecialRulesDict: {
     name: string;
     description: string;
   }[];
-  armySpecialRulesDictNames: string[];
   campaignTraitsDict: ArmyForgeTypes.ICommonRuleTrait[];
   unitProfiles: iUnitProfile[];
   ttsOutputConfig: {
     includeCoreSpecialRules: boolean;
     includeArmySpecialRules: boolean;
-    useShorterVersionOfCoreSpecialRules: boolean;
     includeFullArmySpecialRulesText: boolean;
     includeFullCoreSpecialRulesText: boolean;
     completelyReplaceNameWithCustomName: boolean;
     swapCustomNameBracketingForUnitsWithMultipleModels: boolean;
     includeWeaponsListInName: boolean;
     includeSpecialRulesListInName: boolean;
-    includeToughSpecialRuleRatingInName: boolean;
     disableSmallText: boolean;
     includeCampaignXp: boolean;
     includeCampaignTraits: boolean;

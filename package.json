@@ -7,7 +7,10 @@
     "netlify:dev": "netlify dev",
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "fixtures:refresh": "node scripts/refresh-fixtures.mjs",
+    "lua:check": "node scripts/check-lua.mjs"
   },
   "dependencies": {
     "@libsql/client": "0.17.2",
@@ -36,6 +39,7 @@
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
+    "luaparse": "^0.3.1",
     "netlify-cli": "^25.1.1",
     "postcss": "^8.4.22",
     "tailwindcss": "^3.3.1",

@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run netlify:dev` — Full local stack via `netlify dev`; required whenever you exercise the Army Forge import or the save-list flow.
 - `npm run build` — `tsc` typecheck followed by `vite build`. Treat this as the lint/typecheck gate; there is no separate lint script.
 - `npm run preview` — Serve the production `dist/` locally.
+- `npm run lua:check` — Syntax-checks `tts_lua_code/mod.lua` and, separately, the `perModelCode` string inside it (luaparse, Lua 5.2). Parse errors only; behaviour still needs a hand test in TTS.
 
 `vitest` is installed but no test script is wired up and there are no test files in the tree — do not assume a test harness exists.
 

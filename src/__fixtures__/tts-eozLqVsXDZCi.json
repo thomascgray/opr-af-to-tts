@@ -1,0 +1,998 @@
+{
+  "id": "eozLqVsXDZCi",
+  "key": "-WTdIx09e943OURNUKyY4",
+  "name": "Battle Brothers",
+  "points": 745,
+  "isCloud": false,
+  "modified": "2023-09-23T16:57:27.468Z",
+  "gameSystem": "gf",
+  "competitive": false,
+  "pointsLimit": 750,
+  "unitPreview": null,
+  "campaignMode": false,
+  "creationTime": "1695488216652",
+  "selectedUnitId": "Ni17u",
+  "listPoints": 635,
+  "units": [
+    {
+      "id": "qMjB0Rk",
+      "key": "new-unit",
+      "cost": 155,
+      "name": "Master Destroyer",
+      "size": 1,
+      "bases": {
+        "round": "40",
+        "square": "40"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "T08VkBuVmNZ_",
+          "name": "Hero",
+          "label": "Hero"
+        },
+        {
+          "id": "a0YtInGiUDd6",
+          "name": "Tough",
+          "rating": 6,
+          "label": "Tough(6)"
+        },
+        {
+          "id": "741uN_Qma5mL",
+          "name": "Battleborn",
+          "label": "Battleborn"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 3,
+      "quality": 3,
+      "weapons": [
+        {
+          "id": "h4Ntaf0B",
+          "name": "Archivist Staff",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 4,
+          "weaponId": "ogvVhJ5w",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "4Q1owB6yNFz1",
+              "name": "Spell Amplifier",
+              "label": "Spell Amplifier"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Archivist Staff (A4, Spell Amplifier)",
+          "originalCount": 1
+        }
+      ],
+      "upgrades": [
+        "PzePx",
+        "gIdERs5O"
+      ],
+      "genericName": "Exo-Suit Leader",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "78qp9l5alslt6yj8",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "_1OBB",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "h4Ntaf0B",
+          "name": "Archivist Staff",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 4,
+          "weaponId": "ogvVhJ5w",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "4Q1owB6yNFz1",
+              "name": "Spell Amplifier",
+              "label": "Spell Amplifier"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Archivist Staff (A4, Spell Amplifier)",
+          "originalCount": 1
+        }
+      ]
+    },
+    {
+      "id": "FJRVn9S",
+      "cost": 80,
+      "name": "Master Brother",
+      "size": 1,
+      "bases": {
+        "round": "32",
+        "square": "30"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "T08VkBuVmNZ_",
+          "name": "Hero",
+          "label": "Hero"
+        },
+        {
+          "id": "a0YtInGiUDd6",
+          "name": "Tough",
+          "rating": 3,
+          "label": "Tough(3)"
+        },
+        {
+          "id": "741uN_Qma5mL",
+          "name": "Battleborn",
+          "label": "Battleborn"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 3,
+      "quality": 3,
+      "weapons": [
+        {
+          "id": "EO9u1YFN",
+          "name": "Flamer Pistol",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 6,
+          "attacks": 1,
+          "weaponId": "XvfBSa9o",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Zx4mWN0SbmK8",
+              "name": "Reliable",
+              "label": "Reliable"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "efmjJPTe0Yzd",
+              "name": "Anti-Cover",
+              "label": "Anti-Cover"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "FF5ddXgx75lI",
+              "name": "Assault",
+              "label": "Assault"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Flamer Pistol (6\", A1, Reliable, Anti-Cover, Assault)",
+          "originalCount": 1
+        },
+        {
+          "id": "Cy6wUG_k",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 3,
+          "weaponId": "eF__M0-n",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A3)",
+          "originalCount": 1
+        }
+      ],
+      "upgrades": [
+        "A1",
+        "B1",
+        "HkK5EImr"
+      ],
+      "genericName": "Brother Leader",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "78qp9l5alslt6yj8",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "8amrQ",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "EO9u1YFN",
+          "name": "Flamer Pistol",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 6,
+          "attacks": 1,
+          "weaponId": "XvfBSa9o",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "Zx4mWN0SbmK8",
+              "name": "Reliable",
+              "label": "Reliable"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "efmjJPTe0Yzd",
+              "name": "Anti-Cover",
+              "label": "Anti-Cover"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "FF5ddXgx75lI",
+              "name": "Assault",
+              "label": "Assault"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Flamer Pistol (6\", A1, Reliable, Anti-Cover, Assault)",
+          "originalCount": 1
+        },
+        {
+          "id": "Cy6wUG_k",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 3,
+          "weaponId": "eF__M0-n",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A3)",
+          "originalCount": 1
+        }
+      ]
+    },
+    {
+      "id": "G9O_A_g",
+      "cost": 110,
+      "name": "Pathfinders",
+      "size": 5,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "JSKVyurtWIyW",
+          "name": "Strider",
+          "label": "Strider"
+        },
+        {
+          "id": "741uN_Qma5mL",
+          "name": "Battleborn",
+          "label": "Battleborn"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 4,
+      "quality": 4,
+      "weapons": [
+        {
+          "id": "chcC5EUQ",
+          "name": "Heavy Rifle",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 18,
+          "attacks": 1,
+          "weaponId": "jDDBuADY",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Rifle (18\", A1, AP(1))",
+          "originalCount": 5
+        },
+        {
+          "id": "LSkqpzPG",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "83nhlNHF",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1)",
+          "originalCount": 5
+        }
+      ],
+      "upgrades": [
+        "378_DeZy"
+      ],
+      "genericName": "Scout Brothers",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "78qp9l5alslt6yj8",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "C9kIq",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "chcC5EUQ",
+          "name": "Heavy Rifle",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 18,
+          "attacks": 1,
+          "weaponId": "jDDBuADY",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Rifle (18\", A1, AP(1))",
+          "originalCount": 5
+        },
+        {
+          "id": "LSkqpzPG",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "83nhlNHF",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1)",
+          "originalCount": 5
+        }
+      ]
+    },
+    {
+      "id": "nhxpRx1",
+      "cost": 150,
+      "name": "Assault Brothers",
+      "size": 5,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "741uN_Qma5mL",
+          "name": "Battleborn",
+          "label": "Battleborn"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 3,
+      "quality": 3,
+      "weapons": [
+        {
+          "id": "wfEHdWKY",
+          "name": "Heavy Pistol",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 9,
+          "attacks": 1,
+          "weaponId": "A6hoMTcb",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "FF5ddXgx75lI",
+              "name": "Assault",
+              "label": "Assault"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Pistol (9\", A1, AP(1), Assault)",
+          "originalCount": 5
+        },
+        {
+          "id": "ln7wg3EY",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "83nhlNHF",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1)",
+          "originalCount": 5
+        }
+      ],
+      "upgrades": [
+        "E1",
+        "lBsat"
+      ],
+      "genericName": "Assault Brothers",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "78qp9l5alslt6yj8",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "_KCPj",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "wfEHdWKY",
+          "name": "Heavy Pistol",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 9,
+          "attacks": 1,
+          "weaponId": "A6hoMTcb",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            },
+            {
+              "type": "ArmyBookRule",
+              "id": "FF5ddXgx75lI",
+              "name": "Assault",
+              "label": "Assault"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Pistol (9\", A1, AP(1), Assault)",
+          "originalCount": 5
+        },
+        {
+          "id": "ln7wg3EY",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "83nhlNHF",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1)",
+          "originalCount": 5
+        }
+      ]
+    },
+    {
+      "id": "rsouUXt",
+      "cost": 135,
+      "name": "Battle Brothers",
+      "size": 5,
+      "bases": {
+        "round": "25",
+        "square": "25"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "741uN_Qma5mL",
+          "name": "Battleborn",
+          "label": "Battleborn"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 3,
+      "quality": 3,
+      "weapons": [
+        {
+          "id": "lXOrCYv-",
+          "name": "Heavy Rifle",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 18,
+          "attacks": 1,
+          "weaponId": "jDDBuADY",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Rifle (18\", A1, AP(1))",
+          "originalCount": 5,
+          "dependencies": [
+            {
+              "upgradeInstanceId": "Gf9AfYO75",
+              "count": 1,
+              "variant": "replace"
+            }
+          ]
+        },
+        {
+          "id": "LSkqpzPG",
+          "name": "Strike",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "FOuoX5BA",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Strike (A1)",
+          "originalCount": 5
+        }
+      ],
+      "upgrades": [
+        "D1",
+        "lBsat"
+      ],
+      "genericName": "Battle Brothers",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "78qp9l5alslt6yj8",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "Ni17u",
+      "selectedUpgrades": [
+        {
+          "instanceId": "Gf9AfYO75",
+          "upgrade": {
+            "id": "S-qUnls",
+            "uid": "OwEuxMR",
+            "label": "Replace one Heavy Rifle",
+            "parentPackageUid": "D1",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "replace",
+            "affects": {
+              "type": "exactly",
+              "value": 1
+            },
+            "targets": [
+              "Heavy Rifle"
+            ]
+          },
+          "option": {
+            "uid": "U863yeq",
+            "cost": 5,
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 5,
+                "unitId": "rsouUXt",
+                "exactCost": 5.76,
+                "questCost": 15
+              }
+            ],
+            "gains": [
+              {
+                "id": null,
+                "name": "Flamer",
+                "type": "ArmyBookWeapon",
+                "count": 1,
+                "range": 12,
+                "attacks": 1,
+                "weaponId": "-_T9wTAv",
+                "specialRules": [
+                  {
+                    "id": "w_vX0mi58KKt",
+                    "name": "Blast",
+                    "type": "ArmyBookRule",
+                    "rating": 3
+                  },
+                  {
+                    "id": "Zx4mWN0SbmK8",
+                    "name": "Reliable",
+                    "type": "ArmyBookRule"
+                  }
+                ],
+                "attacksMultiplier": 1,
+                "label": "Flamer (12\", A1, Blast(3), Reliable)",
+                "dependencies": []
+              }
+            ],
+            "label": "Flamer (12\", A1, Blast(3), Reliable)",
+            "parentPackageUid": "D1",
+            "parentSectionUid": "OwEuxMR",
+            "parentSectionId": "OwEuxMR",
+            "id": "U863yeq"
+          }
+        }
+      ],
+      "loadout": [
+        {
+          "id": "lXOrCYv-",
+          "name": "Heavy Rifle",
+          "type": "ArmyBookWeapon",
+          "count": 4,
+          "range": 18,
+          "attacks": 1,
+          "weaponId": "jDDBuADY",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "17crjK7P6_w6",
+              "name": "AP",
+              "rating": 1,
+              "label": "AP(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Heavy Rifle (18\", A1, AP(1))",
+          "originalCount": 5,
+          "dependencies": [
+            {
+              "upgradeInstanceId": "Gf9AfYO75",
+              "count": 1,
+              "variant": "replace"
+            }
+          ]
+        },
+        {
+          "id": "LSkqpzPG",
+          "name": "Strike",
+          "type": "ArmyBookWeapon",
+          "count": 5,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "FOuoX5BA",
+          "specialRules": [],
+          "attacksMultiplier": 1,
+          "label": "Strike (A1)",
+          "originalCount": 5
+        },
+        {
+          "id": null,
+          "name": "Flamer",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 12,
+          "attacks": 1,
+          "weaponId": "-_T9wTAv",
+          "specialRules": [
+            {
+              "id": "w_vX0mi58KKt",
+              "name": "Blast",
+              "type": "ArmyBookRule",
+              "rating": 3
+            },
+            {
+              "id": "Zx4mWN0SbmK8",
+              "name": "Reliable",
+              "type": "ArmyBookRule"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Flamer (12\", A1, Blast(3), Reliable)",
+          "dependencies": []
+        }
+      ]
+    }
+  ],
+  "specialRules": [
+    {
+      "id": "r8OBuam8nRXP",
+      "name": "Vanguard",
+      "aliasedRuleId": null,
+      "description": "After this model is deployed, it may be placed anywhere fully within 9\" of its position, over 9\" away from non-Vanguard enemy units.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "0dZak5jae8F0",
+      "name": "Melee Shrouding Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Melee Shrouding.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "74RjQ1k41DoO",
+      "name": "Armor",
+      "aliasedRuleId": null,
+      "description": "Counts as having Defense X+.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "mETdyZ__yMVj",
+      "name": "Mend",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly model within 3\" with Tough, and remove D3 wounds from it.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "FRVSAjasmFSF",
+      "name": "Bravery Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get +1 to Morale Test rolls.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "O_sf2rsHA7rD",
+      "name": "Evasive",
+      "aliasedRuleId": null,
+      "description": "Enemies get -1 to hit rolls when attacking units where most models have this rule.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "ba6LlbpoLkSu",
+      "name": "Bane when Shooting Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Bane on its weapons when shooting.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "V3YzPPkZm8at",
+      "name": "Regeneration Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Regeneration.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "XoDRL2xVEnVf",
+      "name": "Bane in Melee Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Bane on its weapons in melee.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "RDFhn43ktRx8",
+      "name": "Rapid Rush Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Rapid Rush.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "741uN_Qma5mL",
+      "name": "Battleborn",
+      "aliasedRuleId": "j93FkLXMCk8v",
+      "description": "If a unit where most models have this rule is Shaken at the beginning of the round, roll one die. On a 4+, it stops being Shaken.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Steadfast"
+    },
+    {
+      "id": "ayuikxkmDOmq",
+      "name": "Versatile Reach Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Versatile Reach.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "zjzB46LX-QDg",
+      "name": "Re-Deployment",
+      "aliasedRuleId": null,
+      "description": "After all other units are deployed (excluding units that were set aside), you may remove up to two friendly units from the table and deploy them again. Players alternate in placing Re-Deployment units, starting with the player that activates next.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "Q-wmfZ69HqBX",
+      "name": "Unstoppable Mark",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one enemy unit within 18\" in line of sight, which friendly units gets Unstoppable on their weapons against once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "QXyt-zV_bjpg",
+      "name": "Unstoppable",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration, and ignores all negative modifiers which are not from this model's special rules.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "9o03izVMZ-Xl",
+      "name": "Smash",
+      "aliasedRuleId": null,
+      "description": "When attacking units over half of this weapon's range away, the target must re-roll unmodified Defense results of 6.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "efmjJPTe0Yzd",
+      "name": "Anti-Cover",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Cover.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "z4QuSO_AxqDr",
+      "name": "Versatile Expert",
+      "aliasedRuleId": null,
+      "description": "When this unit is activated, pick one effect: until the end of the activation all models with this rule in this unit either get AP(+1) when attacking, or get +1 to hit rolls when attacking.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "n8Uql4fyd5AX",
+      "name": "Cumbersome",
+      "aliasedRuleId": null,
+      "description": "May only use Hold or Advance actions, but can’t shoot when moving.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "j93FkLXMCk8v",
+      "name": "Steadfast",
+      "aliasedRuleId": null,
+      "description": "If a unit where most models have this rule is Shaken at the beginning of the round, roll one die. On a 4+, it stops being Shaken.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "1TMBPe40kx2b",
+      "name": "Melee Shrouding",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule is targeted by an enemy unit for charging, that enemy unit gets -2\" range to a min. of 6\".",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "s6MgSfmgylXU",
+      "name": "Defense",
+      "aliasedRuleId": null,
+      "description": "This model gets +X to Defense rolls.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "a0YtInGiUDd6",
+      "name": "Tough",
+      "aliasedRuleId": null,
+      "description": "This model must take X wounds before being killed. If a model with Tough joins a unit without it, then it is removed last when the unit takes wounds. You must continue to put wounds on the Tough model with most wounds in the unit until it is killed, before starting to put them on the next Tough model (Heroes must be assigned wounds last, even if already wounded).",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "Naqc5mga9Uha",
+      "name": "Bane",
+      "aliasedRuleId": null,
+      "description": "Ignores Regeneration, and when attacking, the target must re-roll unmodified Defense results of 6.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "8KujvrTG8k9p",
+      "name": "Regeneration",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. On a 5+ it is ignored.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "qsx__9Cz3au_",
+      "name": "Rapid Rush",
+      "aliasedRuleId": null,
+      "description": "This model moves +6\" when using Rush actions.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "y47PXwakTSji",
+      "name": "Versatile Reach",
+      "aliasedRuleId": null,
+      "description": "When this unit is activated, pick one effect: until the end of the activation, all models with this rule in this unit either get +4\" range when shooting or move +2\" when charging.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "CQes0mDvF4bV",
+      "name": "AP",
+      "aliasedRuleId": null,
+      "description": "AP",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "IEJp3a4vE0CB",
+      "name": "Shred",
+      "aliasedRuleId": null,
+      "description": "For each unmodified result of 1 to block hits, this weapon deals 1 extra wound.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    }
+  ],
+  "forceOrgErrors": [
+    "Max 1 Hero per full 500pts.",
+    "Max 1 unit per full 200pts (combined units count as just 1 unit)."
+  ]
+}

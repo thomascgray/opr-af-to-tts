@@ -3,6 +3,7 @@ require("vscode/console")
 local army = {}
 local armyId = nil; -- the army ID relative to OPR AF to TTS
 local gameSystemToAssign = nil; -- the game system we're assigning, so models know what they are (for their right click menus)
+local rulesVersionToAssign = nil; -- nil for lists saved before the app stamped a rules version (pre-3.6 skirmish wounds)
 
 local notecardGuid = 'e73b3a'
 local oprAfToTtsLink = ""
@@ -88,6 +89,13 @@ local perModelCode = [[
         return gameSystem == 'aofs' or gameSystem == 'gff'
     end
 
+    -- Pre-3.6 skirmish added 5 wounds on top of Tough. Models assigned from a list
+    -- with no rulesVersion (saved before 3.6, or by an older mod) keep that.
+    -- Any non-nil rulesVersion means 3.6 or later: wounds = Tough.
+    function usesLegacySkirmishWounds(decodedMemo)
+        return isSkirmishSystem(decodedMemo['gameSystem']) and decodedMemo['rulesVersion'] == nil
+    end
+
     -- Memo Update Helper
     function updateMemo(updates)
         local decodedMemo = JSON.decode(self.memo)
@@ -170,7 +178,7 @@ local perModelCode = [[
 
         local decodedMemo = JSON.decode(self.memo)
         local gameSystem = decodedMemo['gameSystem']
-        local hasTough = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
+        local hasTough = decodedMemo['originalToughValue'] ~= 0 or usesLegacySkirmishWounds(decodedMemo)
         local hasCaster = decodedMemo['originalCasterValue'] ~= 0
 
         if index == 1 then
@@ -617,7 +625,7 @@ local perModelCode = [[
     function buildActionPanelXml()
         local decodedMemo = JSON.decode(self.memo)
         local gameSystem  = decodedMemo['gameSystem']
-        local hasTough    = decodedMemo['originalToughValue'] ~= 0 or isSkirmishSystem(gameSystem)
+        local hasTough    = decodedMemo['originalToughValue'] ~= 0 or usesLegacySkirmishWounds(decodedMemo)
         local hasCaster   = decodedMemo['originalCasterValue'] ~= 0
 
         -- UI visibility flags. Missing (pre-upgrade models) defaults to true; any
@@ -701,7 +709,15 @@ local perModelCode = [[
         -- Positions + rotations. See CLAUDE/tts-lua-api-learnings.md for the axis
         -- rules (negative Z = up for position; yaw is Z on the outer wrapper to
         -- compose cleanly with the X=90/Y=180 billboard).
-        local actualHeight   = self.getBounds()['size']['y']
+        -- getBounds() is a world-space box, so it changes whenever the model is
+        -- tilted or picked up. Measure once (assignment reloads the model upright)
+        -- and keep it in the memo, so HP changes and table reloads don't move the
+        -- UI. Models from before this have no uiBaseHeight and measure on next build.
+        local actualHeight   = decodedMemo['uiBaseHeight']
+        if actualHeight == nil then
+            actualHeight = self.getBounds()['size']['y']
+            updateMemo({ uiBaseHeight = actualHeight })
+        end
         local heightOffset   = decodedMemo['menuHeightOffset']   or 0
         local rotationOffset = decodedMemo['menuRotationOffset'] or 0
         local statBarsZ      = -((actualHeight * 100) + 130 + heightOffset)
@@ -718,8 +734,9 @@ local perModelCode = [[
         if showHp or showSp or showMeasuring then
             local barContents = ""
             if showHp then
-                -- Skirmish: max = tough + 5. Traditional: max = original tough.
-                local maxWounds = isSkirmishSystem(gameSystem) and (originalTough + 5) or originalTough
+                -- Legacy skirmish (no rulesVersion in memo): max = tough + 5.
+                -- 3.6+ skirmish and traditional: max = original tough.
+                local maxWounds = usesLegacySkirmishWounds(decodedMemo) and (originalTough + 5) or originalTough
                 barContents = barContents .. statBar('#e74c3c', 'HP: ' .. currentTough .. '/' .. maxWounds, 'hpDown', 'hpUp', currentTough, maxWounds)
             end
             if showSp then
@@ -1003,10 +1020,11 @@ function assignNameAndDescriptionToObjects( object )
         target.addTag('OPRAFTTS_army_id_' .. armyId)
 
         -- Calculate starting HP based on game system
-        -- For skirmish systems: max HP = tough + 5
-        -- For traditional systems: max HP = originalToughValue
+        -- Legacy skirmish (list saved without rulesVersion, pre-3.6): max HP = tough + 5
+        -- 3.6+ skirmish and traditional systems: max HP = originalToughValue
+        -- Same rule as usesLegacySkirmishWounds in perModelCode
         local startingHP = originalToughValueToAssign
-        if gameSystemToAssign == 'aofs' or gameSystemToAssign == 'gff' then
+        if (gameSystemToAssign == 'aofs' or gameSystemToAssign == 'gff') and rulesVersionToAssign == nil then
             startingHP = originalToughValueToAssign + 5
         end
 
@@ -1016,6 +1034,7 @@ function assignNameAndDescriptionToObjects( object )
             isWavering = false,
             isStunned = false,
             gameSystem = gameSystemToAssign,
+            rulesVersion = rulesVersionToAssign, -- nil drops the key, which reads back as legacy
             unitId = unitIdToAssign,
             armyId = armyId,
             unitName = nameOfModelAssigning,
@@ -1127,6 +1146,8 @@ function handleResponse(response)
 
     armyId = data['listId'];
     gameSystemToAssign = data['listJson']['gameSystem'];
+    -- overwritten on every load, so an old list loaded after a new one goes back to nil
+    rulesVersionToAssign = data['listJson']['rulesVersion'];
     armyNameToAssign = data['listJson']['listName'];
 
     local units = {}

@@ -1,0 +1,1005 @@
+{
+  "id": "xAhPsZKN9hXd",
+  "name": "Saurians",
+  "isCloud": false,
+  "forceOrg": false,
+  "modified": "2026-11-05T14:52:26.829Z",
+  "gameSystem": "aof",
+  "modelCount": 11,
+  "simpleMode": false,
+  "description": "",
+  "pointsLimit": 1500,
+  "campaignMode": false,
+  "cloudModified": null,
+  "narrativeMode": false,
+  "activationCount": 2,
+  "removeOvercosted": false,
+  "listPoints": 500,
+  "units": [
+    {
+      "id": "NWwd7ue",
+      "cost": 230,
+      "name": "Frog-Mage",
+      "size": 1,
+      "bases": {
+        "round": "60",
+        "square": "50"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "47CAqf7ySlfc",
+          "name": "Caster",
+          "rating": 3,
+          "label": "Caster(3)"
+        },
+        {
+          "id": "dIQ3SGl2J2Ew",
+          "name": "Fear",
+          "rating": 1,
+          "label": "Fear(1)"
+        },
+        {
+          "id": "T08VkBuVmNZ_",
+          "name": "Hero",
+          "label": "Hero"
+        },
+        {
+          "id": "JSKVyurtWIyW",
+          "name": "Strider",
+          "label": "Strider"
+        },
+        {
+          "id": "a0YtInGiUDd6",
+          "name": "Tough",
+          "rating": 6,
+          "label": "Tough(6)"
+        },
+        {
+          "id": "PBP94ujaST4y",
+          "name": "Primal",
+          "label": "Primal"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 3,
+      "product": {
+        "imageUrls": [
+          "army-books/unitProduct/BubhE1kUpgYbqZvW/Q73fvGyHcJd7e1Wdp_LOb.png"
+        ],
+        "description": "Frog-Mages are imposing figures, reigning over the rest of their society as semidivine figures. Saurian legends speak of a time before time when the Frog-Mages walked among the gods and wielded an immense power capable of shaping peoples and Planes to the dictates of fate. Their long slumber has left them greatly diminished; their memories are fragmented, their powers a mere shadow of what they once were, and their bodies so frail that they are confined to palanquins. Yet, even in this state, they still possess a powerful command of the arcane.",
+        "avatarImageUrl": "army-books/unitProduct/BubhE1kUpgYbqZvW/s4zhtZ1Umgx88frMh_EM-.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-frog-mage-on-ancient-palanquin-saurians-157777",
+            "label": "Frog-Mage on Ancient Palanquin"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1745771416/frog-mage-on-ancient-palanquin-saurians?sr_prefetch=1&pf_from=shop_home&ref=shop_home_active_1&logging_key=95defbb80292331dba21a0e6ed16cb38e7e210ed%3A1745771416",
+            "label": "Frog-Mage on Ancient Palanquin"
+          }
+        ]
+      },
+      "quality": 3,
+      "weapons": [
+        {
+          "id": "siwzu5ug",
+          "name": "Great Magic Pulse",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 8,
+          "weaponId": "QW9MdkiR",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "QXyt-zV_bjpg",
+              "name": "Unstoppable",
+              "label": "Unstoppable"
+            }
+          ],
+          "attacksMultiplier": 2,
+          "label": "Great Magic Pulse (A8, Unstoppable)",
+          "originalCount": 1,
+          "dependencies": [
+            {
+              "upgradeInstanceId": "4QVOn52rv",
+              "count": 1,
+              "variant": "replace"
+            }
+          ]
+        }
+      ],
+      "upgrades": [
+        "A1",
+        "GvaZUqcA"
+      ],
+      "genericName": "Wizard Frog Leader",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "BubhE1kUpgYbqZvW",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "cgedz",
+      "selectedUpgrades": [
+        {
+          "instanceId": "PODUB5A6i",
+          "upgrade": {
+            "id": "_mEHN3e",
+            "uid": "dit7eUq",
+            "label": "Upgrade with one",
+            "parentPackageUid": "A1",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "upgrade",
+            "select": {
+              "type": "exactly",
+              "value": 1
+            }
+          },
+          "option": {
+            "uid": "gl-k-u40e_",
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 95,
+                "unitId": "NWwd7ue",
+                "exactCost": 94.26,
+                "questCost": 285
+              }
+            ],
+            "gains": [
+              {
+                "name": "Ancient Palanquin",
+                "type": "ArmyBookItem",
+                "bases": null,
+                "content": [
+                  {
+                    "id": "fHPv1ooZ",
+                    "name": "Magic Pulse",
+                    "type": "ArmyBookWeapon",
+                    "count": 1,
+                    "range": 0,
+                    "attacks": 3,
+                    "weaponId": "pWO7epP3",
+                    "specialRules": [
+                      {
+                        "id": "QXyt-zV_bjpg",
+                        "name": "Unstoppable",
+                        "type": "ArmyBookRule"
+                      }
+                    ],
+                    "attacksMultiplier": 1,
+                    "dependencies": []
+                  },
+                  {
+                    "id": "47CAqf7ySlfc",
+                    "name": "Caster",
+                    "type": "ArmyBookRule",
+                    "rating": 1,
+                    "dependencies": []
+                  },
+                  {
+                    "id": "a0YtInGiUDd6",
+                    "name": "Tough",
+                    "type": "ArmyBookRule",
+                    "rating": 3,
+                    "dependencies": []
+                  }
+                ],
+                "label": "Ancient Palanquin (Magic Pulse (A3, Unstoppable), Caster(1), Tough(3))",
+                "count": 1,
+                "dependencies": []
+              }
+            ],
+            "label": "Ancient Palanquin (Magic Pulse (A3, Unstoppable), Caster(1), Tough(3))",
+            "parentSectionId": "dit7eUq",
+            "id": "gl-k-u40e_"
+          }
+        },
+        {
+          "instanceId": "mS1tMAP1r",
+          "upgrade": {
+            "id": "46M03Y1",
+            "uid": "k1OKTZqr",
+            "label": "Upgrade with one",
+            "isHeroUpgrade": true,
+            "parentPackageUid": "VdSUYHea",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "upgrade",
+            "select": {
+              "type": "exactly",
+              "value": 1
+            }
+          },
+          "option": {
+            "uid": "RqJjyf_a",
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 20,
+                "unitId": "NWwd7ue",
+                "exactCost": 21.91,
+                "questCost": 65
+              }
+            ],
+            "gains": [
+              {
+                "name": "Enlightened Mage",
+                "type": "ArmyBookItem",
+                "bases": null,
+                "content": [
+                  {
+                    "id": "47CAqf7ySlfc",
+                    "name": "Caster",
+                    "type": "ArmyBookRule",
+                    "rating": 1,
+                    "dependencies": []
+                  }
+                ],
+                "label": "Enlightened Mage (Caster(1))",
+                "count": 1,
+                "dependencies": []
+              }
+            ],
+            "label": "Enlightened Mage (Caster(1))",
+            "parentSectionId": "k1OKTZqr",
+            "parentPackageUid": "VdSUYHea",
+            "id": "RqJjyf_a"
+          }
+        },
+        {
+          "instanceId": "4QVOn52rv",
+          "upgrade": {
+            "id": "K5gyawu",
+            "uid": "E86X__2__Z",
+            "label": "Replace Great Magic Pulse",
+            "parentPackageUid": "A1",
+            "type": "ArmyBookUpgradeSection",
+            "variant": "replace",
+            "targets": [
+              "Great Magic Pulse"
+            ]
+          },
+          "option": {
+            "uid": "qw2hP6BbmL",
+            "type": "ArmyBookUpgradeOption",
+            "costs": [
+              {
+                "cost": 5,
+                "unitId": "NWwd7ue",
+                "exactCost": 4.19,
+                "questCost": 15
+              }
+            ],
+            "gains": [
+              {
+                "id": "UdNQzcDa",
+                "name": "Sorcerous Blast",
+                "type": "ArmyBookWeapon",
+                "count": 1,
+                "range": 24,
+                "attacks": 2,
+                "weaponId": "srTW8Y5p",
+                "specialRules": [
+                  {
+                    "id": "w_vX0mi58KKt",
+                    "name": "Blast",
+                    "type": "ArmyBookRule",
+                    "rating": 3
+                  }
+                ],
+                "attacksMultiplier": 2,
+                "label": "Sorcerous Blast (24\", A2, Blast(3))",
+                "dependencies": []
+              },
+              {
+                "id": "04ibvCEW",
+                "name": "Strike",
+                "type": "ArmyBookWeapon",
+                "count": 1,
+                "range": 0,
+                "attacks": 2,
+                "weaponId": "FOuoX5BA",
+                "specialRules": [],
+                "attacksMultiplier": 2,
+                "label": "Strike (A2)",
+                "dependencies": []
+              }
+            ],
+            "label": "Sorcerous Blast (24\", A2, Blast(3)), Strike (A2)",
+            "parentSectionId": "E86X__2__Z",
+            "id": "qw2hP6BbmL"
+          }
+        }
+      ],
+      "loadout": [
+        {
+          "name": "Ancient Palanquin",
+          "type": "ArmyBookItem",
+          "bases": null,
+          "content": [
+            {
+              "id": "fHPv1ooZ",
+              "name": "Magic Pulse",
+              "type": "ArmyBookWeapon",
+              "count": 1,
+              "range": 0,
+              "attacks": 3,
+              "weaponId": "pWO7epP3",
+              "specialRules": [
+                {
+                  "id": "QXyt-zV_bjpg",
+                  "name": "Unstoppable",
+                  "type": "ArmyBookRule"
+                }
+              ],
+              "attacksMultiplier": 1,
+              "dependencies": []
+            },
+            {
+              "id": "47CAqf7ySlfc",
+              "name": "Caster",
+              "type": "ArmyBookRule",
+              "rating": 1,
+              "dependencies": [],
+              "count": 1
+            },
+            {
+              "id": "a0YtInGiUDd6",
+              "name": "Tough",
+              "type": "ArmyBookRule",
+              "rating": 3,
+              "dependencies": [],
+              "count": 1
+            }
+          ],
+          "label": "Ancient Palanquin (Magic Pulse (A3, Unstoppable), Caster(1), Tough(3))",
+          "count": 1,
+          "dependencies": []
+        },
+        {
+          "name": "Enlightened Mage",
+          "type": "ArmyBookItem",
+          "bases": null,
+          "content": [
+            {
+              "id": "47CAqf7ySlfc",
+              "name": "Caster",
+              "type": "ArmyBookRule",
+              "rating": 1,
+              "dependencies": [],
+              "count": 1
+            }
+          ],
+          "label": "Enlightened Mage (Caster(1))",
+          "count": 1,
+          "dependencies": []
+        },
+        {
+          "id": "UdNQzcDa",
+          "name": "Sorcerous Blast",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 24,
+          "attacks": 2,
+          "weaponId": "srTW8Y5p",
+          "specialRules": [
+            {
+              "id": "w_vX0mi58KKt",
+              "name": "Blast",
+              "type": "ArmyBookRule",
+              "rating": 3
+            }
+          ],
+          "attacksMultiplier": 2,
+          "label": "Sorcerous Blast (24\", A2, Blast(3))",
+          "dependencies": []
+        },
+        {
+          "id": "04ibvCEW",
+          "name": "Strike",
+          "type": "ArmyBookWeapon",
+          "count": 1,
+          "range": 0,
+          "attacks": 2,
+          "weaponId": "FOuoX5BA",
+          "specialRules": [],
+          "attacksMultiplier": 2,
+          "label": "Strike (A2)",
+          "dependencies": []
+        }
+      ]
+    },
+    {
+      "id": "kpjfnHa",
+      "cost": 150,
+      "name": "Saurian Warriors",
+      "size": 10,
+      "bases": {
+        "round": "32",
+        "square": "30"
+      },
+      "items": [],
+      "rules": [
+        {
+          "id": "PBP94ujaST4y",
+          "name": "Primal",
+          "label": "Primal"
+        },
+        {
+          "id": "2atvlmICQSCV",
+          "name": "Fearless",
+          "label": "Fearless"
+        }
+      ],
+      "valid": true,
+      "defense": 4,
+      "product": {
+        "imageUrls": [
+          "army-books/unitProduct/BubhE1kUpgYbqZvW/Dd0mS-GW3gG5hOvqpDhe_.png",
+          "army-books/unitProduct/BubhE1kUpgYbqZvW/Q9yh1qjbNQcXSX_mj1rIv.png",
+          "army-books/unitProduct/BubhE1kUpgYbqZvW/YTq3AXjFGTJi4L-gjDHeW.png",
+          "army-books/unitProduct/BubhE1kUpgYbqZvW/duIlcIg7voU1F4lSrIxx6.png"
+        ],
+        "description": "When the Frog-Mages set out to war, Saurian Warriors often make up the bulk of their formation. Warriors are typically not professional soldiers but rather receive their training through communal sporting events and in hunting parties. Usually, they are called up to assist in defending their home or to join in a mission ordained by a Frog-Mage. Saurian Warriors fight fearlessly because they believe that the outcome of the battle has already been determined by fate and their duty is only to carry out their part in the pre-ordained battle honourably, whether it ends in death or victory.",
+        "avatarImageUrl": "army-books/unitProduct/BubhE1kUpgYbqZvW/JgklfLdbtPVtT_p-ZIkxx.png",
+        "storeLinksDigital": [
+          {
+            "url": "https://www.myminifactory.com/object/3d-print-saurian-warriors-saurians-148445",
+            "label": "Saurian Warriors"
+          }
+        ],
+        "storeLinksPhysical": [
+          {
+            "url": "https://www.etsy.com/ca/listing/1759955641/saurian-warriors-hand-weapon-saurians-5?sr_prefetch=1&pf_from=shop_home&ref=shop_home_active_26&logging_key=af057300c1109d9f2fa7c42f39ca70b0f75d7e9b%3A1759955641",
+            "label": "Saurian Warriors (Hand Weapon)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1759958513/saurian-warriors-spear-saurians-5-models?sr_prefetch=1&pf_from=shop_home&ref=shop_home_active_33&logging_key=8f6c9007afd9c6f11c4a4e60d0d471be5f1b3355%3A1759958513",
+            "label": "Saurian Warriors (Spear)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1759965793/saurian-warriors-halberd-saurians-5?sr_prefetch=1&pf_from=shop_home&ref=shop_home_active_27&sca=1&logging_key=411f8815d466af61e60e6826fb2a43b2cbad7a22%3A1759965793",
+            "label": "Saurian Warriors (Halberd)"
+          },
+          {
+            "url": "https://www.etsy.com/ca/listing/1745766344/saurian-warriors-command-saurians-3?sr_prefetch=1&pf_from=shop_home&ref=shop_home_active_23&logging_key=977e07907bc59df41f2374bd31d9202fbaa2283d%3A1745766344",
+            "label": "Saurian Warriors Command"
+          }
+        ]
+      },
+      "quality": 4,
+      "weapons": [
+        {
+          "id": "Xpp7cizC",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "WCvuVZKU",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "_T07iXWo4VwJ",
+              "name": "Parry",
+              "rating": 1,
+              "label": "Parry(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1, Parry(1))",
+          "originalCount": 10
+        }
+      ],
+      "upgrades": [
+        "D1",
+        "G1",
+        "Wo23Mo3E"
+      ],
+      "genericName": "Saurian Warriors",
+      "sizeSkirmish": 1,
+      "hasCustomRule": false,
+      "disabledSections": [],
+      "hasBalanceInvalid": false,
+      "armyId": "BubhE1kUpgYbqZvW",
+      "xp": 0,
+      "notes": null,
+      "traits": [],
+      "combined": false,
+      "joinToUnit": null,
+      "selectionId": "fiDdp",
+      "selectedUpgrades": [],
+      "loadout": [
+        {
+          "id": "Xpp7cizC",
+          "name": "Hand Weapon",
+          "type": "ArmyBookWeapon",
+          "count": 10,
+          "range": 0,
+          "attacks": 1,
+          "weaponId": "WCvuVZKU",
+          "specialRules": [
+            {
+              "type": "ArmyBookRule",
+              "id": "_T07iXWo4VwJ",
+              "name": "Parry",
+              "rating": 1,
+              "label": "Parry(1)"
+            }
+          ],
+          "attacksMultiplier": 1,
+          "label": "Hand Weapon (A1, Parry(1))",
+          "originalCount": 10
+        }
+      ]
+    }
+  ],
+  "specialRules": [
+    {
+      "id": "r8OBuam8nRXP",
+      "name": "Vanguard",
+      "aliasedRuleId": null,
+      "description": "After this model is deployed, it may be placed anywhere fully within 9\" of its position, over 9\" away from non-Vanguard enemy units.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "8HWdOwMYcI0p",
+      "name": "Sergeant",
+      "aliasedRuleId": null,
+      "description": "This model gets AP(+1) when attacking.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "j93FkLXMCk8v",
+      "name": "Steadfast",
+      "aliasedRuleId": null,
+      "description": "If a unit where most models have this rule is Shaken at the beginning of the round, roll one die. On a 4+, it stops being Shaken.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "DEeVIJcfNfS6",
+      "name": "Unpredictable Fighter",
+      "aliasedRuleId": null,
+      "description": "When in melee, roll one die and apply one effect to all models with this rule: on a 1-3 they get AP(+1), and on a 4-6 they get +1 to hit rolls instead.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "09SoiR1HuW7u",
+      "name": "Precise",
+      "aliasedRuleId": null,
+      "description": "Gets +1 to hit when attacking.",
+      "hasRating": null,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "PBP94ujaST4y",
+      "name": "Primal",
+      "aliasedRuleId": "aiYEmCuDPUcM",
+      "description": "For each unmodified roll of 6 to hit when attacking, this model may roll +1 attack with that weapon. This rule doesn’t apply to newly generated attacks.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Predator"
+    },
+    {
+      "id": "TU7fkKrcAvop",
+      "name": "Protection Feat",
+      "aliasedRuleId": null,
+      "description": "Once per game, when this unit takes wounds and most of its models have this rule, you may use this rule and roll one die per wound, and on a 5+ it is ignored.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "IyLY1212wacW",
+      "name": "Fortified",
+      "aliasedRuleId": null,
+      "description": "When units where most models have this rule take hits, those hits count as having AP(-1), to a min. of AP(0).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "mETdyZ__yMVj",
+      "name": "Mend",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly model within 3\" with Tough, and remove D3 wounds from it.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "O_sf2rsHA7rD",
+      "name": "Evasive",
+      "aliasedRuleId": null,
+      "description": "Enemies get -1 to hit rolls when attacking units where most models have this rule.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "1cykqbg4xn6o",
+      "name": "Rapid Charge Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit moves +4\" when using Charge actions.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "Aw2kbPkBywee",
+      "name": "Counter in Melee Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Counter on its weapons in melee.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "-05w6vRgH2k9",
+      "name": "Rending in Melee Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Rending on its weapons in melee.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "V3YzPPkZm8at",
+      "name": "Regeneration Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Regeneration.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "rVZfbTlIyt7L",
+      "name": "Hit & Run Shooter Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Hit & Run Shooter.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "ymrWMYEn2noy",
+      "name": "Versatile Warrior Aura",
+      "aliasedRuleId": null,
+      "description": "This model and its unit get Versatile Warrior.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "h9JsgD38BRjI",
+      "name": "Bounding",
+      "aliasedRuleId": null,
+      "description": "When this unit is activated, you may move all models with this rule in it by up to D3+1\".",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "7QCXafSRhLAS",
+      "name": "Enhanced Primal",
+      "aliasedRuleId": "ql-dzbuQgTT4",
+      "description": "If this model has Primal, it gets extra attacks on successful unmodified hit results of 5-6 from Primal (instead of only on 6).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1,
+      "originalName": "Enhanced Predator"
+    },
+    {
+      "id": "rqBYj1yANC3J",
+      "name": "Unique Hero",
+      "aliasedRuleId": null,
+      "description": "Counts as having Hero, and this model may only be taken once per army.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "_kR6P-_VVPhy",
+      "name": "Takedown when Shooting",
+      "aliasedRuleId": null,
+      "description": "This model gets Takedown on its weapons when shooting.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "WNMH1ZiQXSz-",
+      "name": "Spell Conduit",
+      "aliasedRuleId": null,
+      "description": "Casters within 12\" that are from other friendly units may cast spells as if they were in this model's position, and get +1 to casting rolls when doing so. Friendly casters may only use this rule if this unit isn't Shaken.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "O_ZtH22AAORQ",
+      "name": "Precision Target",
+      "aliasedRuleId": null,
+      "description": "Once per game, during this model's activation, before attacking, pick X enemy units within 18\" and in line of sight of it, and place one token on them. Friendly units get +1 to hit rolls when attacking them.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "ZHykLbU6nUWl",
+      "name": "Spawn",
+      "aliasedRuleId": null,
+      "description": "Once per game, when this model is activated, you may place a new unit of X fully within 6\" of it. Units placed via Spawn can’t seize or contest objectives on the round they are placed.",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "0TfnG5G4JEv0",
+      "name": "Anti-Regen",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration.",
+      "hasRating": null,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "Hdm9ry6kJvzb",
+      "name": "Crossing Strike",
+      "aliasedRuleId": null,
+      "description": "Once per activation, when this model moves through enemy units, pick one of them and attack it with this weapon as if it was shooting. This weapon may only be used in this way.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "QXyt-zV_bjpg",
+      "name": "Unstoppable",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Regeneration, and ignores all negative modifiers which are not from this model's special rules.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "9Te72f48wJyw",
+      "name": "Versatile Warrior",
+      "aliasedRuleId": null,
+      "description": "When this unit is activated, pick one effect: until the end of the activation, when shooting/charging enemies over 9\"/6\" away, all models with this rule in it either get AP(+1) or get +1 to hit rolls.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "1qiGNqpxKb24",
+      "name": "Puncture",
+      "aliasedRuleId": null,
+      "description": "Ignores Regeneration, and when attacking units where most models have Defense 2+ to Defense 3+, this weapon gets AP(+2).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 2
+    },
+    {
+      "id": "efmjJPTe0Yzd",
+      "name": "Anti-Cover",
+      "aliasedRuleId": null,
+      "description": "This weapon ignores Cover.",
+      "hasRating": false,
+      "coreType": 5,
+      "targetType": 2
+    },
+    {
+      "id": "WtjO7i-CTM1B",
+      "name": "Shred Mark",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one enemy unit within 18\" in line of sight, which friendly units gets Shred on their weapons when attacking against once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "bjt7_iCtmOK7",
+      "name": "Good Shot",
+      "aliasedRuleId": null,
+      "description": "This model gets +1 to hit rolls when shooting.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "0B7GlGWBl7FF",
+      "name": "Enhanced Primal Buff",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one friendly unit within 12\", which gets Enhanced Primal once (next time the effect would apply).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "zVconc6Qb-g9",
+      "name": "Heavy Impact",
+      "aliasedRuleId": null,
+      "description": "Counts as having Impact(X) with hits that have AP(1).",
+      "hasRating": true,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "lOJdfdPgbhdT",
+      "name": "Precision Spotter",
+      "aliasedRuleId": null,
+      "description": "Once per activation, before attacking, pick one enemy unit within 30\" and in line of sight of this model and roll one die, on a 4+ place a token on it. Friendly units may remove tokens from their target before rolling to hit to get +X to hit rolls when attacking, where X is the number of removed tokens.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "aiYEmCuDPUcM",
+      "name": "Predator",
+      "aliasedRuleId": null,
+      "description": "For each unmodified roll of 6 to hit when attacking, this model may roll +1 attack with that weapon. This rule doesn’t apply to newly generated attacks.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "ql-dzbuQgTT4",
+      "name": "Enhanced Predator",
+      "aliasedRuleId": null,
+      "description": "If this model has Predator, it gets extra attacks on successful unmodified hit results of 5-6 from Predator (instead of only on 6).",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "CQes0mDvF4bV",
+      "name": "AP",
+      "aliasedRuleId": null,
+      "description": "AP",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "a0YtInGiUDd6",
+      "name": "Tough",
+      "aliasedRuleId": null,
+      "description": "This model must take X wounds before being killed. If a model with Tough joins a unit without it, then it is removed last when the unit takes wounds. You must continue to put wounds on the Tough model with most wounds in the unit until it is killed, before starting to put them on the next Tough model (Heroes must be assigned wounds last, even if already wounded).",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "c45Fw0D2oGOk",
+      "name": "Counter",
+      "aliasedRuleId": null,
+      "description": "May strike first with this weapon when charged, unless this unit is Fatigued.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "cavWDboL4ubs",
+      "name": "Rending",
+      "aliasedRuleId": null,
+      "description": "Ignores Regeneration, and for each unmodified result of 6 to hit, those hits get AP(+4).",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "8KujvrTG8k9p",
+      "name": "Regeneration",
+      "aliasedRuleId": null,
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. On a 5+ it is ignored.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "ozCLWcof36wD",
+      "name": "Hit & Run",
+      "aliasedRuleId": null,
+      "description": "Once per round, this model may move by up to 3\" after shooting or being in melee.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "rkGri9GAybaZ",
+      "name": "Hit & Run Shooter",
+      "aliasedRuleId": null,
+      "description": "Once per round, this model may move by up to 3\" after shooting.",
+      "hasRating": false,
+      "coreType": null,
+      "targetType": 1
+    },
+    {
+      "id": "T08VkBuVmNZ_",
+      "name": "Hero",
+      "aliasedRuleId": null,
+      "description": "Heroes with up to Tough(6) may deploy as part of one multi-model unit without another Hero, but must use the unit’s Defense until all other models have been killed. The Hero’s unit, and units within 6” of friendly Heroes with Tough(9) or higher, may use the Hero’s Quality for Morale Tests as long as the Hero isn’t Shaken.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "8Hjy54TYtwb7",
+      "name": "Takedown",
+      "aliasedRuleId": null,
+      "description": "This model may pick any model in the target unit as its individual target for this weapon's attacks, which is resolved as if it was a unit of [1]. Takedown attacks must be resolved before other weapons.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "47CAqf7ySlfc",
+      "name": "Caster",
+      "aliasedRuleId": null,
+      "description": "Gets X spell tokens at the start of each round, but can’t have more than 6 at once. Once per activation, before attacking, spend as many tokens as the spell’s value to try casting one or more spells (only one try per spell). Pick a target and roll one die, and on 4+ resolve the spell’s effect. Models within 18” of the Caster may spend any number of spell tokens at the same time before rolling to give the Caster +1/-1 to the roll per token.",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "s6MgSfmgylXU",
+      "name": "Defense",
+      "aliasedRuleId": null,
+      "description": "This model gets +X to Defense rolls.",
+      "hasRating": true,
+      "coreType": 5,
+      "targetType": 1
+    },
+    {
+      "id": "IEJp3a4vE0CB",
+      "name": "Shred",
+      "aliasedRuleId": null,
+      "description": "For each unmodified result of 1 to block hits, this weapon deals 1 extra wound.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    },
+    {
+      "id": "62-mYKVM9MLd",
+      "name": "Impact",
+      "aliasedRuleId": null,
+      "description": "When charging, before either unit attacks, roll X dice, unless this unit is Fatigued. For each 2+ the target takes 1 hit.",
+      "hasRating": true,
+      "coreType": 1,
+      "targetType": 1
+    },
+    {
+      "id": "Naqc5mga9Uha",
+      "name": "Bane",
+      "aliasedRuleId": null,
+      "description": "Ignores Regeneration, and when attacking, the target must re-roll unmodified Defense results of 6.",
+      "hasRating": false,
+      "coreType": 1,
+      "targetType": 2
+    }
+  ],
+  "forceOrgErrors": []
+}
