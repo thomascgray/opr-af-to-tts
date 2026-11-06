@@ -26,6 +26,9 @@ const COMMON_RULES_FIXTURE_BY_GAME_SYSTEM: Record<string, number> = {
   gf: 2,
   gff: 3,
   aof: 4,
+  aofs: 5,
+  gfsq: 9,
+  gfsqai: 10,
 };
 
 export const loadList = (id: string) =>

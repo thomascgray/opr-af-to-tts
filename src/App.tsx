@@ -28,6 +28,7 @@ import {
   getUnitIndexForSelectionId,
   isUnitHero,
 } from "./utils";
+import { isQuestGameSystem } from "./army-forge/client";
 
 import { ArrowPath, Cross, Duplicate, Cog } from "./components/icons";
 import { DarkModeSwitch } from "./components/DarkModeSwitch";
@@ -147,6 +148,21 @@ function App() {
       {stateView.unitProfiles.length >= 1 && (
         <>
           <hr className="my-5" />
+
+          {isQuestGameSystem(stateView.gameSystem) && (
+            <p className="p-3 mb-4 text-sm border border-amber-400 bg-amber-50 text-amber-900 dark:bg-amber-900/40 dark:text-amber-100 dark:border-amber-600">
+              <Trans
+                i18nKey="app.questExperimental.text"
+                components={[
+                  <a
+                    target="_blank"
+                    className="text-blue-700 underline dark:text-blue-400 visited:text-purple-700 dark:visited:text-purple-400"
+                    href="https://github.com/thomascgray/opr-af-to-tts/issues/74"
+                  />,
+                ]}
+              />
+            </p>
+          )}
 
           <fieldset
             className="mb-8 p-4 text-xs bg-gradient-to-tl from-zinc-100 to-stone-100 dark:from-slate-400 dark:to-zinc-400 shadow-xl border border-zinc-200 dark:border-zinc-300"

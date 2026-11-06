@@ -60,10 +60,50 @@ const resolveRuleDefinition = (
     specialRule = dict.find((sr) => sr.name === rule.name);
   }
 
-  return (
-    specialRule?.description ||
-    "[[Rule description missing in Army Forge data!]]"
+  if (!specialRule?.description) {
+    return "[[Rule description missing in Army Forge data!]]";
+  }
+  const referenced = findReferencedRules(
+    specialRule.description,
+    [rule.name, specialRule.name],
+    dict
   );
+  return [
+    specialRule.description,
+    ...referenced.map((sr) => `${sr.name}: ${sr.description}`),
+  ].join("\n");
+};
+
+// Army Forge's tooltip appends the text of any rule a description names, e.g.
+// "Takedown Strike" ends "...and Takedown." and the tooltip explains Takedown. It
+// leaves out rules from the core rulebook (AP, Deadly), which showWhenReferenced
+// tracks. Longer names are matched first and blanked out, so "Enhanced Hold the
+// Line" doesn't also drag in "Hold the Line". One level deep only.
+const findReferencedRules = (
+  description: string,
+  ownNames: string[],
+  dict: Readonly<iAppState["armySpecialRulesDict"]>
+) => {
+  // first entry per name wins, same as the exactName lookup above
+  const candidates = _.uniqBy(dict, "name")
+    .filter(
+      (sr) =>
+        sr.showWhenReferenced &&
+        !!sr.description &&
+        !ownNames.includes(sr.name)
+    )
+    .sort((a, b) => b.name.length - a.name.length);
+
+  let remaining = description;
+  return candidates.filter((sr) => {
+    const pattern = new RegExp(
+      `(?<!\\w)${_.escapeRegExp(sr.name)}(?!\\w)`,
+      "g"
+    );
+    if (!pattern.test(remaining)) return false;
+    remaining = remaining.replace(pattern, " ");
+    return true;
+  });
 };
 
 const isCoreSpecialRule = (name: string, stateView: Readonly<iAppState>) =>
@@ -251,7 +291,10 @@ const buildRulesBlock = (
         : stateView.ttsOutputConfig.includeFullArmySpecialRulesText;
       if (includeFullText) {
         return `[${specialRulesColour}]${name}[-]
-[sup]${insertLineBreaksIntoString(w.definition)}[/sup]`;
+[sup]${w.definition
+          .split("\n")
+          .map(insertLineBreaksIntoString)
+          .join("\r\n")}[/sup]`;
       }
       return `[${specialRulesColour}]${name}[-]`;
     })

@@ -1,0 +1,445 @@
+{
+  "rules": [
+    {
+      "id": "3FeiOe3krHMa",
+      "name": "Aircraft",
+      "description": "May only use Advance actions, moving in a straight line, and adding 30” to its total move (even if Shaken). Aircraft ignore all units and terrain when moving and stopping, can’t seize or contest objectives, can’t be charged, and units targeting them get -12” range and -1 to hit rolls.",
+      "enabledGameSystems": null,
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "6mJw5IdqSqNC",
+      "name": "Ambush",
+      "description": "May be set aside before deployment. At the start of any round after the first, may be placed anywhere over 9” away from enemy units.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "17crjK7P6_w6",
+      "name": "AP",
+      "description": "Targets get -X to Defense rolls when blocking hits.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "GRuFoZiyjY5f",
+      "name": "Artillery",
+      "description": "When this model uses Hold actions and shoots at enemies over 12” away, it gets +1 to hit rolls. If most models in this unit have this rule, as long as they haven't moved during this round, enemy units shooting at them from over 12” away get -1 to hit rolls.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "FF5ddXgx75lI",
+      "name": "Assault",
+      "description": "Counts as both a ranged weapon and a melee weapon.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "Naqc5mga9Uha",
+      "name": "Bane",
+      "description": "Ignores Regeneration, and when attacking, the target must re-roll unmodified Defense results of 6.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "ywXKQKPOLjTF",
+      "name": "Banner",
+      "description": "This model's unit and up to 2 friendly units picked before the start of the game get +1 to Morale Test rolls triggered by shooting/melee. If this model is killed, picked models that are deployed lose the rule.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "w_vX0mi58KKt",
+      "name": "Blast",
+      "description": "Ignores cover, and after resolving other special rules, each hit is multiplied by X, where X is up to as many hits as enemy models in the target unit and within 3” of it. Hits must be split evenly between all enemy units within 3” of any model from the target (players pick how).",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "0bcGY4Xr4NE0",
+      "name": "Brace",
+      "description": "Enemies charging this unit get -X total Impact rolls, unless this unit is Fatigued.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "47CAqf7ySlfc",
+      "name": "Caster",
+      "description": "Gets X spell tokens at the start of each round, but can’t have more than 6 at once. Once per activation, before attacking, spend as many tokens as the spell’s value to try casting one or more spells (only one try per spell). Pick a target and roll one die, and on 4+ resolve the spell’s effect. Heroes may spend any number of tokens/power before rolling to get +1 to the roll per token/power, or to give an enemy Caster within 18” -1 to their roll per token/power.",
+      "enabledGameSystems": null,
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "c45Fw0D2oGOk",
+      "name": "Counter",
+      "description": "May strike first with this weapon when charged, unless this unit is Fatigued.",
+      "enabledGameSystems": [
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "_mrPya5SXSqW",
+      "name": "Deadly",
+      "description": "Assign each wound to one model, and multiply it by X. Hits from Deadly must be resolved first, and these wounds don’t carry over to other models if the original target is killed.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "KdgwlPb8LuD2",
+      "name": "Fast",
+      "description": "Moves +2” when using Advance, and +4” when using Rush/Charge.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "dIQ3SGl2J2Ew",
+      "name": "Fear",
+      "description": "When in melee with this model, enemies count as having taken +X wounds when checking if they must take a Morale Test (must deal at least one wound).",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "2atvlmICQSCV",
+      "name": "Fearless",
+      "description": "When a unit where most models have this rule fails a Morale Test, roll one die. On a 4+ it counts as passed instead.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "-QJdqJEKjIpE",
+      "name": "Flying",
+      "description": "May move through units and terrain, and ignores the effects of Difficult and Dangerous terrain it doesn’t start its move in.This unit automatically passes jumping rolls.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "JoOCVPx1xT1G",
+      "name": "Furious",
+      "description": "When charging, unmodified result of 6 to hit deal 1 extra hit (only the original hit counts as a 6 for special rules).",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "T08VkBuVmNZ_",
+      "name": "Hero",
+      "description": "Units within 6” of friendly Heroes may use the Hero’s Quality for Morale Tests as long as the Hero isn’t Shaken.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "HWtnPV9LQF1D",
+      "name": "Immobile",
+      "description": "May only use Hold actions.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "62-mYKVM9MLd",
+      "name": "Impact",
+      "description": "When charging, before either unit attacks, roll X dice, unless this unit is Fatigued. For each 2+ the target takes 1 hit.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "8Ck9GAwUK824",
+      "name": "Indirect",
+      "description": "May target enemies that are not in line of sight as if in line of sight, and ignores cover from sight obstructions, but gets -1 to hit rolls when shooting after moving.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "9042COVrLCsI",
+      "name": "Limited",
+      "description": "May only be used once per game.",
+      "enabledGameSystems": null,
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "qrG_DXJez5Dg",
+      "name": "Musician",
+      "description": "This model's unit and up to 2 friendly units picked before the start of the game moves +1\" when using move actions. If this model is killed, picked models that are deployed lose the rule.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "_T07iXWo4VwJ",
+      "name": "Parry",
+      "description": "When this unit takes hits in melee, roll X dice per model with this rule in it, up to as many dice as hits taken. For each 6+ one hit is ignored (defender picks which).",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "8KujvrTG8k9p",
+      "name": "Regeneration",
+      "description": "When a unit where most models have this rule takes wounds, roll one die for each. On a 5+ it is ignored.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "H9E9PIWpGRdw",
+      "name": "Relentless",
+      "description": "When this model shoots at enemies over 9” away, unmodified result of 6 to hit deal 1 extra hit (only the original hit counts as a 6 for special rules).",
+      "enabledGameSystems": [
+        2,
+        3
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "Zx4mWN0SbmK8",
+      "name": "Reliable",
+      "description": "Attacks at Quality 2+.",
+      "enabledGameSystems": null,
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "cavWDboL4ubs",
+      "name": "Rending",
+      "description": "Ignores Regeneration, and for each unmodified result of 6 to hit, those hits get AP(+4).",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "FAMbscK5vhSu",
+      "name": "Scout",
+      "description": "This model may be deployed anywhere fully within 12” of its deployment zone.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "IEJp3a4vE0CB",
+      "name": "Shred",
+      "description": "For each unmodified result of 1 to block hits, this weapon deals 1 extra wound.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "Ldhtmr4H8b6G",
+      "name": "Slow",
+      "description": "Moves -2” when using Advance, and -4” when using Rush/Charge.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        7,
+        8
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": true
+    },
+    {
+      "id": "4Q1owB6yNFz1",
+      "name": "Spell Amplifier",
+      "description": "Gets +1 to casting rolls.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "9jyvRoBODD-O",
+      "name": "Stealth",
+      "description": "When units where most models have this rule are shot from over 9\" away, enemy units get -1 to hit rolls.",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "JSKVyurtWIyW",
+      "name": "Strider",
+      "description": "May ignore the effects of Difficult terrain. This unit halves the number of dice it rolls when jumping (rounding up).",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "5v6oaGfrdf29",
+      "name": "Surge",
+      "description": "For each unmodified result of 6 to hit, this weapon deals 1 extra hit (only the original hit counts as a 6 for special rules).",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "8Hjy54TYtwb7",
+      "name": "Takedown",
+      "description": "This model may pick any model in the target unit as its individual target for this weapon's attacks, which is resolved as if it was a unit of [1]. Takedown attacks must be resolved before other weapons.",
+      "enabledGameSystems": [],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "umbiz4tnEyF8",
+      "name": "Thrust",
+      "description": "When charging, gets +1 to hit rolls and AP(+1) in melee.",
+      "enabledGameSystems": null,
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "a0YtInGiUDd6",
+      "name": "Tough",
+      "description": "Once a model has taken as many wounds as its Tough value, it is killed (remove from play).",
+      "enabledGameSystems": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    },
+    {
+      "id": "aogQZcOOQrDI",
+      "name": "Transport",
+      "description": "May transport up to X friendly models with Tough(9) or Heroes with up to Tough(54), and non-Heroes with up to Tough(27) which occupy 3 spaces each. Transports may deploy with units inside, and units may enter/exit by using any move action, getting within 2” to enter, and staying fully within 6” when exiting. Units inside/outside transports may not target other units that are outside/inside, but may target the transport itself. When a transport is destroyed, units inside must take a Dangerous Terrain Test, are Shaken, and must be placed fully within 6” of the transport before it’s removed.",
+      "enabledGameSystems": [
+        2,
+        3
+      ],
+      "coreType": 1,
+      "displayCoreRuleForSystem": false
+    }
+  ],
+  "traits": []
+}

@@ -12,7 +12,23 @@ export const COMMON_RULES_ID_BY_GAME_SYSTEM: Record<eGameSystemInitials, number>
     [eGameSystemInitials.AOF]: 4,
     [eGameSystemInitials.AOFS]: 5,
     [eGameSystemInitials.AOFR]: 6,
+    [eGameSystemInitials.AOFQ]: 7,
+    [eGameSystemInitials.AOFQAI]: 8,
+    [eGameSystemInitials.GFSQ]: 9,
+    [eGameSystemInitials.GFSQAI]: 10,
   };
+
+// Quest lists are built from the same army books as Firefight/Skirmish, but
+// nobody has tested one end to end yet, so App.tsx flags them as experimental
+const QUEST_GAME_SYSTEMS: string[] = [
+  eGameSystemInitials.AOFQ,
+  eGameSystemInitials.AOFQAI,
+  eGameSystemInitials.GFSQ,
+  eGameSystemInitials.GFSQAI,
+];
+
+export const isQuestGameSystem = (gameSystem: string | undefined): boolean =>
+  gameSystem !== undefined && QUEST_GAME_SYSTEMS.includes(gameSystem);
 
 export const extractIdFromUrl = (
   url: string
@@ -90,7 +106,7 @@ export const fetchCommonRules = (
 ): Promise<ICommonRulesResponse> => {
   const commonRulesId = getCommonRulesId(gameSystem);
   if (commonRulesId === undefined) {
-    // army books also list systems 7 to 10 (Quest / Star Quest); asking for
+    // e.g. gfwf (Warfleets), which has its own endpoint; asking for
     // commonRulesId=undefined used to end in a vague 500
     return Promise.reject(new UnsupportedGameSystemError(gameSystem));
   }

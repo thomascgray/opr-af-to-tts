@@ -8,6 +8,7 @@ import {
   loadCommonRulesFor,
   loadList,
   maskNanoids,
+  readFixture,
   shareLinkFor,
   stubArmyForgeFetch,
 } from "./test-helpers";
@@ -32,11 +33,16 @@ import {
   onGenerateShareableId,
   removeQuantityStringFromStartOfString,
 } from "./utils";
+import { getCommonRulesId, isQuestGameSystem } from "./army-forge/client";
 
 // F1: AoF Saurians, Frog-Mage with Ancient Palanquin + Enlightened Mage
 const F1 = "xAhPsZKN9hXd";
 // F2: GF Battle Brothers, campaign mode, combined/joined/custom name/upgrades
 const F2 = "rzS5YWEN4vHF";
+// F3: GF Human Empire, Battle Master with Great Empire Icon Bearer (Enhanced Hold the Line Buff)
+const F3 = "iY9ouC4u52M1";
+// GFF list, stands in for a Star Quest list (same army books and data shape)
+const GFF = "4IycTvl_idGU";
 
 const stateViewFor = (
   id: string,
@@ -203,7 +209,7 @@ describe("onGenerateDefinitions", () => {
   });
 
   it("doesn't request common rules for a game system it can't map", async () => {
-    const list = { ...loadList(F1), gameSystem: "gfsq" };
+    const list = { ...loadList(F1), gameSystem: "zzz" };
     const fetchMock = stubArmyForgeFetch(list, {});
     state.armyListShareLink = shareLinkFor(F1);
 
@@ -213,11 +219,54 @@ describe("onGenerateDefinitions", () => {
       `/.netlify/functions/get-army?armyId=${F1}&isBeta=false`,
     ]);
     expect(alert).toHaveBeenCalledWith(
-      "This list uses a game system the app doesn't support yet (gfsq)."
+      "This list uses a game system the app doesn't support yet (zzz)."
     );
     expect(state.networkState.fetchArmyFromArmyForge).toBe(
       eNetworkRequestState.ERROR
     );
+  });
+
+  it("imports a Star Quest list with the Star Quest common rules", async () => {
+    const commonRules9 = readFixture("common-rules-9.json");
+    const list = { ...loadList(GFF), gameSystem: "gfsq" };
+    const fetchMock = stubArmyForgeFetch(list, commonRules9);
+    state.armyListShareLink = shareLinkFor(GFF);
+
+    await onGenerateDefinitions(state);
+
+    expect(fetchMock.mock.calls.map((c) => c[0])).toEqual([
+      `/.netlify/functions/get-army?armyId=${GFF}&isBeta=false`,
+      `/.netlify/functions/get-army?commonRulesId=9&isBeta=false`,
+    ]);
+    expect(alert).not.toHaveBeenCalled();
+    expect(state.networkState.fetchArmyFromArmyForge).toBe(
+      eNetworkRequestState.SUCCESS
+    );
+    expect(state.gameSystem).toBe("gfsq");
+    // Scout is worded differently in common rules 3 (Firefight) and 9
+    const scout = state.coreSpecialRulesDict.find((r) => r.name === "Scout");
+    expect(scout?.description).toBe(
+      commonRules9.rules.find((r: { name: string }) => r.name === "Scout")
+        .description
+    );
+  });
+
+  it.each([
+    ["aofq", 7],
+    ["aofqai", 8],
+    ["gfsq", 9],
+    ["gfsqai", 10],
+  ])("maps %s to common rules %i", (gameSystem, id) => {
+    expect(getCommonRulesId(gameSystem)).toBe(id);
+  });
+
+  it("knows which game systems are Quest systems", () => {
+    for (const gs of ["aofq", "aofqai", "gfsq", "gfsqai"]) {
+      expect(isQuestGameSystem(gs)).toBe(true);
+    }
+    for (const gs of ["gf", "gff", "aof", "aofs", "aofr", undefined, "toString"]) {
+      expect(isQuestGameSystem(gs)).toBe(false);
+    }
   });
 
   it("doesn't treat Object.prototype names as game systems", async () => {
@@ -414,6 +463,70 @@ describe("fixed bugs", () => {
     expect(
       generateUnitOutput(unit, unit.models[0], stateView).originalCasterValue
     ).toBe(1);
+  });
+
+  it("a rule's text includes the rules it names, like Army Forge's tooltip", () => {
+    const rule = (
+      name: string,
+      description: string,
+      showWhenReferenced: boolean
+    ) => ({ name, description, showWhenReferenced });
+    const stateView = {
+      armySpecialRulesDict: [
+        rule("AP", "Targets get -X to Defense rolls.", false),
+        rule("Deadly", "Multiply wounds by X.", false),
+        rule("Takedown", "Pick any model in the target unit.", true),
+        rule("Hold the Line", "Gets +1 to Morale Test rolls.", true),
+        rule(
+          "Enhanced Hold the Line",
+          "Always get +1 from Hold the Line.",
+          true
+        ),
+        rule(
+          "Takedown Strike",
+          "Make X attacks with AP(2), Deadly(3), and Takedown.",
+          true
+        ),
+        rule(
+          "Enhanced Hold the Line Buff",
+          "Pick up to 3 friendly units, which get Enhanced Hold the Line once.",
+          true
+        ),
+      ],
+      coreSpecialRulesDict: [],
+      ttsOutputConfig: initialTtsOutputConfig,
+    } as unknown as iAppState;
+    const unit = {
+      originalName: "Leader",
+      originalModelCountInUnit: 1,
+      models: [
+        {
+          name: "Leader",
+          qua: 5,
+          def: 5,
+          originalSpecialRules: [
+            { name: "Takedown Strike", rating: 2 },
+            { name: "Enhanced Hold the Line Buff" },
+          ],
+          campaignTraits: [],
+          xp: 0,
+          loadout: [],
+        },
+      ],
+    } as unknown as iUnitProfile;
+
+    const output = generateUnitOutput(
+      unit,
+      unit.models[0],
+      stateView
+    ).ttsDescriptionOutput;
+    expect(output).toContain("Takedown: Pick any model");
+    expect(output).toContain("Enhanced Hold the Line: Always get");
+    // AP and Deadly are in the core rulebook, so Army Forge doesn't explain them
+    expect(output).not.toContain("AP: ");
+    expect(output).not.toContain("Deadly: ");
+    // the longer name claims the text, so the shorter one isn't pulled in too
+    expect(output).not.toContain("Hold the Line: Gets");
   });
 
   it("B3: isUnitHero finds a 3.6 hero by name (no key)", async () => {

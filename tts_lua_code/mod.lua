@@ -89,6 +89,11 @@ local perModelCode = [[
         return gameSystem == 'aofs' or gameSystem == 'gff'
     end
 
+    -- Quest lists use skirmish-sized units but the Shaken rule, not Stunned
+    function isQuestSystem(gameSystem)
+        return gameSystem == 'aofq' or gameSystem == 'aofqai' or gameSystem == 'gfsq' or gameSystem == 'gfsqai'
+    end
+
     -- Pre-3.6 skirmish added 5 wounds on top of Tough. Models assigned from a list
     -- with no rulesVersion (saved before 3.6, or by an older mod) keep that.
     -- Any non-nil rulesVersion means 3.6 or later: wounds = Tough.
@@ -537,7 +542,8 @@ local perModelCode = [[
         local decodedMemo = JSON.decode(self.memo)
         local nameToAssign = decodedMemo['nameToAssign']
 
-        if isSkirmishSystem(decodedMemo['gameSystem']) and decodedMemo['originalToughValue'] ~= 0 then
+        local gs = decodedMemo['gameSystem']
+        if (isSkirmishSystem(gs) or isQuestSystem(gs)) and decodedMemo['originalToughValue'] ~= 0 then
             nameToAssign = nameToAssign .. "\r\nTough: " .. decodedMemo['originalToughValue']
         end
 
@@ -584,7 +590,7 @@ local perModelCode = [[
 
         self.addContextMenuItem("Toggle Menu", toggleActionPanel, false)
         self.addContextMenuItem("Activated", toggleActivated, false)
-        if isTraditionalSystem(gameSystem) then
+        if isTraditionalSystem(gameSystem) or isQuestSystem(gameSystem) then
             self.addContextMenuItem("Shaken", toggleShaken, false)
         end
         if isSkirmishSystem(gameSystem) then
@@ -698,7 +704,7 @@ local perModelCode = [[
         -- Unit column (conditional on game system)
         local unitButtons = btn('toggleActivated', 'Activated')
         if isSkirmishSystem(gameSystem)    then unitButtons = unitButtons .. btn('toggleStunned', 'Stunned') end
-        if isTraditionalSystem(gameSystem) then unitButtons = unitButtons .. btn('toggleShaken',  'Shaken')  end
+        if isTraditionalSystem(gameSystem) or isQuestSystem(gameSystem) then unitButtons = unitButtons .. btn('toggleShaken', 'Shaken') end
         unitButtons = unitButtons .. btn('selectAllUnit', 'Select All') .. btn('countUnit', 'Count')
 
         -- Army column

@@ -4,6 +4,10 @@ export enum eGameSystemInitials {
   AOF = "aof",
   AOFS = "aofs",
   AOFR = "aofr",
+  AOFQ = "aofq",
+  AOFQAI = "aofqai",
+  GFSQ = "gfsq",
+  GFSQAI = "gfsqai",
 }
 
 // These types describe the /api/tts and /api/rules/common/<n> responses. There is no
@@ -27,8 +31,8 @@ export interface ListState {
   competitive?: boolean;
   id?: string;
   key?: string;
-  // a string outside eGameSystemInitials is possible: army books also list
-  // game systems 7 to 10 (Quest / Star Quest), which the app doesn't map
+  // a string outside eGameSystemInitials is still possible (for example gfwf,
+  // Warfleets), so check it with getCommonRulesId before trusting it
   gameSystem: eGameSystemInitials;
 }
 
@@ -36,6 +40,7 @@ export interface IArmySpecialRule {
   id?: string;
   name: string;
   description: string;
+  coreType?: number | null; // null for rules that only exist in the army book
 }
 
 export interface ISpecialRule {
@@ -175,6 +180,8 @@ export interface ICommonRule {
   name: string;
   description: string;
   hasRating?: boolean; // gone from 3.6 data
+  // false for rules the system's core rulebook doesn't print (Takedown, Bane, ...)
+  displayCoreRuleForSystem?: boolean;
 }
 
 export interface ICommonRulesResponse {
